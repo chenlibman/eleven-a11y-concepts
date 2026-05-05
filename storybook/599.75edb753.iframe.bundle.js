@@ -1,15 +1,15 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[599],{
 
-/***/ 13599:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 13599
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
-__webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   WithToolTipState: () => (/* binding */ WithToolTipState),
 /* harmony export */   WithTooltip: () => (/* binding */ WithToolTipState),
 /* harmony export */   WithTooltipPure: () => (/* binding */ WithTooltipPure)
 /* harmony export */ });
+/* unused harmony export WithToolTipState */
+/* unused harmony import specifier */ var modifierPhases;
 /* harmony import */ var core_js_modules_es_symbol_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(58070);
 /* harmony import */ var core_js_modules_es_symbol_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_symbol_description_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(93510);
@@ -78,14 +78,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_32___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with_js__WEBPACK_IMPORTED_MODULE_32__);
 /* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(11875);
 /* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_33__);
-/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(94106);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(14041);
-/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(88480);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(43144);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(27430);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_36__);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(82098);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_37__);
+/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(94106);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(14041);
+/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(88480);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(43144);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(27430);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_38___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_38__);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(82098);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_39___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_39__);
 
 
 
@@ -484,7 +484,7 @@ var toPaddingObject = function toPaddingObject(padding, state) {
   padding = typeof padding === 'function' ? padding(Object.assign({}, state.rects, {
     placement: state.placement
   })) : padding;
-  return mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.f));
+  return mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.f));
 };
 
 function arrow(_ref) {
@@ -497,7 +497,7 @@ function arrow(_ref) {
   var popperOffsets = state.modifiersData.popperOffsets;
   var basePlacement = getBasePlacement(state.placement);
   var axis = getMainAxisFromPlacement(basePlacement);
-  var isVertical = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r].indexOf(basePlacement) >= 0;
+  var isVertical = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r].indexOf(basePlacement) >= 0;
   var len = isVertical ? 'height' : 'width';
 
   if (!arrowElement || !popperOffsets) {
@@ -506,8 +506,8 @@ function arrow(_ref) {
 
   var paddingObject = toPaddingObject(options.padding, state);
   var arrowRect = getLayoutRect(arrowElement);
-  var minProp = axis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l;
-  var maxProp = axis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r;
+  var minProp = axis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l;
+  var maxProp = axis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r;
   var endDiff = state.rects.reference[len] + state.rects.reference[axis] - popperOffsets[axis] - state.rects.popper[len];
   var startDiff = popperOffsets[axis] - state.rects.reference[axis];
   var arrowOffsetParent = getOffsetParent(arrowElement);
@@ -621,8 +621,8 @@ function mapToStyles(_ref2) {
   y = _ref3.y;
   var hasX = offsets.hasOwnProperty('x');
   var hasY = offsets.hasOwnProperty('y');
-  var sideX = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l;
-  var sideY = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t;
+  var sideX = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l;
+  var sideY = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t;
   var win = window;
 
   if (adaptive) {
@@ -642,16 +642,16 @@ function mapToStyles(_ref2) {
 
     offsetParent = offsetParent;
 
-    if (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t || (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l || placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r) && variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.i) {
-      sideY = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h;
+    if (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t || (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l || placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r) && variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.i) {
+      sideY = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h;
       var offsetY = isFixed && win.visualViewport ? win.visualViewport.height : // $FlowFixMe[prop-missing]
       offsetParent[heightProp];
       y -= offsetY - popperRect.height;
       y *= gpuAcceleration ? 1 : -1;
     }
 
-    if (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l || (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t || placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h) && variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.i) {
-      sideX = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r;
+    if (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l || (placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t || placement === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h) && variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.i) {
+      sideX = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r;
       var offsetX = isFixed && win.visualViewport ? win.visualViewport.width : // $FlowFixMe[prop-missing]
       offsetParent[widthProp];
       x -= offsetX - popperRect.width;
@@ -959,7 +959,7 @@ function getInnerBoundingClientRect(element) {
 }
 
 function getClientRectFromMixedType(element, clippingParent) {
-  return clippingParent === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.v ? rectToClientRect(getViewportRect(element)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
+  return clippingParent === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.v ? rectToClientRect(getViewportRect(element)) : isElement(clippingParent) ? getInnerBoundingClientRect(clippingParent) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
 } // A "clipping parent" is an overflowable container with the characteristic of
 // clipping (or hiding) overflowing elements with a position different from
 // `initial`
@@ -1012,28 +1012,28 @@ function computeOffsets(_ref) {
   var offsets;
 
   switch (basePlacement) {
-    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t:
+    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t:
       offsets = {
         x: commonX,
         y: reference.y - element.height
       };
       break;
 
-    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h:
+    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h:
       offsets = {
         x: commonX,
         y: reference.y + reference.height
       };
       break;
 
-    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r:
+    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r:
       offsets = {
         x: reference.x + reference.width,
         y: commonY
       };
       break;
 
-    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l:
+    case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l:
       offsets = {
         x: reference.x - element.width,
         y: commonY
@@ -1053,11 +1053,11 @@ function computeOffsets(_ref) {
     var len = mainAxis === 'y' ? 'height' : 'width';
 
     switch (variation) {
-      case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.s:
+      case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.s:
         offsets[mainAxis] = offsets[mainAxis] - (reference[len] / 2 - element[len] / 2);
         break;
 
-      case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.i:
+      case _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.i:
         offsets[mainAxis] = offsets[mainAxis] + (reference[len] / 2 - element[len] / 2);
         break;
     }
@@ -1075,17 +1075,17 @@ function detectOverflow(state, options) {
       _options$placement = _options.placement,
       placement = _options$placement === void 0 ? state.placement : _options$placement,
       _options$boundary = _options.boundary,
-      boundary = _options$boundary === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.j : _options$boundary,
+      boundary = _options$boundary === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.j : _options$boundary,
       _options$rootBoundary = _options.rootBoundary,
-      rootBoundary = _options$rootBoundary === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.v : _options$rootBoundary,
+      rootBoundary = _options$rootBoundary === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.v : _options$rootBoundary,
       _options$elementConte = _options.elementContext,
-      elementContext = _options$elementConte === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.p : _options$elementConte,
+      elementContext = _options$elementConte === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.p : _options$elementConte,
       _options$altBoundary = _options.altBoundary,
       altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary,
       _options$padding = _options.padding,
       padding = _options$padding === void 0 ? 0 : _options$padding;
-  var paddingObject = mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.f));
-  var altContext = elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.p ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.k : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.p;
+  var paddingObject = mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.f));
+  var altContext = elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.p ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.k : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.p;
   var popperRect = state.rects.popper;
   var element = state.elements[altBoundary ? altContext : elementContext];
   var clippingClientRect = getClippingRect(isElement(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary);
@@ -1097,7 +1097,7 @@ function detectOverflow(state, options) {
     placement: placement
   });
   var popperClientRect = rectToClientRect(Object.assign({}, popperRect, popperOffsets));
-  var elementClientRect = elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.p ? popperClientRect : referenceClientRect; // positive = overflowing the clipping rect
+  var elementClientRect = elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.p ? popperClientRect : referenceClientRect; // positive = overflowing the clipping rect
   // 0 or negative = within the clipping rect
 
   var overflowOffsets = {
@@ -1108,11 +1108,11 @@ function detectOverflow(state, options) {
   };
   var offsetData = state.modifiersData.offset; // Offsets can be applied only to the popper element
 
-  if (elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.p && offsetData) {
+  if (elementContext === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.p && offsetData) {
     var offset = offsetData[placement];
     Object.keys(overflowOffsets).forEach(function (key) {
-      var multiply = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h].indexOf(key) >= 0 ? 1 : -1;
-      var axis = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h].indexOf(key) >= 0 ? 'y' : 'x';
+      var multiply = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h].indexOf(key) >= 0 ? 1 : -1;
+      var axis = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h].indexOf(key) >= 0 ? 'y' : 'x';
       overflowOffsets[key] += offset[axis] * multiply;
     });
   }
@@ -1132,11 +1132,11 @@ function computeAutoPlacement(state, options) {
       padding = _options.padding,
       flipVariations = _options.flipVariations,
       _options$allowedAutoP = _options.allowedAutoPlacements,
-      allowedAutoPlacements = _options$allowedAutoP === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.n : _options$allowedAutoP;
+      allowedAutoPlacements = _options$allowedAutoP === void 0 ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.n : _options$allowedAutoP;
   var variation = getVariation(placement);
-  var placements$1 = variation ? flipVariations ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.m : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.m.filter(function (placement) {
+  var placements$1 = variation ? flipVariations ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.m : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.m.filter(function (placement) {
     return getVariation(placement) === variation;
-  }) : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.f;
+  }) : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.f;
   var allowedPlacements = placements$1.filter(function (placement) {
     return allowedAutoPlacements.indexOf(placement) >= 0;
   });
@@ -1164,7 +1164,7 @@ function computeAutoPlacement(state, options) {
 }
 
 function getExpandedFallbackPlacements(placement) {
-  if (getBasePlacement(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.o) {
+  if (getBasePlacement(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.o) {
     return [];
   }
 
@@ -1198,7 +1198,7 @@ function flip(_ref) {
   var isBasePlacement = basePlacement === preferredPlacement;
   var fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipVariations ? [getOppositePlacement(preferredPlacement)] : getExpandedFallbackPlacements(preferredPlacement));
   var placements = [preferredPlacement].concat(fallbackPlacements).reduce(function (acc, placement) {
-    return acc.concat(getBasePlacement(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.o ? computeAutoPlacement(state, {
+    return acc.concat(getBasePlacement(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.o ? computeAutoPlacement(state, {
       placement: placement,
       boundary: boundary,
       rootBoundary: rootBoundary,
@@ -1218,8 +1218,8 @@ function flip(_ref) {
 
     var _basePlacement = getBasePlacement(placement);
 
-    var isStartVariation = getVariation(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.s;
-    var isVertical = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h].indexOf(_basePlacement) >= 0;
+    var isStartVariation = getVariation(placement) === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.s;
+    var isVertical = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h].indexOf(_basePlacement) >= 0;
     var len = isVertical ? 'width' : 'height';
     var overflow = detectOverflow(state, {
       placement: placement,
@@ -1228,7 +1228,7 @@ function flip(_ref) {
       altBoundary: altBoundary,
       padding: padding
     });
-    var mainVariationSide = isVertical ? isStartVariation ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l : isStartVariation ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t;
+    var mainVariationSide = isVertical ? isStartVariation ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l : isStartVariation ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t;
 
     if (referenceRect[len] > popperRect[len]) {
       mainVariationSide = getOppositePlacement(mainVariationSide);
@@ -1320,7 +1320,7 @@ function getSideOffsets(overflow, rect, preventedOffsets) {
 }
 
 function isAnySideFullyClipped(overflow) {
-  return [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l].some(function (side) {
+  return [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l].some(function (side) {
     return overflow[side] >= 0;
   });
 }
@@ -1364,7 +1364,7 @@ var hide$1 = {
 
 function distanceAndSkiddingToXY(placement, rects, offset) {
   var basePlacement = getBasePlacement(placement);
-  var invertDistance = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t].indexOf(basePlacement) >= 0 ? -1 : 1;
+  var invertDistance = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t].indexOf(basePlacement) >= 0 ? -1 : 1;
 
   var _ref = typeof offset === 'function' ? offset(Object.assign({}, rects, {
     placement: placement
@@ -1374,7 +1374,7 @@ function distanceAndSkiddingToXY(placement, rects, offset) {
 
   skidding = skidding || 0;
   distance = (distance || 0) * invertDistance;
-  return [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r].indexOf(basePlacement) >= 0 ? {
+  return [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r].indexOf(basePlacement) >= 0 ? {
     x: distance,
     y: skidding
   } : {
@@ -1389,7 +1389,7 @@ function offset(_ref2) {
       name = _ref2.name;
   var _options$offset = options.offset,
       offset = _options$offset === void 0 ? [0, 0] : _options$offset;
-  var data = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.n.reduce(function (acc, placement) {
+  var data = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.n.reduce(function (acc, placement) {
     acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset);
     return acc;
   }, {});
@@ -1495,15 +1495,15 @@ function preventOverflow(_ref) {
   if (checkMainAxis) {
     var _offsetModifierState$;
 
-    var mainSide = mainAxis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l;
-    var altSide = mainAxis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r;
+    var mainSide = mainAxis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l;
+    var altSide = mainAxis === 'y' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r;
     var len = mainAxis === 'y' ? 'height' : 'width';
     var offset = popperOffsets[mainAxis];
     var min$1 = offset + overflow[mainSide];
     var max$1 = offset - overflow[altSide];
     var additive = tether ? -popperRect[len] / 2 : 0;
-    var minLen = variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.s ? referenceRect[len] : popperRect[len];
-    var maxLen = variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.s ? -popperRect[len] : -referenceRect[len]; // We need to include the arrow in the calculation so the arrow doesn't go
+    var minLen = variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.s ? referenceRect[len] : popperRect[len];
+    var maxLen = variation === _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.s ? -popperRect[len] : -referenceRect[len]; // We need to include the arrow in the calculation so the arrow doesn't go
     // outside the reference bounds
 
     var arrowElement = state.elements.arrow;
@@ -1535,9 +1535,9 @@ function preventOverflow(_ref) {
   if (checkAltAxis) {
     var _offsetModifierState$2;
 
-    var _mainSide = mainAxis === 'x' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l;
+    var _mainSide = mainAxis === 'x' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l;
 
-    var _altSide = mainAxis === 'x' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.r;
+    var _altSide = mainAxis === 'x' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.h : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.r;
 
     var _offset = popperOffsets[altAxis];
 
@@ -1547,7 +1547,7 @@ function preventOverflow(_ref) {
 
     var _max = _offset - overflow[_altSide];
 
-    var isOriginSide = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.l].indexOf(basePlacement) !== -1;
+    var isOriginSide = [_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.t, _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.l].indexOf(basePlacement) !== -1;
 
     var _offsetModifierValue = (_offsetModifierState$2 = offsetModifierState == null ? void 0 : offsetModifierState[altAxis]) != null ? _offsetModifierState$2 : 0;
 
@@ -1674,7 +1674,7 @@ function orderModifiers(modifiers) {
   // order based on dependencies
   var orderedModifiers = order(modifiers); // order based on phase
 
-  return _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.q.reduce(function (acc, phase) {
+  return _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.q.reduce(function (acc, phase) {
     return acc.concat(orderedModifiers.filter(function (modifier) {
       return modifier.phase === phase;
     }));
@@ -2041,30 +2041,30 @@ function _inheritsLoose(subClass, superClass) {
   _setPrototypeOf(subClass, superClass);
 }
 
-var ManagerReferenceNodeContext = react__WEBPACK_IMPORTED_MODULE_34__.createContext();
-var ManagerReferenceNodeSetterContext = react__WEBPACK_IMPORTED_MODULE_34__.createContext();
+var ManagerReferenceNodeContext = react__WEBPACK_IMPORTED_MODULE_35__.createContext();
+var ManagerReferenceNodeSetterContext = react__WEBPACK_IMPORTED_MODULE_35__.createContext();
 
 function Manager(_ref) {
   var children = _ref.children;
 
-  var _React$useState = react__WEBPACK_IMPORTED_MODULE_34__.useState(null),
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_35__.useState(null),
       referenceNode = _React$useState[0],
       setReferenceNode = _React$useState[1];
 
-  var hasUnmounted = react__WEBPACK_IMPORTED_MODULE_34__.useRef(false);
-  react__WEBPACK_IMPORTED_MODULE_34__.useEffect(function () {
+  var hasUnmounted = react__WEBPACK_IMPORTED_MODULE_35__.useRef(false);
+  react__WEBPACK_IMPORTED_MODULE_35__.useEffect(function () {
     return function () {
       hasUnmounted.current = true;
     };
   }, []);
-  var handleSetReferenceNode = react__WEBPACK_IMPORTED_MODULE_34__.useCallback(function (node) {
+  var handleSetReferenceNode = react__WEBPACK_IMPORTED_MODULE_35__.useCallback(function (node) {
     if (!hasUnmounted.current) {
       setReferenceNode(node);
     }
   }, []);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(ManagerReferenceNodeContext.Provider, {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(ManagerReferenceNodeContext.Provider, {
     value: referenceNode
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(ManagerReferenceNodeSetterContext.Provider, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(ManagerReferenceNodeSetterContext.Provider, {
     value: handleSetReferenceNode
   }, children));
 }
@@ -2124,7 +2124,7 @@ var fromEntries = function fromEntries(entries) {
  */
 
 
-var useIsomorphicLayoutEffect = typeof window !== 'undefined' && window.document && window.document.createElement ? react__WEBPACK_IMPORTED_MODULE_34__.useLayoutEffect : react__WEBPACK_IMPORTED_MODULE_34__.useEffect;
+var useIsomorphicLayoutEffect = typeof window !== 'undefined' && window.document && window.document.createElement ? react__WEBPACK_IMPORTED_MODULE_35__.useLayoutEffect : react__WEBPACK_IMPORTED_MODULE_35__.useEffect;
 /* global Map:readonly, Set:readonly, ArrayBuffer:readonly */
 
 var hasElementType = typeof Element !== 'undefined';
@@ -2280,7 +2280,7 @@ var usePopper = function usePopper(referenceElement, popperElement, options) {
     options = {};
   }
 
-  var prevOptions = react__WEBPACK_IMPORTED_MODULE_34__.useRef(null);
+  var prevOptions = react__WEBPACK_IMPORTED_MODULE_35__.useRef(null);
   var optionsWithDefaults = {
     onFirstUpdate: options.onFirstUpdate,
     placement: options.placement || 'bottom',
@@ -2288,7 +2288,7 @@ var usePopper = function usePopper(referenceElement, popperElement, options) {
     modifiers: options.modifiers || EMPTY_MODIFIERS$1
   };
 
-  var _React$useState = react__WEBPACK_IMPORTED_MODULE_34__.useState({
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_35__.useState({
     styles: {
       popper: {
         position: optionsWithDefaults.strategy,
@@ -2304,7 +2304,7 @@ var usePopper = function usePopper(referenceElement, popperElement, options) {
       state = _React$useState[0],
       setState = _React$useState[1];
 
-  var updateStateModifier = react__WEBPACK_IMPORTED_MODULE_34__.useMemo(function () {
+  var updateStateModifier = react__WEBPACK_IMPORTED_MODULE_35__.useMemo(function () {
     return {
       name: 'updateState',
       enabled: true,
@@ -2324,7 +2324,7 @@ var usePopper = function usePopper(referenceElement, popperElement, options) {
       requires: ['computeStyles']
     };
   }, []);
-  var popperOptions = react__WEBPACK_IMPORTED_MODULE_34__.useMemo(function () {
+  var popperOptions = react__WEBPACK_IMPORTED_MODULE_35__.useMemo(function () {
     var newOptions = {
       onFirstUpdate: optionsWithDefaults.onFirstUpdate,
       placement: optionsWithDefaults.placement,
@@ -2342,7 +2342,7 @@ var usePopper = function usePopper(referenceElement, popperElement, options) {
       return newOptions;
     }
   }, [optionsWithDefaults.onFirstUpdate, optionsWithDefaults.placement, optionsWithDefaults.strategy, optionsWithDefaults.modifiers, updateStateModifier]);
-  var popperInstanceRef = react__WEBPACK_IMPORTED_MODULE_34__.useRef();
+  var popperInstanceRef = react__WEBPACK_IMPORTED_MODULE_35__.useRef();
   useIsomorphicLayoutEffect(function () {
     if (popperInstanceRef.current) {
       popperInstanceRef.current.setOptions(popperOptions);
@@ -2391,20 +2391,20 @@ function Popper(_ref) {
       onFirstUpdate = _ref.onFirstUpdate,
       innerRef = _ref.innerRef,
       children = _ref.children;
-  var referenceNode = react__WEBPACK_IMPORTED_MODULE_34__.useContext(ManagerReferenceNodeContext);
+  var referenceNode = react__WEBPACK_IMPORTED_MODULE_35__.useContext(ManagerReferenceNodeContext);
 
-  var _React$useState = react__WEBPACK_IMPORTED_MODULE_34__.useState(null),
+  var _React$useState = react__WEBPACK_IMPORTED_MODULE_35__.useState(null),
       popperElement = _React$useState[0],
       setPopperElement = _React$useState[1];
 
-  var _React$useState2 = react__WEBPACK_IMPORTED_MODULE_34__.useState(null),
+  var _React$useState2 = react__WEBPACK_IMPORTED_MODULE_35__.useState(null),
       arrowElement = _React$useState2[0],
       setArrowElement = _React$useState2[1];
 
-  react__WEBPACK_IMPORTED_MODULE_34__.useEffect(function () {
+  react__WEBPACK_IMPORTED_MODULE_35__.useEffect(function () {
     setRef$1(innerRef, popperElement);
   }, [innerRef, popperElement]);
-  var options = react__WEBPACK_IMPORTED_MODULE_34__.useMemo(function () {
+  var options = react__WEBPACK_IMPORTED_MODULE_35__.useMemo(function () {
     return {
       placement: placement,
       strategy: strategy,
@@ -2425,7 +2425,7 @@ function Popper(_ref) {
       forceUpdate = _usePopper.forceUpdate,
       update = _usePopper.update;
 
-  var childrenProps = react__WEBPACK_IMPORTED_MODULE_34__.useMemo(function () {
+  var childrenProps = react__WEBPACK_IMPORTED_MODULE_35__.useMemo(function () {
     return {
       ref: setPopperElement,
       style: styles.popper,
@@ -2510,18 +2510,18 @@ var warning_1 = warning;
 function Reference(_ref) {
   var children = _ref.children,
       innerRef = _ref.innerRef;
-  var setReferenceNode = react__WEBPACK_IMPORTED_MODULE_34__.useContext(ManagerReferenceNodeSetterContext);
-  var refHandler = react__WEBPACK_IMPORTED_MODULE_34__.useCallback(function (node) {
+  var setReferenceNode = react__WEBPACK_IMPORTED_MODULE_35__.useContext(ManagerReferenceNodeSetterContext);
+  var refHandler = react__WEBPACK_IMPORTED_MODULE_35__.useCallback(function (node) {
     setRef$1(innerRef, node);
     safeInvoke(setReferenceNode, node);
   }, [innerRef, setReferenceNode]); // ran on unmount
 
-  react__WEBPACK_IMPORTED_MODULE_34__.useEffect(function () {
+  react__WEBPACK_IMPORTED_MODULE_35__.useEffect(function () {
     return function () {
       return setRef$1(innerRef, null);
     };
   });
-  react__WEBPACK_IMPORTED_MODULE_34__.useEffect(function () {
+  react__WEBPACK_IMPORTED_MODULE_35__.useEffect(function () {
     warning_1(Boolean(setReferenceNode), '`Reference` should not be used outside of a `Manager` component.');
   }, [setReferenceNode]);
   return unwrapArray(children)({
@@ -2529,7 +2529,7 @@ function Reference(_ref) {
   });
 }
 
-var TooltipContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createContext({}); // eslint-disable-next-line @typescript-eslint/no-explicit-any
+var TooltipContext = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createContext({}); // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 
 var callAll = function callAll() {
@@ -2635,8 +2635,8 @@ var Tooltip$1 = /*#__PURE__*/function (_Component) {
         props = {};
       }
 
-      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, props, {
-        style: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, props.style, _this.props.arrowProps.style)
+      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, props, {
+        style: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, props.style, _this.props.arrowProps.style)
       });
     };
 
@@ -2645,11 +2645,11 @@ var Tooltip$1 = /*#__PURE__*/function (_Component) {
         props = {};
       }
 
-      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, props, _this.isTriggeredBy('hover') && {
+      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, props, _this.isTriggeredBy('hover') && {
         onMouseEnter: callAll(_this.props.clearScheduled, props.onMouseEnter),
         onMouseLeave: callAll(_this.props.hideTooltip, props.onMouseLeave)
       }, {
-        style: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, props.style, _this.props.style)
+        style: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, props.style, _this.props.style)
       });
     };
 
@@ -2728,7 +2728,7 @@ var Tooltip$1 = /*#__PURE__*/function (_Component) {
         arrowProps = _this$props3.arrowProps,
         placement = _this$props3.placement,
         tooltip = _this$props3.tooltip;
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(TooltipContext.Provider, {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(TooltipContext.Provider, {
       value: this.contextValue
     }, tooltip({
       arrowRef: arrowProps.ref,
@@ -2745,7 +2745,7 @@ var Tooltip$1 = /*#__PURE__*/function (_Component) {
   };
 
   return Tooltip;
-}(react__WEBPACK_IMPORTED_MODULE_34__.Component);
+}(react__WEBPACK_IMPORTED_MODULE_35__.Component);
 
 Tooltip$1.contextType = TooltipContext;
 var DEFAULT_MUTATION_OBSERVER_CONFIG = {
@@ -2795,7 +2795,7 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
       };
 
       if (_this.props.followCursor) {
-        state = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, state, {
+        state = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, state, {
           pageX: pageX,
           pageY: pageY
         });
@@ -2856,12 +2856,12 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
         props = {};
       }
 
-      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({}, props, _this.isTriggeredBy('click') && {
+      return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({}, props, _this.isTriggeredBy('click') && {
         onClick: callAll(_this.clickToggle, props.onClick),
         onTouchEnd: callAll(_this.clickToggle, props.onTouchEnd)
       }, _this.isTriggeredBy('right-click') && {
         onContextMenu: callAll(_this.contextMenuToggle, props.onContextMenu)
-      }, _this.isTriggeredBy('hover') && (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({
+      }, _this.isTriggeredBy('hover') && (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({
         onMouseEnter: callAll(_this.showTooltip, props.onMouseEnter),
         onMouseLeave: callAll(_this.hideTooltip, props.onMouseLeave)
       }, _this.props.followCursor && {
@@ -2897,9 +2897,9 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
         followCursor = _this$props.followCursor,
         getTooltipRef = _this$props.getTooltipRef,
         mutationObserverOptions = _this$props.mutationObserverOptions,
-        restProps = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__._)(_this$props, ["children", "tooltip", "placement", "trigger", "getTriggerRef", "modifiers", "closeOnReferenceHidden", "usePortal", "portalContainer", "followCursor", "getTooltipRef", "mutationObserverOptions"]);
+        restProps = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__._)(_this$props, ["children", "tooltip", "placement", "trigger", "getTriggerRef", "modifiers", "closeOnReferenceHidden", "usePortal", "portalContainer", "followCursor", "getTooltipRef", "mutationObserverOptions"]);
 
-    var popper = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(Popper, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({
+    var popper = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(Popper, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({
       innerRef: getTooltipRef,
       placement: placement,
       modifiers: [{
@@ -2930,7 +2930,7 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
         style.transform = "translate3d(" + x + "px, " + y + "px, 0";
       }
 
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(Tooltip$1, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(Tooltip$1, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.a)({
         arrowProps: arrowProps,
         closeOnReferenceHidden: closeOnReferenceHidden,
         isReferenceHidden: isReferenceHidden,
@@ -2946,7 +2946,7 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
         innerRef: ref
       }));
     });
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(Manager, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_34__.createElement(Reference, {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(Manager, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_35__.createElement(Reference, {
       innerRef: getTriggerRef
     }, function (_ref4) {
       var ref = _ref4.ref;
@@ -2954,7 +2954,7 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
         getTriggerProps: _this2.getTriggerProps,
         triggerRef: ref
       });
-    }), this.getState() && (usePortal ? /*#__PURE__*/(0,react_dom__WEBPACK_IMPORTED_MODULE_35__.createPortal)(popper, portalContainer) : popper));
+    }), this.getState() && (usePortal ? /*#__PURE__*/(0,react_dom__WEBPACK_IMPORTED_MODULE_37__.createPortal)(popper, portalContainer) : popper));
   };
 
   _proto.isControlled = function isControlled() {
@@ -2971,7 +2971,7 @@ var TooltipTrigger = /*#__PURE__*/function (_Component) {
   };
 
   return TooltipTrigger;
-}(react__WEBPACK_IMPORTED_MODULE_34__.Component);
+}(react__WEBPACK_IMPORTED_MODULE_35__.Component);
 
 TooltipTrigger.defaultProps = {
   closeOnReferenceHidden: true,
@@ -2988,12 +2988,12 @@ TooltipTrigger.defaultProps = {
   modifiers: []
 };
 var TooltipTrigger$1 = TooltipTrigger;
-var match = memoizerific__WEBPACK_IMPORTED_MODULE_36___default()(1000)(function (requests, actual, value) {
+var match = memoizerific__WEBPACK_IMPORTED_MODULE_38___default()(1000)(function (requests, actual, value) {
   var fallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
   return actual.split('-')[0] === requests ? value : fallback;
 });
 var ArrowSpacing = 8;
-var Arrow = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.div({
+var Arrow = _storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .styled */ .I4.div({
   position: 'absolute',
   borderStyle: 'solid'
 }, function (_ref6) {
@@ -3032,13 +3032,13 @@ var Arrow = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.di
     borderTopWidth: "".concat(match('bottom', placement, '0', ArrowSpacing), "px"),
     borderRightWidth: "".concat(match('left', placement, '0', ArrowSpacing), "px"),
     borderLeftWidth: "".concat(match('right', placement, '0', ArrowSpacing), "px"),
-    borderTopColor: match('top', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .darken */ .e$)(theme.background.app), 'transparent'),
-    borderBottomColor: match('bottom', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .darken */ .e$)(theme.background.app), 'transparent'),
-    borderLeftColor: match('left', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .darken */ .e$)(theme.background.app), 'transparent'),
-    borderRightColor: match('right', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .darken */ .e$)(theme.background.app), 'transparent')
+    borderTopColor: match('top', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .darken */ .e$)(theme.background.app), 'transparent'),
+    borderBottomColor: match('bottom', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .darken */ .e$)(theme.background.app), 'transparent'),
+    borderLeftColor: match('left', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .darken */ .e$)(theme.background.app), 'transparent'),
+    borderRightColor: match('right', placement, theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .darken */ .e$)(theme.background.app), 'transparent')
   };
 });
-var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.div(function (_ref8) {
+var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .styled */ .I4.div(function (_ref8) {
   var hidden = _ref8.hidden;
   return {
     display: hidden ? 'none' : 'inline-block',
@@ -3049,7 +3049,7 @@ var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.
       color = _ref9.color,
       hasChrome = _ref9.hasChrome;
   return hasChrome ? {
-    background: theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .darken */ .e$)(theme.background.app),
+    background: theme.color[color] || color || theme.base === 'light' ? (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .lighten */ .a)(theme.background.app) : (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .darken */ .e$)(theme.background.app),
     filter: "\n            drop-shadow(0px 5px 5px rgba(0,0,0,0.05))\n            drop-shadow(0 1px 3px rgba(0,0,0,0.1))\n          ",
     borderRadius: theme.appBorderRadius * 2,
     fontSize: theme.typography.size.s1
@@ -3064,15 +3064,15 @@ var Tooltip = function Tooltip(_a) {
       tooltipRef = _a.tooltipRef,
       arrowRef = _a.arrowRef,
       color = _a.color,
-      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.d)(_a, ["placement", "hasChrome", "children", "arrowProps", "tooltipRef", "arrowRef", "color"]);
+      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.d)(_a, ["placement", "hasChrome", "children", "arrowProps", "tooltipRef", "arrowRef", "color"]);
 
-  return react__WEBPACK_IMPORTED_MODULE_34__.createElement(Wrapper, Object.assign({
+  return react__WEBPACK_IMPORTED_MODULE_35__.createElement(Wrapper, Object.assign({
     hasChrome: hasChrome,
     placement: placement,
     ref: tooltipRef
   }, props, {
     color: color
-  }), hasChrome && react__WEBPACK_IMPORTED_MODULE_34__.createElement(Arrow, Object.assign({
+  }), hasChrome && react__WEBPACK_IMPORTED_MODULE_35__.createElement(Arrow, Object.assign({
     placement: placement,
     ref: arrowRef
   }, arrowProps, {
@@ -3088,12 +3088,12 @@ Tooltip.defaultProps = {
   placement: 'top',
   arrowProps: {}
 };
-var document$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.w.document; // A target that doesn't speak popper
+var document$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.w.document; // A target that doesn't speak popper
 
-var TargetContainer = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.div(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n  display: inline-block;\n  cursor: ", ";\n"])), function (props) {
+var TargetContainer = _storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .styled */ .I4.div(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n  display: inline-block;\n  cursor: ", ";\n"])), function (props) {
   return props.mode === 'hover' ? 'default' : 'pointer';
 });
-var TargetSvgContainer = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.g(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n  cursor: ", ";\n"])), function (props) {
+var TargetSvgContainer = _storybook_theming__WEBPACK_IMPORTED_MODULE_36__/* .styled */ .I4.g(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n  cursor: ", ";\n"])), function (props) {
   return props.mode === 'hover' ? 'default' : 'pointer';
 }); // Pure, does not bind to the body
 
@@ -3108,10 +3108,10 @@ var WithTooltipPure = function WithTooltipPure(_a) {
       children = _a.children,
       tooltipShown = _a.tooltipShown,
       onVisibilityChange = _a.onVisibilityChange,
-      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.d)(_a, ["svg", "trigger", "closeOnClick", "placement", "modifiers", "hasChrome", "tooltip", "children", "tooltipShown", "onVisibilityChange"]);
+      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.d)(_a, ["svg", "trigger", "closeOnClick", "placement", "modifiers", "hasChrome", "tooltip", "children", "tooltipShown", "onVisibilityChange"]);
 
   var Container = svg ? TargetSvgContainer : TargetContainer;
-  return react__WEBPACK_IMPORTED_MODULE_34__.createElement(TooltipTrigger$1, {
+  return react__WEBPACK_IMPORTED_MODULE_35__.createElement(TooltipTrigger$1, {
     placement: placement,
     trigger: trigger,
     modifiers: modifiers,
@@ -3123,7 +3123,7 @@ var WithTooltipPure = function WithTooltipPure(_a) {
           tooltipRef = _ref10.tooltipRef,
           arrowRef = _ref10.arrowRef,
           tooltipPlacement = _ref10.placement;
-      return react__WEBPACK_IMPORTED_MODULE_34__.createElement(Tooltip, Object.assign({
+      return react__WEBPACK_IMPORTED_MODULE_35__.createElement(Tooltip, Object.assign({
         hasChrome: hasChrome,
         placement: tooltipPlacement,
         tooltipRef: tooltipRef,
@@ -3139,7 +3139,7 @@ var WithTooltipPure = function WithTooltipPure(_a) {
     var getTriggerProps = _ref11.getTriggerProps,
         triggerRef = _ref11.triggerRef;
     return (// @ts-ignore
-      react__WEBPACK_IMPORTED_MODULE_34__.createElement(Container, Object.assign({
+      react__WEBPACK_IMPORTED_MODULE_35__.createElement(Container, Object.assign({
         ref: triggerRef
       }, getTriggerProps(), props), children)
     );
@@ -3174,18 +3174,18 @@ WithTooltipPure.defaultProps = {
 var WithToolTipState = function WithToolTipState(_a) {
   var startOpen = _a.startOpen,
       onChange = _a.onVisibilityChange,
-      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.d)(_a, ["startOpen", "onVisibilityChange"]);
+      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_34__.d)(_a, ["startOpen", "onVisibilityChange"]);
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_34__.useState)(startOpen || false),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_35__.useState)(startOpen || false),
       _useState2 = _slicedToArray(_useState, 2),
       tooltipShown = _useState2[0],
       setTooltipShown = _useState2[1];
 
-  var onVisibilityChange = (0,react__WEBPACK_IMPORTED_MODULE_34__.useCallback)(function (visibility) {
+  var onVisibilityChange = (0,react__WEBPACK_IMPORTED_MODULE_35__.useCallback)(function (visibility) {
     if (onChange && onChange(visibility) === false) return;
     setTooltipShown(visibility);
   }, [onChange]);
-  (0,react__WEBPACK_IMPORTED_MODULE_34__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_35__.useEffect)(function () {
     var hide = function hide() {
       return onVisibilityChange(false);
     };
@@ -3224,7 +3224,7 @@ var WithToolTipState = function WithToolTipState(_a) {
       });
     };
   });
-  return react__WEBPACK_IMPORTED_MODULE_34__.createElement(WithTooltipPure, Object.assign({}, rest, {
+  return react__WEBPACK_IMPORTED_MODULE_35__.createElement(WithTooltipPure, Object.assign({}, rest, {
     tooltipShown: tooltipShown,
     onVisibilityChange: onVisibilityChange
   }));
@@ -3233,70 +3233,30 @@ var WithToolTipState = function WithToolTipState(_a) {
 
 
 
-/***/ }),
+/***/ },
 
-/***/ 47146:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 47146
+(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
-var globalThis = __webpack_require__(79117);
 var DESCRIPTORS = __webpack_require__(96893);
 var defineBuiltInAccessor = __webpack_require__(10997);
-var regExpFlags = __webpack_require__(34932);
-var fails = __webpack_require__(5234);
-
-// babel-minify and Closure Compiler transpiles RegExp('.', 'd') -> /./d and it causes SyntaxError
-var RegExp = globalThis.RegExp;
-var RegExpPrototype = RegExp.prototype;
-
-var FORCED = DESCRIPTORS && fails(function () {
-  var INDICES_SUPPORT = true;
-  try {
-    RegExp('.', 'd');
-  } catch (error) {
-    INDICES_SUPPORT = false;
-  }
-
-  var O = {};
-  // modern V8 bug
-  var calls = '';
-  var expected = INDICES_SUPPORT ? 'dgimsy' : 'gimsy';
-
-  var addGetter = function (key, chr) {
-    // eslint-disable-next-line es/no-object-defineproperty -- safe
-    Object.defineProperty(O, key, { get: function () {
-      calls += chr;
-      return true;
-    } });
-  };
-
-  var pairs = {
-    dotAll: 's',
-    global: 'g',
-    ignoreCase: 'i',
-    multiline: 'm',
-    sticky: 'y'
-  };
-
-  if (INDICES_SUPPORT) pairs.hasIndices = 'd';
-
-  for (var key in pairs) addGetter(key, pairs[key]);
-
-  // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-  var result = Object.getOwnPropertyDescriptor(RegExpPrototype, 'flags').get.call(O);
-
-  return result !== expected || calls !== expected;
-});
+var regExpFlagsDetection = __webpack_require__(72306);
+var regExpFlagsGetterImplementation = __webpack_require__(34932);
 
 // `RegExp.prototype.flags` getter
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
-if (FORCED) defineBuiltInAccessor(RegExpPrototype, 'flags', {
-  configurable: true,
-  get: regExpFlags
-});
+if (DESCRIPTORS && !regExpFlagsDetection.correct) {
+  defineBuiltInAccessor(RegExp.prototype, 'flags', {
+    configurable: true,
+    get: regExpFlagsGetterImplementation
+  });
+
+  regExpFlagsDetection.correct = true;
+}
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=599.175cd852.iframe.bundle.js.map
+//# sourceMappingURL=599.75edb753.iframe.bundle.js.map

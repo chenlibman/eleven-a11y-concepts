@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[61],{
 
-/***/ 12061:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 12061
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -61,13 +61,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_iterator_js__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator_js__WEBPACK_IMPORTED_MODULE_24__);
 /* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(11875);
 /* harmony import */ var core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_from_js__WEBPACK_IMPORTED_MODULE_25__);
-/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(94106);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(14041);
-/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(88480);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(27430);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_27___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_27__);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(82098);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_28___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_28__);
+/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(94106);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(14041);
+/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(88480);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(27430);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_29___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_29__);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(82098);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_30___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_30__);
 var _ColorPicker, _fallbackColor;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -149,8 +149,8 @@ function c(e, r) {
 }
 
 function i(e) {
-  var t = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(e),
-      n = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(function (e) {
+  var t = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(e),
+      n = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(function (e) {
     t.current && t.current(e);
   });
   return t.current = e, n.current;
@@ -182,16 +182,16 @@ var s = function s(e, r, t) {
     h = function h(e) {
   !f(e) && e.preventDefault();
 },
-    m = react__WEBPACK_IMPORTED_MODULE_26__.memo(function (o) {
+    m = react__WEBPACK_IMPORTED_MODULE_27__.memo(function (o) {
   var a = o.onMove,
       l = o.onKey,
       s = c(o, ["onMove", "onKey"]),
-      m = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(null),
+      m = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(null),
       g = i(a),
       p = i(l),
-      b = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(null),
-      _ = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(!1),
-      x = (0,react__WEBPACK_IMPORTED_MODULE_26__.useMemo)(function () {
+      b = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(null),
+      _ = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(!1),
+      x = (0,react__WEBPACK_IMPORTED_MODULE_27__.useMemo)(function () {
     var e = function e(_e) {
       h(_e), (f(_e) ? _e.touches.length > 0 : _e.buttons > 0) && m.current ? g(d(m.current, _e, b.current)) : t(!1);
     },
@@ -233,9 +233,9 @@ var s = function s(e, r, t) {
       E = x[1],
       H = x[2];
 
-  return (0,react__WEBPACK_IMPORTED_MODULE_26__.useEffect)(function () {
+  return (0,react__WEBPACK_IMPORTED_MODULE_27__.useEffect)(function () {
     return H;
-  }, [H]), react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", u({}, s, {
+  }, [H]), react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", u({}, s, {
     onTouchStart: C,
     onMouseDown: C,
     className: "react-colorful__interactive",
@@ -254,13 +254,13 @@ var s = function s(e, r, t) {
       o = r.top,
       a = void 0 === o ? .5 : o,
       l = g(["react-colorful__pointer", r.className]);
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: l,
     style: {
       top: 100 * a + "%",
       left: 100 * n + "%"
     }
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: "react-colorful__pointer-fill",
     style: {
       backgroundColor: t
@@ -386,13 +386,13 @@ var s = function s(e, r, t) {
     a: o
   };
 },
-    K = react__WEBPACK_IMPORTED_MODULE_26__.memo(function (r) {
+    K = react__WEBPACK_IMPORTED_MODULE_27__.memo(function (r) {
   var t = r.hue,
       n = r.onChange,
       o = g(["react-colorful__hue", r.className]);
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: o
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(m, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(m, {
     onMove: function onMove(e) {
       n({
         h: 360 * e.left
@@ -405,7 +405,7 @@ var s = function s(e, r, t) {
     },
     "aria-label": "Hue",
     "aria-valuetext": b(t)
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(p, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(p, {
     className: "react-colorful__hue-pointer",
     left: t / 360,
     color: w({
@@ -416,7 +416,7 @@ var s = function s(e, r, t) {
     })
   })));
 }),
-    L = react__WEBPACK_IMPORTED_MODULE_26__.memo(function (r) {
+    L = react__WEBPACK_IMPORTED_MODULE_27__.memo(function (r) {
   var t = r.hsva,
       n = r.onChange,
       o = {
@@ -427,10 +427,10 @@ var s = function s(e, r, t) {
       a: 1
     })
   };
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: "react-colorful__saturation",
     style: o
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(m, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(m, {
     onMove: function onMove(e) {
       n({
         s: 100 * e.left,
@@ -445,7 +445,7 @@ var s = function s(e, r, t) {
     },
     "aria-label": "Color",
     "aria-valuetext": "Saturation " + b(t.s) + "%, Brightness " + b(t.v) + "%"
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(p, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(p, {
     className: "react-colorful__saturation-pointer",
     top: 1 - t.v / 100,
     left: t.s / 100,
@@ -467,16 +467,16 @@ var s = function s(e, r, t) {
 
 function T(e, t, l) {
   var u = i(l),
-      c = (0,react__WEBPACK_IMPORTED_MODULE_26__.useState)(function () {
+      c = (0,react__WEBPACK_IMPORTED_MODULE_27__.useState)(function () {
     return e.toHsva(t);
   }),
       s = c[0],
       f = c[1],
-      v = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)({
+      v = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)({
     color: t,
     hsva: s
   });
-  (0,react__WEBPACK_IMPORTED_MODULE_26__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_27__.useEffect)(function () {
     if (!e.equal(t, v.current.color)) {
       var r = e.toHsva(t);
       v.current = {
@@ -484,14 +484,14 @@ function T(e, t, l) {
         color: t
       }, f(r);
     }
-  }, [t, e]), (0,react__WEBPACK_IMPORTED_MODULE_26__.useEffect)(function () {
+  }, [t, e]), (0,react__WEBPACK_IMPORTED_MODULE_27__.useEffect)(function () {
     var r;
     A(s, v.current.hsva) || e.equal(r = e.fromHsva(s), v.current.color) || (v.current = {
       hsva: s,
       color: r
     }, u(r));
   }, [s, e, u]);
-  var d = (0,react__WEBPACK_IMPORTED_MODULE_26__.useCallback)(function (e) {
+  var d = (0,react__WEBPACK_IMPORTED_MODULE_27__.useCallback)(function (e) {
     f(function (r) {
       return Object.assign({}, r, e);
     });
@@ -499,7 +499,7 @@ function T(e, t, l) {
   return [s, d];
 }
 
-var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLayoutEffect : react__WEBPACK_IMPORTED_MODULE_26__.useEffect,
+var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_27__.useLayoutEffect : react__WEBPACK_IMPORTED_MODULE_27__.useEffect,
     X = function X() {
   return  true ? __webpack_require__.nc : 0;
 },
@@ -523,19 +523,19 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
       l = void 0 === a ? o.defaultColor : a,
       i = t.onChange,
       s = c(t, ["className", "colorModel", "color", "onChange"]),
-      f = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(null);
+      f = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(null);
   V(f);
   var v = T(o, l, i),
       d = v[0],
       h = v[1],
       m = g(["react-colorful", n]);
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", u({}, s, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", u({}, s, {
     ref: f,
     className: m
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(L, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(L, {
     hsva: d,
     onChange: h
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(K, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(K, {
     hue: d.h,
     onChange: h,
     className: "react-colorful__last-control"
@@ -549,14 +549,14 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
   fromHsva: function fromHsva(e) {
     return t = (r = q(e)).g, n = r.b, "#" + z(r.r) + z(t) + z(n);
     // removed by dead control flow
-{ var r, t, n; }
+ var r, t, n; 
   },
   equal: function equal(e, r) {
     return e.toLowerCase() === r.toLowerCase() || A(x(e), x(r));
   }
 },
     J = function J(r) {
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement($, u({}, r, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement($, u({}, r, {
     colorModel: G
   }));
 },
@@ -572,12 +572,12 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
     })) + ")"
   },
       l = g(["react-colorful__alpha", t]);
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: l
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", {
     className: "react-colorful__alpha-gradient",
     style: a
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(m, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(m, {
     onMove: function onMove(e) {
       o({
         a: e.left
@@ -590,7 +590,7 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
     },
     "aria-label": "Alpha",
     "aria-valuetext": b(100 * n.a) + "%"
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(p, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(p, {
     className: "react-colorful__alpha-pointer",
     left: n.a,
     color: y(n)
@@ -603,22 +603,22 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
       l = void 0 === a ? o.defaultColor : a,
       i = t.onChange,
       s = c(t, ["className", "colorModel", "color", "onChange"]),
-      f = (0,react__WEBPACK_IMPORTED_MODULE_26__.useRef)(null);
+      f = (0,react__WEBPACK_IMPORTED_MODULE_27__.useRef)(null);
   V(f);
   var v = T(o, l, i),
       d = v[0],
       h = v[1],
       m = g(["react-colorful", n]);
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement("div", u({}, s, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement("div", u({}, s, {
     ref: f,
     className: m
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(L, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(L, {
     hsva: d,
     onChange: h
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(K, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(K, {
     hue: d.h,
     onChange: h
-  }), react__WEBPACK_IMPORTED_MODULE_26__.createElement(Q, {
+  }), react__WEBPACK_IMPORTED_MODULE_27__.createElement(Q, {
     hsva: d,
     onChange: h,
     className: "react-colorful__last-control"
@@ -631,7 +631,7 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
   equal: S
 },
     re = function re(r) {
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement(U, u({}, r, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement(U, u({}, r, {
     colorModel: ee
   }));
 },
@@ -645,7 +645,7 @@ var P = "undefined" != typeof window ? react__WEBPACK_IMPORTED_MODULE_26__.useLa
   equal: S
 },
     pe = function pe(r) {
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement(U, u({}, r, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement(U, u({}, r, {
     colorModel: ge
   }));
 };
@@ -1861,7 +1861,7 @@ models.forEach(function (fromModel) {
   });
 });
 var colorConvert = convert;
-var root = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.u;
+var root = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.u;
 /**
  * Gets the timestamp of the number of milliseconds that have elapsed since
  * the Unix epoch (1 January 1970 00:00:00 UTC).
@@ -1923,8 +1923,8 @@ function baseTrim$1(string) {
 
 var _baseTrim = baseTrim$1;
 var baseTrim = _baseTrim,
-    isObject$2 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.x,
-    isSymbol = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.y;
+    isObject$2 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.x,
+    isSymbol = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.y;
 /** Used as references for various `Number` constants. */
 
 var NAN = 0 / 0;
@@ -1988,7 +1988,7 @@ function toNumber$1(value) {
 }
 
 var toNumber_1 = toNumber$1;
-var isObject$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.x,
+var isObject$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.x,
     now = now_1,
     toNumber = toNumber_1;
 /** Error message constants. */
@@ -2182,7 +2182,7 @@ function debounce$1(func, wait, options) {
 
 var debounce_1 = debounce$1;
 var debounce = debounce_1,
-    isObject = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.x;
+    isObject = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.x;
 /** Error message constants. */
 
 var FUNC_ERROR_TEXT = 'Expected a function';
@@ -2252,17 +2252,17 @@ function throttle(func, wait, options) {
 }
 
 var throttle_1 = throttle;
-var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4.div({
+var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4.div({
   position: 'relative',
   maxWidth: 250
 });
-var PickerTooltip = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.W)({
+var PickerTooltip = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.W)({
   position: 'absolute',
   zIndex: 1,
   top: 4,
   left: 4
 });
-var TooltipContent = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4.div({
+var TooltipContent = _storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4.div({
   width: 200,
   margin: 5,
   '.react-colorful__saturation': {
@@ -2275,13 +2275,13 @@ var TooltipContent = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled 
     borderRadius: '0 0 4px 4px'
   }
 });
-var Note = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.T)(function (_ref) {
+var Note = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.T)(function (_ref) {
   var theme = _ref.theme;
   return {
     fontFamily: theme.typography.fonts.base
   };
 });
-var Swatches = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4.div({
+var Swatches = _storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4.div({
   display: 'grid',
   gridTemplateColumns: 'repeat(9, 16px)',
   gap: 6,
@@ -2289,7 +2289,7 @@ var Swatches = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4
   marginTop: 5,
   width: 200
 });
-var SwatchColor = _storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4.div(function (_ref2) {
+var SwatchColor = _storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4.div(function (_ref2) {
   var theme = _ref2.theme,
       active = _ref2.active;
   return {
@@ -2306,10 +2306,10 @@ var Swatch = function Swatch(_a) {
       active = _a.active,
       onClick = _a.onClick,
       style = _a.style,
-      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.d)(_a, ["value", "active", "onClick", "style"]);
+      props = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.d)(_a, ["value", "active", "onClick", "style"]);
 
   var backgroundImage = "linear-gradient(".concat(value, ", ").concat(value, "), ").concat(swatchBackground, ", linear-gradient(#fff, #fff)");
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement(SwatchColor, Object.assign({}, props, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement(SwatchColor, Object.assign({}, props, {
     active: active,
     onClick: onClick
   }, {
@@ -2319,7 +2319,7 @@ var Swatch = function Swatch(_a) {
   }));
 };
 
-var Input = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.F.Input)(function (_ref3) {
+var Input = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.F.Input)(function (_ref3) {
   var theme = _ref3.theme;
   return {
     width: '100%',
@@ -2329,7 +2329,7 @@ var Input = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4
     fontFamily: theme.typography.fonts.base
   };
 });
-var ToggleIcon = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_30__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.I)(function (_ref4) {
+var ToggleIcon = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_28__/* .styled */ .I4)(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.I)(function (_ref4) {
   var theme = _ref4.theme;
   return {
     position: 'absolute',
@@ -2478,34 +2478,34 @@ var getRealValue = function getRealValue(value, color, colorSpace) {
 };
 
 var useColorInput = function useColorInput(initialValue, onChange) {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_26__.useState)(initialValue || ''),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_27__.useState)(initialValue || ''),
       _useState2 = _slicedToArray(_useState, 2),
       value = _useState2[0],
       setValue = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_26__.useState)(function () {
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_27__.useState)(function () {
     return parseValue(value);
   }),
       _useState4 = _slicedToArray(_useState3, 2),
       color = _useState4[0],
       setColor = _useState4[1];
 
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_26__.useState)((color === null || color === void 0 ? void 0 : color.colorSpace) || ColorSpace.HEX),
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_27__.useState)((color === null || color === void 0 ? void 0 : color.colorSpace) || ColorSpace.HEX),
       _useState6 = _slicedToArray(_useState5, 2),
       colorSpace = _useState6[0],
       setColorSpace = _useState6[1]; // Reset state when initialValue becomes undefined (when resetting controls)
 
 
-  (0,react__WEBPACK_IMPORTED_MODULE_26__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_27__.useEffect)(function () {
     if (initialValue !== undefined) return;
     setValue('');
     setColor(undefined);
     setColorSpace(ColorSpace.HEX);
   }, [initialValue]);
-  var realValue = (0,react__WEBPACK_IMPORTED_MODULE_26__.useMemo)(function () {
+  var realValue = (0,react__WEBPACK_IMPORTED_MODULE_27__.useMemo)(function () {
     return getRealValue(value, color, colorSpace).toLowerCase();
   }, [value, color, colorSpace]);
-  var updateValue = (0,react__WEBPACK_IMPORTED_MODULE_26__.useCallback)(function (update) {
+  var updateValue = (0,react__WEBPACK_IMPORTED_MODULE_27__.useCallback)(function (update) {
     var parsed = parseValue(update);
     setValue((parsed === null || parsed === void 0 ? void 0 : parsed.value) || update || '');
     if (!parsed) return;
@@ -2513,7 +2513,7 @@ var useColorInput = function useColorInput(initialValue, onChange) {
     setColorSpace(parsed.colorSpace);
     onChange(parsed.value);
   }, [onChange]);
-  var cycleColorSpace = (0,react__WEBPACK_IMPORTED_MODULE_26__.useCallback)(function () {
+  var cycleColorSpace = (0,react__WEBPACK_IMPORTED_MODULE_27__.useCallback)(function () {
     var next = COLOR_SPACES.indexOf(colorSpace) + 1;
     if (next >= COLOR_SPACES.length) next = 0;
     setColorSpace(COLOR_SPACES[next]);
@@ -2536,17 +2536,17 @@ var id = function id(value) {
 };
 
 var usePresets = function usePresets(presetColors, currentColor, colorSpace) {
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_26__.useState)((currentColor === null || currentColor === void 0 ? void 0 : currentColor.valid) ? [currentColor] : []),
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_27__.useState)((currentColor === null || currentColor === void 0 ? void 0 : currentColor.valid) ? [currentColor] : []),
       _useState8 = _slicedToArray(_useState7, 2),
       selectedColors = _useState8[0],
       setSelectedColors = _useState8[1]; // Reset state when currentColor becomes undefined (when resetting controls)
 
 
-  (0,react__WEBPACK_IMPORTED_MODULE_26__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_27__.useEffect)(function () {
     if (currentColor !== undefined) return;
     setSelectedColors([]);
   }, [currentColor]);
-  var presets = (0,react__WEBPACK_IMPORTED_MODULE_26__.useMemo)(function () {
+  var presets = (0,react__WEBPACK_IMPORTED_MODULE_27__.useMemo)(function () {
     var initialPresets = (presetColors || []).map(function (preset) {
       if (typeof preset === 'string') return parseValue(preset);
       if (preset.title) return Object.assign(Object.assign({}, parseValue(preset.color)), {
@@ -2556,7 +2556,7 @@ var usePresets = function usePresets(presetColors, currentColor, colorSpace) {
     });
     return initialPresets.concat(selectedColors).filter(Boolean).slice(-27);
   }, [presetColors, selectedColors]);
-  var addPreset = (0,react__WEBPACK_IMPORTED_MODULE_26__.useCallback)(function (color) {
+  var addPreset = (0,react__WEBPACK_IMPORTED_MODULE_27__.useCallback)(function (color) {
     if (!(color === null || color === void 0 ? void 0 : color.valid)) return;
     if (presets.some(function (preset) {
       return id(preset[colorSpace]) === id(color[colorSpace]);
@@ -2593,29 +2593,29 @@ var ColorControl = function ColorControl(_ref12) {
       addPreset = _usePresets.addPreset;
 
   var Picker = ColorPicker[colorSpace];
-  return react__WEBPACK_IMPORTED_MODULE_26__.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_26__.createElement(PickerTooltip, {
+  return react__WEBPACK_IMPORTED_MODULE_27__.createElement(Wrapper, null, react__WEBPACK_IMPORTED_MODULE_27__.createElement(PickerTooltip, {
     trigger: "click",
     startOpen: startOpen,
     closeOnClick: true,
     onVisibilityChange: function onVisibilityChange() {
       return addPreset(color);
     },
-    tooltip: react__WEBPACK_IMPORTED_MODULE_26__.createElement(TooltipContent, null, react__WEBPACK_IMPORTED_MODULE_26__.createElement(Picker, Object.assign({
+    tooltip: react__WEBPACK_IMPORTED_MODULE_27__.createElement(TooltipContent, null, react__WEBPACK_IMPORTED_MODULE_27__.createElement(Picker, Object.assign({
       color: realValue === 'transparent' ? '#000000' : realValue
     }, {
       onChange: updateValue,
       onFocus: onFocus,
       onBlur: onBlur
-    })), presets.length > 0 && react__WEBPACK_IMPORTED_MODULE_26__.createElement(Swatches, null, presets.map(function (preset, index) {
-      return react__WEBPACK_IMPORTED_MODULE_26__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.W // eslint-disable-next-line react/no-array-index-key
+    })), presets.length > 0 && react__WEBPACK_IMPORTED_MODULE_27__.createElement(Swatches, null, presets.map(function (preset, index) {
+      return react__WEBPACK_IMPORTED_MODULE_27__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.W // eslint-disable-next-line react/no-array-index-key
       , {
         // eslint-disable-next-line react/no-array-index-key
         key: "".concat(preset.value, "-").concat(index),
         hasChrome: false,
-        tooltip: react__WEBPACK_IMPORTED_MODULE_26__.createElement(Note, {
+        tooltip: react__WEBPACK_IMPORTED_MODULE_27__.createElement(Note, {
           note: preset.keyword || preset.value
         })
-      }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(Swatch, {
+      }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(Swatch, {
         value: preset[colorSpace],
         active: color && id(preset[colorSpace]) === id(color[colorSpace]),
         onClick: function onClick() {
@@ -2623,13 +2623,13 @@ var ColorControl = function ColorControl(_ref12) {
         }
       }));
     })))
-  }, react__WEBPACK_IMPORTED_MODULE_26__.createElement(Swatch, {
+  }, react__WEBPACK_IMPORTED_MODULE_27__.createElement(Swatch, {
     value: realValue,
     style: {
       margin: 4
     }
-  })), react__WEBPACK_IMPORTED_MODULE_26__.createElement(Input, {
-    id: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_29__.z)(name),
+  })), react__WEBPACK_IMPORTED_MODULE_27__.createElement(Input, {
+    id: (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_26__.z)(name),
     value: value,
     onChange: function onChange(e) {
       return updateValue(e.target.value);
@@ -2638,7 +2638,7 @@ var ColorControl = function ColorControl(_ref12) {
       return e.target.select();
     },
     placeholder: "Choose color..."
-  }), value ? react__WEBPACK_IMPORTED_MODULE_26__.createElement(ToggleIcon, {
+  }), value ? react__WEBPACK_IMPORTED_MODULE_27__.createElement(ToggleIcon, {
     icon: "markup",
     onClick: cycleColorSpace
   }) : null);
@@ -2647,7 +2647,7 @@ var ColorControl = function ColorControl(_ref12) {
 
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=61.0a51f8cd.iframe.bundle.js.map
+//# sourceMappingURL=61.c12e628c.iframe.bundle.js.map

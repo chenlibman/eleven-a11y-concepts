@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[873],{
 
-/***/ 25873:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ 25873
+(__unused_webpack_module, exports, __webpack_require__) {
 
 
 
@@ -14,7 +14,7 @@ if (true) {
 { var i; }
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=873.06111b76.iframe.bundle.js.map
+//# sourceMappingURL=873.32663bc7.iframe.bundle.js.map

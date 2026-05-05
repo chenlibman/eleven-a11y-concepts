@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[725],{
 
-/***/ 9725:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 9725
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -80,14 +80,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_esnext_global_this_js__WEBPACK_IMPORTED_MODULE_33___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_esnext_global_this_js__WEBPACK_IMPORTED_MODULE_33__);
 /* harmony import */ var core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(69431);
 /* harmony import */ var core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_34___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_34__);
-/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(94106);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(14041);
-/* harmony import */ var _storybook_client_logger__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(69108);
-/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(88480);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(27430);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_36___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_36__);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(82098);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_37___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_37__);
+/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(94106);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(14041);
+/* harmony import */ var _storybook_client_logger__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(69108);
+/* harmony import */ var _storybook_theming__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(88480);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(27430);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_39___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_39__);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(82098);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_40___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_40__);
 
 
 function _defineProperty2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1710,7 +1710,7 @@ var tsx$1 = tsx_1;
 function _objectWithoutProperties(source, excluded) {
   if (source == null) return {};
 
-  var target = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__._)(source, excluded);
+  var target = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__._)(source, excluded);
 
   var key, i;
 
@@ -1905,7 +1905,7 @@ function createElement(_ref) {
     }
 
     var children = childrenCreator(node.children);
-    return react__WEBPACK_IMPORTED_MODULE_35__.createElement(TagName, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.a)({
+    return react__WEBPACK_IMPORTED_MODULE_36__.createElement(TagName, (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.a)({
       key: key
     }, props), children);
   }
@@ -1928,7 +1928,7 @@ function getAllLineNumbers(_ref) {
       style = _ref.style;
   return lines.map(function (_, i) {
     var number = i + startingLineNumber;
-    return react__WEBPACK_IMPORTED_MODULE_35__.createElement("span", {
+    return react__WEBPACK_IMPORTED_MODULE_36__.createElement("span", {
       key: "line-".concat(i),
       className: "react-syntax-highlighter-line-number",
       style: typeof style === 'function' ? style(number) : style
@@ -1947,7 +1947,7 @@ function AllLineNumbers(_ref2) {
       _ref2$numberStyle = _ref2.numberStyle,
       numberStyle = _ref2$numberStyle === void 0 ? {} : _ref2$numberStyle,
       startingLineNumber = _ref2.startingLineNumber;
-  return react__WEBPACK_IMPORTED_MODULE_35__.createElement("code", {
+  return react__WEBPACK_IMPORTED_MODULE_36__.createElement("code", {
     style: Object.assign({}, codeStyle, containerStyle)
   }, getAllLineNumbers({
     lines: codeString.replace(/\n$/, '').split('\n'),
@@ -2256,7 +2256,7 @@ function highlight$1(defaultAstGenerator, defaultStyle) {
         rest = _objectWithoutProperties(_ref7, ["language", "children", "style", "customStyle", "codeTagProps", "useInlineStyles", "showLineNumbers", "showInlineLineNumbers", "startingLineNumber", "lineNumberContainerStyle", "lineNumberStyle", "wrapLines", "wrapLongLines", "lineProps", "renderer", "PreTag", "CodeTag", "code", "astGenerator"]);
 
     astGenerator = astGenerator || defaultAstGenerator;
-    var allLineNumbers = showLineNumbers ? react__WEBPACK_IMPORTED_MODULE_35__.createElement(AllLineNumbers, {
+    var allLineNumbers = showLineNumbers ? react__WEBPACK_IMPORTED_MODULE_36__.createElement(AllLineNumbers, {
       containerStyle: lineNumberContainerStyle,
       codeStyle: codeTagProps.style || {},
       numberStyle: lineNumberStyle,
@@ -2275,7 +2275,7 @@ function highlight$1(defaultAstGenerator, defaultStyle) {
     });
 
     if (!astGenerator) {
-      return react__WEBPACK_IMPORTED_MODULE_35__.createElement(PreTag, preProps, allLineNumbers, react__WEBPACK_IMPORTED_MODULE_35__.createElement(CodeTag, codeTagProps, code));
+      return react__WEBPACK_IMPORTED_MODULE_36__.createElement(PreTag, preProps, allLineNumbers, react__WEBPACK_IMPORTED_MODULE_36__.createElement(CodeTag, codeTagProps, code));
     }
     /*
      * Some custom renderers rely on individual row elements so we need to turn wrapLines on
@@ -2314,7 +2314,7 @@ function highlight$1(defaultAstGenerator, defaultStyle) {
       });
     }
 
-    return react__WEBPACK_IMPORTED_MODULE_35__.createElement(PreTag, preProps, react__WEBPACK_IMPORTED_MODULE_35__.createElement(CodeTag, codeTagProps, !showInlineLineNumbers && allLineNumbers, renderer({
+    return react__WEBPACK_IMPORTED_MODULE_36__.createElement(PreTag, preProps, react__WEBPACK_IMPORTED_MODULE_36__.createElement(CodeTag, codeTagProps, !showInlineLineNumbers && allLineNumbers, renderer({
       rows: rows,
       stylesheet: style,
       useInlineStyles: useInlineStyles
@@ -9760,8 +9760,8 @@ var prismCore = {
   } // hack for components to work correctly in node.js
 
 
-  if (typeof _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.c !== 'undefined') {
-    _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.c.Prism = Prism;
+  if (typeof _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.c !== 'undefined') {
+    _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.c.Prism = Prism;
   } // some additional documentation/types
 
   /**
@@ -9978,7 +9978,7 @@ function javascript(Prism) {
 // to start messaging from workers.
 
 
-var ctx = (typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis)) === 'object' ? globalThis : (typeof self === "undefined" ? "undefined" : _typeof(self)) === 'object' ? self : (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object' ? window : _typeof(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.c) === 'object' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.c : {};
+var ctx = (typeof globalThis === "undefined" ? "undefined" : _typeof(globalThis)) === 'object' ? globalThis : (typeof self === "undefined" ? "undefined" : _typeof(self)) === 'object' ? self : (typeof window === "undefined" ? "undefined" : _typeof(window)) === 'object' ? window : _typeof(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.c) === 'object' ? _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.c : {};
 var restore = capture();
 ctx.Prism = {
   manual: true,
@@ -10200,9 +10200,9 @@ SyntaxHighlighter$1.registerLanguage = function (_, language) {
 };
 
 var ReactSyntaxHighlighter = SyntaxHighlighter$1;
-var navigator = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.w.navigator,
-    document$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.w.document,
-    globalWindow = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.w.window;
+var navigator = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.w.navigator,
+    document$1 = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.w.document,
+    globalWindow = _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.w.window;
 ReactSyntaxHighlighter.registerLanguage('jsextra', jsExtras$1);
 ReactSyntaxHighlighter.registerLanguage('jsx', jsx$1);
 ReactSyntaxHighlighter.registerLanguage('json', json$1);
@@ -10214,7 +10214,7 @@ ReactSyntaxHighlighter.registerLanguage('html', markup$2);
 ReactSyntaxHighlighter.registerLanguage('tsx', tsx$1);
 ReactSyntaxHighlighter.registerLanguage('typescript', typescript$1);
 ReactSyntaxHighlighter.registerLanguage('graphql', graphql$1);
-var themedSyntax = memoizerific__WEBPACK_IMPORTED_MODULE_36___default()(2)(function (theme) {
+var themedSyntax = memoizerific__WEBPACK_IMPORTED_MODULE_39___default()(2)(function (theme) {
   return Object.entries(theme.code || {}).reduce(function (acc, _ref8) {
     var _ref9 = _slicedToArray(_ref8, 2),
         key = _ref9[0],
@@ -10235,7 +10235,7 @@ function createCopyToClipboardFunction() {
   }
 
   return function (text) {
-    return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.b)(_this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+    return (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.b)(_this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
       var tmp, focus;
       return regeneratorRuntime.wrap(function _callee$(_context) {
         while (1) {
@@ -10260,7 +10260,7 @@ function createCopyToClipboardFunction() {
   };
 }
 
-var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.div(function (_ref10) {
+var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_38__/* .styled */ .I4.div(function (_ref10) {
   var theme = _ref10.theme;
   return {
     position: 'relative',
@@ -10276,10 +10276,10 @@ var Wrapper = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.
     background: theme.background.content
   } : {};
 });
-var Scroller = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4)(function (_ref12) {
+var Scroller = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_38__/* .styled */ .I4)(function (_ref12) {
   var children = _ref12.children,
       className = _ref12.className;
-  return react__WEBPACK_IMPORTED_MODULE_35__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.S, {
+  return react__WEBPACK_IMPORTED_MODULE_36__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.S, {
     horizontal: true,
     vertical: true,
     className: className
@@ -10290,7 +10290,7 @@ var Scroller = (0,_storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ 
   var theme = _ref13.theme;
   return themedSyntax(theme);
 });
-var Pre = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.pre(function (_ref14) {
+var Pre = _storybook_theming__WEBPACK_IMPORTED_MODULE_38__/* .styled */ .I4.pre(function (_ref14) {
   var theme = _ref14.theme,
       padded = _ref14.padded;
   return {
@@ -10305,7 +10305,7 @@ We can't use `code` since PrismJS races for it.
 See https://github.com/storybookjs/storybook/issues/18090
  */
 
-var Code = _storybook_theming__WEBPACK_IMPORTED_MODULE_39__/* .styled */ .I4.div(function (_ref15) {
+var Code = _storybook_theming__WEBPACK_IMPORTED_MODULE_38__/* .styled */ .I4.div(function (_ref15) {
   var theme = _ref15.theme;
   return {
     flex: 1,
@@ -10333,7 +10333,7 @@ var SyntaxHighlighter = function SyntaxHighlighter(_a) {
       className = _a$className === void 0 ? null : _a$className,
       _a$showLineNumbers = _a.showLineNumbers,
       showLineNumbers = _a$showLineNumbers === void 0 ? false : _a$showLineNumbers,
-      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.d)(_a, ["children", "language", "copyable", "bordered", "padded", "format", "formatter", "className", "showLineNumbers"]);
+      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.d)(_a, ["children", "language", "copyable", "bordered", "padded", "format", "formatter", "className", "showLineNumbers"]);
 
   if (typeof children !== 'string' || !children.trim()) {
     return null;
@@ -10341,12 +10341,12 @@ var SyntaxHighlighter = function SyntaxHighlighter(_a) {
 
   var highlightableCode = formatter ? formatter(format, children) : children.trim();
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_35__.useState)(false),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_36__.useState)(false),
       _useState2 = _slicedToArray(_useState, 2),
       copied = _useState2[0],
       setCopied = _useState2[1];
 
-  var onClick = (0,react__WEBPACK_IMPORTED_MODULE_35__.useCallback)(function (e) {
+  var onClick = (0,react__WEBPACK_IMPORTED_MODULE_36__.useCallback)(function (e) {
     e.preventDefault();
     var selectedText = globalWindow.getSelection().toString();
     var textToCopy = e.type !== 'click' && selectedText ? selectedText : highlightableCode;
@@ -10355,14 +10355,14 @@ var SyntaxHighlighter = function SyntaxHighlighter(_a) {
       globalWindow.setTimeout(function () {
         return setCopied(false);
       }, 1500);
-    }).catch(_storybook_client_logger__WEBPACK_IMPORTED_MODULE_40__/* .logger */ .vF.error);
+    }).catch(_storybook_client_logger__WEBPACK_IMPORTED_MODULE_37__/* .logger */ .vF.error);
   }, []);
-  return react__WEBPACK_IMPORTED_MODULE_35__.createElement(Wrapper, {
+  return react__WEBPACK_IMPORTED_MODULE_36__.createElement(Wrapper, {
     bordered: bordered,
     padded: padded,
     className: className,
     onCopyCapture: onClick
-  }, react__WEBPACK_IMPORTED_MODULE_35__.createElement(Scroller, null, react__WEBPACK_IMPORTED_MODULE_35__.createElement(ReactSyntaxHighlighter, Object.assign({
+  }, react__WEBPACK_IMPORTED_MODULE_36__.createElement(Scroller, null, react__WEBPACK_IMPORTED_MODULE_36__.createElement(ReactSyntaxHighlighter, Object.assign({
     padded: padded || bordered,
     language: language,
     showLineNumbers: showLineNumbers,
@@ -10371,7 +10371,7 @@ var SyntaxHighlighter = function SyntaxHighlighter(_a) {
     PreTag: Pre,
     CodeTag: Code,
     lineNumberContainerStyle: {}
-  }, rest), highlightableCode)), copyable ? react__WEBPACK_IMPORTED_MODULE_35__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_38__.A, {
+  }, rest), highlightableCode)), copyable ? react__WEBPACK_IMPORTED_MODULE_36__.createElement(_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_35__.A, {
     actionItems: [{
       title: copied ? 'Copied' : 'Copy',
       onClick: onClick
@@ -10382,70 +10382,30 @@ var SyntaxHighlighter = function SyntaxHighlighter(_a) {
 
 
 
-/***/ }),
+/***/ },
 
-/***/ 47146:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ 47146
+(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 
-var globalThis = __webpack_require__(79117);
 var DESCRIPTORS = __webpack_require__(96893);
 var defineBuiltInAccessor = __webpack_require__(10997);
-var regExpFlags = __webpack_require__(34932);
-var fails = __webpack_require__(5234);
-
-// babel-minify and Closure Compiler transpiles RegExp('.', 'd') -> /./d and it causes SyntaxError
-var RegExp = globalThis.RegExp;
-var RegExpPrototype = RegExp.prototype;
-
-var FORCED = DESCRIPTORS && fails(function () {
-  var INDICES_SUPPORT = true;
-  try {
-    RegExp('.', 'd');
-  } catch (error) {
-    INDICES_SUPPORT = false;
-  }
-
-  var O = {};
-  // modern V8 bug
-  var calls = '';
-  var expected = INDICES_SUPPORT ? 'dgimsy' : 'gimsy';
-
-  var addGetter = function (key, chr) {
-    // eslint-disable-next-line es/no-object-defineproperty -- safe
-    Object.defineProperty(O, key, { get: function () {
-      calls += chr;
-      return true;
-    } });
-  };
-
-  var pairs = {
-    dotAll: 's',
-    global: 'g',
-    ignoreCase: 'i',
-    multiline: 'm',
-    sticky: 'y'
-  };
-
-  if (INDICES_SUPPORT) pairs.hasIndices = 'd';
-
-  for (var key in pairs) addGetter(key, pairs[key]);
-
-  // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-  var result = Object.getOwnPropertyDescriptor(RegExpPrototype, 'flags').get.call(O);
-
-  return result !== expected || calls !== expected;
-});
+var regExpFlagsDetection = __webpack_require__(72306);
+var regExpFlagsGetterImplementation = __webpack_require__(34932);
 
 // `RegExp.prototype.flags` getter
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
-if (FORCED) defineBuiltInAccessor(RegExpPrototype, 'flags', {
-  configurable: true,
-  get: regExpFlags
-});
+if (DESCRIPTORS && !regExpFlagsDetection.correct) {
+  defineBuiltInAccessor(RegExp.prototype, 'flags', {
+    configurable: true,
+    get: regExpFlagsGetterImplementation
+  });
+
+  regExpFlagsDetection.correct = true;
+}
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=725.d348777d.iframe.bundle.js.map
+//# sourceMappingURL=725.0884e56a.iframe.bundle.js.map

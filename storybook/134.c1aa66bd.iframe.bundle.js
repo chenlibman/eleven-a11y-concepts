@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[134],{
 
-/***/ 18134:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 18134
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -478,7 +478,7 @@ var GlobalScrollAreaStyles = function GlobalScrollAreaStyles() {
 
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=134.2eb64fe7.iframe.bundle.js.map
+//# sourceMappingURL=134.c1aa66bd.iframe.bundle.js.map

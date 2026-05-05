@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[673],{
 
-/***/ 76673:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 76673
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
@@ -167,7 +167,7 @@ function unmountDocs(element) {
   react_dom.unmountComponentAtNode(element);
 }
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=673.3141db2b.iframe.bundle.js.map
+//# sourceMappingURL=673.276590c3.iframe.bundle.js.map

@@ -1,8 +1,8 @@
 "use strict";
 (self["webpackChunk_wix_a11y_audit_tool_plugin"] = self["webpackChunk_wix_a11y_audit_tool_plugin"] || []).push([[833],{
 
-/***/ 46833:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ 46833
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
@@ -53,12 +53,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_iterator_js__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator_js__WEBPACK_IMPORTED_MODULE_20__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(47010);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator_js__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(94106);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(14041);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(27430);
-/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_23__);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(82098);
-/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(94106);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(14041);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(27430);
+/* harmony import */ var memoizerific__WEBPACK_IMPORTED_MODULE_24___default = /*#__PURE__*/__webpack_require__.n(memoizerific__WEBPACK_IMPORTED_MODULE_24__);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(82098);
+/* harmony import */ var _storybook_csf__WEBPACK_IMPORTED_MODULE_25___default = /*#__PURE__*/__webpack_require__.n(_storybook_csf__WEBPACK_IMPORTED_MODULE_25__);
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 
@@ -109,7 +109,7 @@ var OverlayScrollbars$1 = {
 (function (module) {
   (function (global, factory) {
     module.exports = factory(global, global.document, undefined);
-  })(typeof window !== 'undefined' ? window : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_25__.c, function (window, document, undefined$1) {
+  })(typeof window !== 'undefined' ? window : _index_681e4b07_js__WEBPACK_IMPORTED_MODULE_22__.c, function (window, document, undefined$1) {
     var PLUGINNAME = 'OverlayScrollbars';
     var TYPES = {
       o: 'object',
@@ -6702,11 +6702,11 @@ var OverlayScrollbarsComponent = function OverlayScrollbarsComponent(_a) {
       extensions = _a.extensions,
       className = _a.className,
       children = _a.children,
-      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_25__.d)(_a, ["options", "extensions", "className", "children"]);
+      rest = (0,_index_681e4b07_js__WEBPACK_IMPORTED_MODULE_22__.d)(_a, ["options", "extensions", "className", "children"]);
 
-  var osTargetRef = (0,react__WEBPACK_IMPORTED_MODULE_22__.useRef)();
-  var osInstance = (0,react__WEBPACK_IMPORTED_MODULE_22__.useRef)();
-  (0,react__WEBPACK_IMPORTED_MODULE_22__.useEffect)(function () {
+  var osTargetRef = (0,react__WEBPACK_IMPORTED_MODULE_23__.useRef)();
+  var osInstance = (0,react__WEBPACK_IMPORTED_MODULE_23__.useRef)();
+  (0,react__WEBPACK_IMPORTED_MODULE_23__.useEffect)(function () {
     osInstance.current = OverlayScrollbars(osTargetRef.current, options, extensions);
     mergeHostClassNames(osInstance.current, className);
     return function () {
@@ -6716,41 +6716,41 @@ var OverlayScrollbarsComponent = function OverlayScrollbarsComponent(_a) {
       }
     };
   }, []);
-  (0,react__WEBPACK_IMPORTED_MODULE_22__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_23__.useEffect)(function () {
     if (OverlayScrollbars.valid(osInstance.current)) {
       osInstance.current.options(options);
     }
   }, [options]);
-  (0,react__WEBPACK_IMPORTED_MODULE_22__.useEffect)(function () {
+  (0,react__WEBPACK_IMPORTED_MODULE_23__.useEffect)(function () {
     if (OverlayScrollbars.valid(osInstance.current)) {
       mergeHostClassNames(osInstance.current, className);
     }
   }, [className]);
-  return react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", Object.assign({
+  return react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", Object.assign({
     className: "os-host"
   }, rest, {
     ref: osTargetRef
-  }), react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }), react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-resize-observer-host"
-  }), react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }), react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-padding"
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-viewport"
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-content"
-  }, children))), react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, children))), react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar os-scrollbar-horizontal "
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar-track"
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar-handle"
-  }))), react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }))), react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar os-scrollbar-vertical"
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar-track"
-  }, react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }, react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar-handle"
-  }))), react__WEBPACK_IMPORTED_MODULE_22__.createElement("div", {
+  }))), react__WEBPACK_IMPORTED_MODULE_23__.createElement("div", {
     className: "os-scrollbar-corner"
   }));
 };
@@ -6771,7 +6771,7 @@ function mergeHostClassNames(osInstance, className) {
 
 
 
-/***/ })
+/***/ }
 
 }]);
-//# sourceMappingURL=833.4de5a8db.iframe.bundle.js.map
+//# sourceMappingURL=833.a5144da3.iframe.bundle.js.map
