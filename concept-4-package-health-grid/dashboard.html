@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN - Package Health Grid</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f5f5f5;
+    --bg-panel: #fafafa;
+    --border: #e0e0e0;
+    --border-light: #eee;
+    --text: #111111;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --accent-fail: #d32f2f;
+    --accent-fail-bg: #fdecea;
+    --accent-pass: #2e7d32;
+    --accent-pass-bg: #e8f5e9;
+    --accent-skip: #f57c00;
+    --accent-skip-bg: #fff3e0;
+    --accent-critical: #b71c1c;
+    --accent-serious: #d32f2f;
+    --accent-moderate: #f57c00;
+    --accent-minor: #fbc02d;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+    --radius: 8px;
+    --tile-selected: #111111;
+    --tile-selected-text: #ffffff;
+    --pre-existing-opacity: 0.55;
+    --pre-existing-border: #bbb;
+    --toggle-bg: #e0e0e0;
+    --toggle-active: #111111;
+    --toggle-text: #ffffff;
+    --sidebar-bg: #ffffff;
+    --accordion-hover: #f0f0f0;
+    --tab-active-border: #111111;
+    --skip-bg: #f9f9f9;
+    --banner-fail-bg: #111111;
+    --banner-fail-text: #ffffff;
+    --banner-pass-bg: #2e7d32;
+    --banner-pass-text: #ffffff;
+  }
+
+  [data-theme="dark"] {
+    --bg: #121212;
+    --bg-alt: #1e1e1e;
+    --bg-panel: #1a1a1a;
+    --border: #333333;
+    --border-light: #2a2a2a;
+    --text: #e8e8e8;
+    --text-secondary: #aaaaaa;
+    --text-muted: #777777;
+    --accent-fail-bg: #2c1a1a;
+    --accent-pass-bg: #1a2c1a;
+    --accent-skip-bg: #2c2418;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.4);
+    --tile-selected: #e8e8e8;
+    --tile-selected-text: #121212;
+    --pre-existing-border: #555;
+    --toggle-bg: #333;
+    --toggle-active: #e8e8e8;
+    --toggle-text: #121212;
+    --sidebar-bg: #1a1a1a;
+    --accordion-hover: #252525;
+    --tab-active-border: #e8e8e8;
+    --skip-bg: #222;
+    --banner-fail-bg: #e8e8e8;
+    --banner-fail-text: #121212;
+    --banner-pass-bg: #2e7d32;
+    --banner-pass-text: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  /* ── Verdict Banner ── */
+  .verdict-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--banner-fail-bg);
+    color: var(--banner-fail-text);
+    transition: background 0.2s, color 0.2s;
+  }
+  .verdict-banner.passing {
+    background: var(--banner-pass-bg);
+    color: var(--banner-pass-text);
+  }
+  .verdict-banner .verdict-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .verdict-badge .icon { font-size: 24px; }
+  .verdict-label { font-size: 14px; opacity: 0.85; }
+
+  .stats-strip {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+  .stat-item { display: flex; align-items: center; gap: 6px; }
+  .stat-num { font-weight: 700; font-size: 18px; }
+
+  /* ── Audit stats strip ── */
+  .audit-stats-strip {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+    flex-wrap: wrap;
+  }
+  .audit-stats-strip .strip-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+  .audit-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .audit-stat-num {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .audit-stat-num.total { color: var(--text); }
+  .audit-stat-num.passed { color: var(--accent-pass); }
+  .audit-stat-num.failed { color: var(--accent-fail); }
+  .audit-stat-num.skipped { color: var(--accent-skip); }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+  }
+  .toolbar-left { display: flex; align-items: center; gap: 16px; }
+  .toolbar-right { display: flex; align-items: center; gap: 12px; }
+
+  .scope-toggle {
+    display: flex;
+    background: var(--toggle-bg);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .scope-toggle button {
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .scope-toggle button.active {
+    background: var(--toggle-active);
+    color: var(--toggle-text);
+  }
+  .scope-toggle button:focus-visible {
+    outline: 2px solid var(--accent-fail);
+    outline-offset: -2px;
+  }
+
+  .theme-toggle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+  .theme-toggle:hover { background: var(--bg-alt); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: 2px; }
+
+  .filter-label { font-size: 13px; color: var(--text-muted); }
+  .filter-select {
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* ── Main Layout ── */
+  .main-layout {
+    display: flex;
+    min-height: calc(100vh - 130px);
+  }
+
+  /* ── Grid ── */
+  .grid-area {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    transition: all 0.25s;
+  }
+  .grid-area.sidebar-open {
+    flex: 0 0 55%;
+  }
+
+  .package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .grid-area.sidebar-open .package-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  /* ── Package Tile ── */
+  .package-tile {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .package-tile:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+  }
+  .package-tile:focus-visible {
+    outline: 3px solid var(--accent-fail);
+    outline-offset: 2px;
+  }
+  .package-tile.selected {
+    border-color: var(--tile-selected);
+    background: var(--tile-selected);
+    color: var(--tile-selected-text);
+  }
+  .package-tile.selected .tile-count,
+  .package-tile.selected .text-muted { color: rgba(255,255,255,0.7); }
+  [data-theme="dark"] .package-tile.selected .tile-count,
+  [data-theme="dark"] .package-tile.selected .text-muted { color: rgba(0,0,0,0.6); }
+
+  .tile-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .tile-name {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.3;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .status-badge .shape {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+  .status-badge.failed { background: var(--accent-fail-bg); color: var(--accent-fail); }
+  .status-badge.failed .shape {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid var(--accent-fail);
+  }
+  .status-badge.passed { background: var(--accent-pass-bg); color: var(--accent-pass); }
+  .status-badge.passed .shape {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent-pass);
+  }
+  .status-badge.skipped { background: var(--accent-skip-bg); color: var(--accent-skip); }
+  .status-badge.skipped .shape {
+    width: 9px; height: 9px;
+    background: var(--accent-skip);
+    border-radius: 1px;
+  }
+
+  .package-tile.selected .status-badge {
+    background: rgba(255,255,255,0.15);
+  }
+  [data-theme="dark"] .package-tile.selected .status-badge {
+    background: rgba(0,0,0,0.15);
+  }
+
+  .tile-count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  /* Severity bar */
+  .severity-bar {
+    display: flex;
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--border-light);
+    gap: 1px;
+  }
+  .sev-seg {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+  .sev-critical { background: var(--accent-critical); }
+  .sev-serious { background: var(--accent-serious); }
+  .sev-moderate { background: var(--accent-moderate); }
+  .sev-minor { background: var(--accent-minor); }
+
+  .severity-bar-labels {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .sev-label-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    margin-right: 2px;
+    vertical-align: middle;
+  }
+
+  /* Pre-existing de-emphasis */
+  .package-tile.pre-existing:not(.selected) {
+    opacity: var(--pre-existing-opacity);
+    border-color: var(--pre-existing-border);
+    border-style: dashed;
+  }
+  .package-tile.pre-existing:not(.selected):hover {
+    opacity: 0.8;
+  }
+  .pre-existing-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar-panel {
+    width: 0;
+    overflow: hidden;
+    border-left: 1px solid var(--border);
+    background: var(--sidebar-bg);
+    transition: width 0.25s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-panel.open {
+    width: 45%;
+  }
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .sidebar-header h2 { font-size: 16px; font-weight: 700; }
+  .sidebar-close {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .sidebar-close:hover { background: var(--bg-alt); }
+  .sidebar-close:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: 2px; }
+
+  .sidebar-stats {
+    display: flex;
+    gap: 16px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .sidebar-stat-val { font-weight: 700; color: var(--text); }
+
+  .sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  /* ── Accordions ── */
+  .category-group {
+    border-bottom: 1px solid var(--border-light);
+  }
+  .category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.1s;
+  }
+  .category-header:hover { background: var(--accordion-hover); }
+  .category-header:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: -2px; }
+  .category-count {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+  }
+  .category-chevron {
+    transition: transform 0.2s;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 8px;
+  }
+  .category-header.open .category-chevron { transform: rotate(90deg); }
+  .category-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .category-body {
+    display: none;
+    padding: 0;
+  }
+  .category-body.open { display: block; }
+
+  /* ── Violation Item ── */
+  .violation-item {
+    border-top: 1px solid var(--border-light);
+    padding: 0 20px;
+  }
+  .violation-item.pre-existing {
+    opacity: var(--pre-existing-opacity);
+    border-left: 3px solid var(--pre-existing-border);
+  }
+  .violation-item.pre-existing:hover { opacity: 0.8; }
+  .violation-item.skipped-item {
+    background: var(--skip-bg);
+  }
+
+  .violation-summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px 0;
+    cursor: pointer;
+  }
+  .violation-summary:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: -2px; }
+  .violation-name {
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    margin-right: 8px;
+  }
+  .violation-severity {
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .sev-critical-badge { background: #b71c1c; color: #fff; }
+  .sev-serious-badge { background: var(--accent-fail); color: #fff; }
+  .sev-moderate-badge { background: var(--accent-moderate); color: #fff; }
+  .sev-minor-badge { background: var(--accent-minor); color: #333; }
+
+  .violation-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .violation-pre-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-left: 6px;
+  }
+
+  .violation-detail {
+    display: none;
+    padding: 0 0 12px;
+  }
+  .violation-detail.open { display: block; }
+
+  /* ── Tabs ── */
+  .detail-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .detail-tab {
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .detail-tab:hover { color: var(--text); }
+  .detail-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--tab-active-border);
+  }
+  .detail-tab:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: -2px; }
+
+  .tab-content { display: none; font-size: 13px; line-height: 1.6; }
+  .tab-content.active { display: block; }
+  .tab-content p { margin-bottom: 8px; }
+  .tab-content code {
+    background: var(--bg-alt);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'SF Mono', Menlo, monospace;
+    border: 1px solid var(--border-light);
+  }
+  .tab-content pre {
+    background: var(--bg-alt);
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-size: 12px;
+    font-family: 'SF Mono', Menlo, monospace;
+    border: 1px solid var(--border-light);
+    margin: 8px 0;
+  }
+
+  /* ── Skip Flow ── */
+  .skip-controls {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--bg-alt);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .skip-btn {
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .skip-btn:hover { background: var(--bg-alt); }
+  .skip-btn:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: 2px; }
+  .skip-btn.primary {
+    background: var(--toggle-active);
+    color: var(--toggle-text);
+    border-color: var(--toggle-active);
+  }
+  .skip-btn.primary:hover { opacity: 0.9; }
+  .skip-btn.unskip {
+    background: var(--accent-skip-bg);
+    color: var(--accent-skip);
+    border-color: var(--accent-skip);
+  }
+
+  .skip-dropdown {
+    display: none;
+    margin-top: 8px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .skip-dropdown.open { display: flex; }
+  .skip-dropdown label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .skip-dropdown select,
+  .skip-dropdown textarea {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .skip-dropdown textarea {
+    resize: vertical;
+    min-height: 48px;
+  }
+  .skip-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .skip-error {
+    color: var(--accent-fail);
+    font-size: 11px;
+    display: none;
+  }
+
+  .skipped-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--accent-skip-bg);
+    border: 1px solid var(--accent-skip);
+    border-radius: 5px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  .skipped-banner .skip-info { color: var(--accent-skip); font-weight: 600; }
+  .skipped-banner .skip-reason { color: var(--text-secondary); margin-left: 8px; font-weight: 400; }
+
+  /* ── Empty / All Passing ── */
+  .all-passing-state {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+  }
+  .all-passing-state .big-icon { font-size: 64px; margin-bottom: 16px; }
+  .all-passing-state h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .all-passing-state p { color: var(--text-secondary); font-size: 14px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .main-layout { flex-direction: column; }
+    .grid-area.sidebar-open { flex: none; }
+    .sidebar-panel.open { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .package-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .stats-strip { gap: 12px; flex-wrap: wrap; }
+    .audit-stats-strip { gap: 12px; }
+    .verdict-banner { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+  @media (max-width: 600px) {
+    .package-grid { grid-template-columns: 1fr; }
+    .toolbar { flex-direction: column; gap: 10px; align-items: stretch; }
+    .toolbar-left, .toolbar-right { justify-content: center; }
+  }
+
+  /* ── Start Fixing Button ── */
+  .start-fixing-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: var(--accent-fail);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+  }
+  .start-fixing-btn:hover { background: #b71c1c; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
+  .start-fixing-btn:active { transform: translateY(0); }
+  .start-fixing-btn .btn-icon { font-size: 16px; }
+
+  /* ── Fix Mode Overlay ── */
+  .fix-mode-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 500;
+    overflow-y: auto;
+  }
+  .fix-mode-overlay.open { display: block; }
+
+  .fix-mode-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .fix-mode-header-left { display: flex; align-items: center; gap: 16px; }
+  .fix-mode-logo { font-weight: 800; font-size: 16px; letter-spacing: 1px; }
+  .fix-mode-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .fix-mode-back:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* Stepper */
+  .fix-stepper {
+    text-align: center;
+    padding: 32px 24px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .fix-stepper-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .fix-stepper-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .stepper-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 8px;
+  }
+  .stepper-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .stepper-dot.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+  .stepper-dot.done {
+    background: var(--accent-pass);
+    color: #fff;
+    border-color: var(--accent-pass);
+  }
+  .stepper-dot.skipped-dot {
+    background: var(--accent-skip);
+    color: #fff;
+    border-color: var(--accent-skip);
+  }
+  .stepper-dot:hover:not(.active) { border-color: var(--text-muted); }
+  .stepper-line {
+    width: 40px;
+    height: 2px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .stepper-line.done { background: var(--accent-pass); }
+
+  /* Issue Card */
+  .fix-issue-card {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+  .fix-card {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+  .fix-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .fix-card-title {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+  .fix-card-severity {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .fix-card-severity.critical { background: var(--accent-fail-bg); color: var(--accent-fail); border: 1px solid var(--accent-fail); }
+  .fix-card-severity.serious { background: #fff3e0; color: var(--accent-serious); border: 1px solid var(--accent-serious); }
+  [data-theme="dark"] .fix-card-severity.serious { background: #2c2418; }
+  .fix-card-severity.moderate { background: var(--accent-skip-bg); color: var(--accent-moderate); border: 1px solid var(--accent-moderate); }
+  .fix-card-severity .sev-shape { width: 8px; height: 8px; display: inline-block; }
+  .fix-card-severity .sev-shape.critical { background: var(--accent-fail); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+  .fix-card-severity .sev-shape.serious { background: var(--accent-serious); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+  .fix-card-severity .sev-shape.moderate { background: var(--accent-moderate); border-radius: 50%; }
+
+  .fix-card-category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+  }
+
+  /* Numbered sections */
+  .fix-section {
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .fix-section:last-of-type { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+  .fix-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .fix-section-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .fix-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-secondary);
+  }
+  .fix-section p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .fix-code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin-bottom: 12px;
+  }
+  .fix-selector {
+    margin-top: 8px;
+  }
+  .fix-selector-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .fix-selector-value {
+    display: inline-block;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .fix-screenshot-placeholder {
+    background: var(--bg);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  /* Fix actions */
+  .fix-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+  .fix-actions-left { display: flex; gap: 8px; }
+  .fix-actions-right { display: flex; gap: 8px; }
+  .fix-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .fix-btn:hover { border-color: var(--text-muted); }
+  .fix-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .fix-btn-ai {
+    background: #7c3aed;
+    color: #fff;
+    border-color: #7c3aed;
+  }
+  .fix-btn-ai:hover { background: #6d28d9; border-color: #6d28d9; }
+  .fix-btn-manual {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+  .fix-btn-manual:hover { opacity: 0.85; }
+  .fix-btn-skip {
+    color: var(--text-muted);
+    border-color: transparent;
+    background: transparent;
+  }
+  .fix-btn-skip:hover { color: var(--text-secondary); border-color: var(--border); }
+
+  /* Fix complete */
+  .fix-complete {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .fix-complete.visible { display: block; }
+  .fix-complete .big-check { font-size: 64px; margin-bottom: 16px; }
+  .fix-complete h2 { font-size: 24px; font-weight: 800; color: var(--accent-pass); margin-bottom: 8px; }
+  .fix-complete p { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; }
+
+  /* AI diff in fix mode */
+  .fix-ai-panel {
+    margin-top: 16px;
+    background: #f5f3ff;
+    border: 1px solid #c4b5fd;
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+  }
+  [data-theme="dark"] .fix-ai-panel { background: #1a1028; border-color: #4c1d95; }
+  .fix-ai-panel.open { display: block; }
+  .fix-ai-header {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #7c3aed;
+    border-bottom: 1px solid #c4b5fd;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  [data-theme="dark"] .fix-ai-header { border-color: #4c1d95; }
+  .fix-ai-diff {
+    font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 12px 16px;
+  }
+  .diff-removed { color: var(--accent-fail); }
+  .diff-added { color: var(--accent-pass); }
+  .fix-ai-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid #c4b5fd;
+  }
+  [data-theme="dark"] .fix-ai-actions { border-color: #4c1d95; }
+
+  /* ── Focus styles ── */
+  *:focus-visible { outline: 2px solid var(--accent-fail); outline-offset: 2px; }
+  button:focus:not(:focus-visible) { outline: none; }
+
+  /* sr-only */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Verdict Banner -->
+<div class="verdict-banner" id="verdictBanner" role="banner" aria-live="polite">
+  <div class="verdict-left">
+    <span class="verdict-badge">
+      <span class="icon" aria-hidden="true">&#x26D4;</span>
+      <span id="verdictText">BLOCKED</span>
+    </span>
+    <span class="verdict-label" id="verdictLabel">3 packages have new accessibility violations</span>
+  </div>
+  <div class="stats-strip" id="statsStrip">
+    <div class="stat-item"><span class="stat-num" id="statPackages">8</span> Packages</div>
+    <div class="stat-item"><span class="stat-num" id="statFailed">3</span> Failed</div>
+    <div class="stat-item"><span class="stat-num" id="statPassed">5</span> Passed</div>
+    <div class="stat-item"><span class="stat-num" id="statViolations">14</span> Violations</div>
+    <div class="stat-item"><span class="stat-num" id="statNew">7</span> New</div>
+  </div>
+</div>
+
+<!-- Audit stats strip -->
+<div class="audit-stats-strip">
+  <span class="strip-label">Audits</span>
+  <div class="audit-stat"><span class="audit-stat-num total">47</span> Total</div>
+  <div class="audit-stat"><span class="audit-stat-num passed">38</span> Passed</div>
+  <div class="audit-stat"><span class="audit-stat-num failed">6</span> Failed</div>
+  <div class="audit-stat"><span class="audit-stat-num skipped">3</span> Skipped</div>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar" role="toolbar" aria-label="Dashboard controls">
+  <div class="toolbar-left">
+    <div class="scope-toggle" role="radiogroup" aria-label="Audit scope">
+      <button role="radio" aria-checked="true" class="active" data-scope="pr" onclick="setScope('pr')">This PR</button>
+      <button role="radio" aria-checked="false" data-scope="full" onclick="setScope('full')">Full Audit</button>
+    </div>
+    <span class="filter-label">Filter:</span>
+    <select class="filter-select" aria-label="Filter packages" onchange="filterPackages(this.value)">
+      <option value="all">All packages</option>
+      <option value="failed">Failed only</option>
+      <option value="passed">Passed only</option>
+    </select>
+  </div>
+  <div class="toolbar-right">
+    <button class="start-fixing-btn" onclick="enterFixMode()" id="startFixingBtn">
+      <span class="btn-icon">🔧</span> Start Fixing
+    </button>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark theme" title="Toggle theme">
+      <span id="themeIcon" aria-hidden="true">&#x263D;</span>
+    </button>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="main-layout">
+  <!-- Grid Area -->
+  <div class="grid-area" id="gridArea">
+    <div class="package-grid" id="packageGrid" role="list" aria-label="Package health grid">
+      <!-- Tiles injected by JS -->
+    </div>
+    <div class="all-passing-state" id="allPassingState">
+      <div class="big-icon" aria-hidden="true">&#x2705;</div>
+      <h2>All Packages Passing</h2>
+      <p>No accessibility violations detected in this scope. Great work!</p>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar-panel" id="sidebarPanel" role="complementary" aria-label="Package violation details">
+    <div class="sidebar-header">
+      <h2 id="sidebarTitle">Package Details</h2>
+      <button class="sidebar-close" onclick="closeSidebar()" aria-label="Close detail panel">&times;</button>
+    </div>
+    <div class="sidebar-stats" id="sidebarStats"></div>
+    <div class="sidebar-body" id="sidebarBody"></div>
+  </div>
+</div>
+
+<!-- Fix Mode Overlay -->
+<div class="fix-mode-overlay" id="fixModeOverlay">
+  <div class="fix-mode-header">
+    <div class="fix-mode-header-left">
+      <span class="fix-mode-logo">ELEVEN</span>
+      <button class="fix-mode-back" onclick="exitFixMode()">← Back to Grid</button>
+    </div>
+    <div id="fixModeProgress" style="font-size:13px;color:var(--text-secondary)"></div>
+  </div>
+  <div class="fix-stepper" id="fixStepper"></div>
+  <div class="fix-issue-card" id="fixIssueCard"></div>
+  <div class="fix-actions" id="fixActions"></div>
+  <div class="fix-complete" id="fixComplete">
+    <div class="big-check">✅</div>
+    <h2>All Issues Resolved!</h2>
+    <p>Every new accessibility violation has been addressed through this fix session.</p>
+    <button class="fix-btn fix-btn-manual" onclick="exitFixMode()">Back to Grid</button>
+  </div>
+</div>
+
+<script>
+// ── Demo Data ──
+const packages = [
+  {
+    id: 'btn',
+    name: '@eleven/button',
+    status: 'failed',
+    newCount: 2,
+    preExisting: 3,
+    severity: { critical: 1, serious: 2, moderate: 2, minor: 0 },
+    violations: [
+      {
+        category: 'Keyboard',
+        items: [
+          {
+            id: 'kb-1',
+            name: 'Button not reachable via keyboard',
+            severity: 'critical',
+            preExisting: false,
+            skipped: false,
+            why: 'Interactive elements must be operable with keyboard alone. Users who cannot use a mouse rely entirely on keyboard navigation. A button that cannot be reached via Tab is completely invisible to keyboard users and assistive technology.',
+            where: '<code>&lt;div class="btn-primary" onclick="submit()"&gt;</code> in <code>src/Button.tsx:42</code>',
+            how: 'Replace the <code>&lt;div&gt;</code> with a native <code>&lt;button&gt;</code> element, or add <code>tabindex="0"</code> and <code>role="button"</code> along with a <code>keydown</code> handler for Enter and Space keys.\n<pre>// Before\n&lt;div class="btn-primary" onclick={submit}&gt;\n\n// After\n&lt;button class="btn-primary" onClick={submit}&gt;</pre>'
+          },
+          {
+            id: 'kb-2',
+            name: 'Focus not returned after dialog close',
+            severity: 'serious',
+            preExisting: true,
+            skipped: false,
+            why: 'When a dialog closes, focus should return to the element that triggered it. Without this, keyboard users lose their place in the page and must re-navigate from the top.',
+            where: '<code>ConfirmDialog</code> component in <code>src/Button.tsx:88</code>',
+            how: 'Store a ref to the triggering element before opening the dialog. On close, call <code>triggerRef.current.focus()</code>.\n<pre>const triggerRef = useRef(null);\n// On open: triggerRef.current = document.activeElement;\n// On close: triggerRef.current?.focus();</pre>'
+          }
+        ]
+      },
+      {
+        category: 'Axe',
+        items: [
+          {
+            id: 'axe-1',
+            name: 'color-contrast: Insufficient contrast ratio',
+            severity: 'serious',
+            preExisting: false,
+            skipped: false,
+            why: 'Text must have a contrast ratio of at least 4.5:1 (WCAG 2.1 AA). The current contrast ratio is 2.8:1, making text difficult to read for users with low vision.',
+            where: '<code>.btn-secondary</code> text color <code>#999</code> on background <code>#f5f5f5</code> in <code>src/Button.module.css:23</code>',
+            how: 'Change the text color to at least <code>#767676</code> to achieve 4.5:1 contrast ratio.\n<pre>.btn-secondary {\n  color: #595959; /* 7.0:1 ratio */\n}</pre>'
+          },
+          {
+            id: 'axe-2',
+            name: 'button-name: Button missing accessible name',
+            severity: 'critical',
+            preExisting: true,
+            skipped: false,
+            why: 'Buttons must have discernible text that describes their purpose. Screen readers announce "button" with no label, leaving users unable to understand the control.',
+            where: '<code>&lt;button class="icon-btn"&gt;&lt;svg ...&gt;&lt;/button&gt;</code> in <code>src/IconButton.tsx:15</code>',
+            how: 'Add an <code>aria-label</code> attribute describing the action.\n<pre>&lt;button class="icon-btn" aria-label="Close dialog"&gt;\n  &lt;svg ...&gt;\n&lt;/button&gt;</pre>'
+          }
+        ]
+      },
+      {
+        category: 'Focus Ring',
+        items: [
+          {
+            id: 'fr-1',
+            name: 'No visible focus indicator on primary button',
+            severity: 'moderate',
+            preExisting: true,
+            skipped: true,
+            skipType: 'temporary',
+            skipReason: 'Design team is reworking focus styles in Q2 sprint',
+            why: 'All interactive elements must have a visible focus indicator. Without one, keyboard users cannot tell which element is currently focused.',
+            where: '<code>.btn-primary:focus</code> style in <code>src/Button.module.css:31</code>',
+            how: 'Add a visible focus style using <code>:focus-visible</code> pseudo-class.\n<pre>.btn-primary:focus-visible {\n  outline: 2px solid #005fcc;\n  outline-offset: 2px;\n}</pre>'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'modal',
+    name: '@eleven/modal',
+    status: 'failed',
+    newCount: 3,
+    preExisting: 1,
+    severity: { critical: 1, serious: 2, moderate: 1, minor: 0 },
+    violations: [
+      {
+        category: 'Keyboard',
+        items: [
+          { id: 'mk-1', name: 'Focus trap not implemented', severity: 'critical', preExisting: false, skipped: false,
+            why: 'Modal dialogs must trap focus within them. Without a focus trap, keyboard users can Tab behind the modal into obscured content.',
+            where: '<code>Modal</code> component in <code>src/Modal.tsx:24</code>',
+            how: 'Implement a focus trap that cycles Tab focus between the first and last focusable elements inside the modal.' },
+        ]
+      },
+      {
+        category: 'Axe',
+        items: [
+          { id: 'ma-1', name: 'aria-hidden on focused element', severity: 'serious', preExisting: false, skipped: false,
+            why: 'An element with aria-hidden="true" is receiving focus, making it invisible to screen readers while still being interactive.',
+            where: '<code>src/Modal.tsx:56</code>',
+            how: 'Remove aria-hidden from elements that can receive focus, or prevent focus on hidden elements.' },
+          { id: 'ma-2', name: 'Missing dialog role', severity: 'serious', preExisting: true, skipped: false,
+            why: 'The modal container lacks role="dialog", so assistive technology does not recognize it as a dialog.',
+            where: '<code>src/Modal.tsx:20</code>',
+            how: 'Add <code>role="dialog"</code> and <code>aria-modal="true"</code> to the modal container.' },
+        ]
+      },
+      {
+        category: 'Tab Reachability',
+        items: [
+          { id: 'mt-1', name: 'Close button not in tab order', severity: 'moderate', preExisting: false, skipped: false,
+            why: 'The close button uses a div instead of a button element and lacks tabindex.',
+            where: '<code>src/Modal.tsx:35</code>',
+            how: 'Use a native <code>&lt;button&gt;</code> element for the close control.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'dropdown',
+    name: '@eleven/dropdown',
+    status: 'failed',
+    newCount: 2,
+    preExisting: 0,
+    severity: { critical: 0, serious: 1, moderate: 1, minor: 0 },
+    violations: [
+      {
+        category: 'Keyboard',
+        items: [
+          { id: 'dk-1', name: 'Arrow key navigation not implemented', severity: 'serious', preExisting: false, skipped: false,
+            why: 'Dropdown menus should support arrow key navigation per WAI-ARIA Listbox pattern.',
+            where: '<code>src/Dropdown.tsx:30</code>',
+            how: 'Add onKeyDown handler that moves focus with ArrowUp/ArrowDown and selects with Enter.' }
+        ]
+      },
+      {
+        category: 'Focus Ring',
+        items: [
+          { id: 'df-1', name: 'Focus ring hidden by overflow:hidden', severity: 'moderate', preExisting: false, skipped: false,
+            why: 'The container clips the focus ring, making it invisible.',
+            where: '<code>src/Dropdown.module.css:12</code>',
+            how: 'Use <code>overflow: visible</code> or add padding to accommodate the focus ring.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'input',
+    name: '@eleven/input',
+    status: 'passed',
+    newCount: 0,
+    preExisting: 0,
+    severity: { critical: 0, serious: 0, moderate: 0, minor: 0 },
+    violations: []
+  },
+  {
+    id: 'tooltip',
+    name: '@eleven/tooltip',
+    status: 'passed',
+    newCount: 0,
+    preExisting: 0,
+    severity: { critical: 0, serious: 0, moderate: 0, minor: 0 },
+    violations: []
+  },
+  {
+    id: 'tabs',
+    name: '@eleven/tabs',
+    status: 'passed',
+    newCount: 0,
+    preExisting: 1,
+    severity: { critical: 0, serious: 0, moderate: 0, minor: 1 },
+    violations: [
+      {
+        category: 'Axe',
+        items: [
+          { id: 'ta-1', name: 'Tab panel missing aria-labelledby', severity: 'minor', preExisting: true, skipped: false,
+            why: 'Each tab panel should be labelled by its corresponding tab.',
+            where: '<code>src/Tabs.tsx:45</code>',
+            how: 'Add <code>aria-labelledby</code> pointing to the tab element id.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'avatar',
+    name: '@eleven/avatar',
+    status: 'passed',
+    newCount: 0,
+    preExisting: 0,
+    severity: { critical: 0, serious: 0, moderate: 0, minor: 0 },
+    violations: []
+  },
+  {
+    id: 'badge',
+    name: '@eleven/badge',
+    status: 'passed',
+    newCount: 0,
+    preExisting: 0,
+    severity: { critical: 0, serious: 0, moderate: 0, minor: 0 },
+    violations: []
+  }
+];
+
+let currentScope = 'pr';
+let currentFilter = 'all';
+let selectedPackage = null;
+
+// ── Render Grid ──
+function renderGrid() {
+  const grid = document.getElementById('packageGrid');
+  const allPassing = document.getElementById('allPassingState');
+  grid.innerHTML = '';
+
+  const filtered = packages.filter(p => {
+    if (currentFilter === 'failed') return p.status === 'failed';
+    if (currentFilter === 'passed') return p.status !== 'failed';
+    return true;
+  });
+
+  // For "Full Audit" scope, show pre-existing violations differently
+  // For "This PR" scope, focus on new violations
+  const showAllPassing = filtered.every(p => p.status === 'passed' && p.newCount === 0 && p.preExisting === 0);
+
+  if (showAllPassing && currentFilter === 'all') {
+    grid.style.display = 'none';
+    allPassing.style.display = 'block';
+    return;
+  }
+  grid.style.display = 'grid';
+  allPassing.style.display = 'none';
+
+  filtered.forEach(pkg => {
+    const tile = document.createElement('div');
+    tile.className = 'package-tile' + (selectedPackage === pkg.id ? ' selected' : '');
+    tile.setAttribute('role', 'listitem');
+    tile.setAttribute('tabindex', '0');
+    tile.setAttribute('aria-label', pkg.name + ', status: ' + pkg.status +
+      (pkg.newCount > 0 ? ', ' + pkg.newCount + ' new violations' : '') +
+      (pkg.preExisting > 0 ? ', ' + pkg.preExisting + ' pre-existing' : ', all clear'));
+
+    if (pkg.preExisting > 0 && pkg.newCount === 0 && pkg.status === 'passed') {
+      tile.classList.add('pre-existing');
+    }
+
+    const totalSev = pkg.severity.critical + pkg.severity.serious + pkg.severity.moderate + pkg.severity.minor;
+    const sevBar = totalSev > 0 ? `
+      <div class="severity-bar" role="img" aria-label="Severity breakdown: ${pkg.severity.critical} critical, ${pkg.severity.serious} serious, ${pkg.severity.moderate} moderate, ${pkg.severity.minor} minor">
+        ${pkg.severity.critical > 0 ? `<div class="sev-seg sev-critical" style="width:${(pkg.severity.critical/totalSev)*100}%"></div>` : ''}
+        ${pkg.severity.serious > 0 ? `<div class="sev-seg sev-serious" style="width:${(pkg.severity.serious/totalSev)*100}%"></div>` : ''}
+        ${pkg.severity.moderate > 0 ? `<div class="sev-seg sev-moderate" style="width:${(pkg.severity.moderate/totalSev)*100}%"></div>` : ''}
+        ${pkg.severity.minor > 0 ? `<div class="sev-seg sev-minor" style="width:${(pkg.severity.minor/totalSev)*100}%"></div>` : ''}
+      </div>
+      <div class="severity-bar-labels">
+        ${pkg.severity.critical > 0 ? `<span><span class="sev-label-dot" style="background:var(--accent-critical)"></span>${pkg.severity.critical} crit</span>` : ''}
+        ${pkg.severity.serious > 0 ? `<span><span class="sev-label-dot" style="background:var(--accent-serious)"></span>${pkg.severity.serious} ser</span>` : ''}
+        ${pkg.severity.moderate > 0 ? `<span><span class="sev-label-dot" style="background:var(--accent-moderate)"></span>${pkg.severity.moderate} mod</span>` : ''}
+        ${pkg.severity.minor > 0 ? `<span><span class="sev-label-dot" style="background:var(--accent-minor)"></span>${pkg.severity.minor} min</span>` : ''}
+      </div>
+    ` : '';
+
+    const statusClass = pkg.status === 'failed' ? 'failed' : 'passed';
+    const statusLabel = pkg.status === 'failed' ? 'Failed' : 'Passed';
+
+    let countText = '';
+    if (pkg.newCount > 0 && pkg.preExisting > 0) {
+      countText = `${pkg.newCount} new, ${pkg.preExisting} pre-existing`;
+    } else if (pkg.newCount > 0) {
+      countText = `${pkg.newCount} new`;
+    } else if (pkg.preExisting > 0) {
+      countText = `${pkg.preExisting} pre-existing`;
+      if (pkg.status === 'passed') countText += ' <span class="pre-existing-tag">(not blocking)</span>';
+    } else {
+      countText = 'All clear';
+    }
+
+    tile.innerHTML = `
+      <div class="tile-header">
+        <span class="tile-name">${pkg.name}</span>
+        <span class="status-badge ${statusClass}" aria-label="Status: ${statusLabel}">
+          <span class="shape" aria-hidden="true"></span>
+          ${statusLabel}
+        </span>
+      </div>
+      <div class="tile-count">${countText}</div>
+      ${sevBar}
+    `;
+
+    tile.addEventListener('click', () => selectPackage(pkg.id));
+    tile.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPackage(pkg.id); }
+    });
+
+    grid.appendChild(tile);
+  });
+}
+
+// ── Select Package ──
+function selectPackage(pkgId) {
+  selectedPackage = pkgId;
+  const pkg = packages.find(p => p.id === pkgId);
+  if (!pkg) return;
+
+  document.getElementById('gridArea').classList.add('sidebar-open');
+  document.getElementById('sidebarPanel').classList.add('open');
+  document.getElementById('sidebarTitle').textContent = pkg.name;
+
+  // Stats
+  const totalViolations = pkg.violations.reduce((sum, cat) => sum + cat.items.length, 0);
+  const newViolations = pkg.violations.reduce((sum, cat) => sum + cat.items.filter(i => !i.preExisting).length, 0);
+  const skippedCount = pkg.violations.reduce((sum, cat) => sum + cat.items.filter(i => i.skipped).length, 0);
+
+  document.getElementById('sidebarStats').innerHTML = `
+    <span><span class="sidebar-stat-val">${totalViolations}</span> Total</span>
+    <span><span class="sidebar-stat-val">${newViolations}</span> New</span>
+    <span><span class="sidebar-stat-val">${totalViolations - newViolations}</span> Pre-existing</span>
+    <span><span class="sidebar-stat-val">${skippedCount}</span> Skipped</span>
+  `;
+
+  renderSidebar(pkg);
+  renderGrid();
+}
+
+// ── Render Sidebar ──
+function renderSidebar(pkg) {
+  const body = document.getElementById('sidebarBody');
+
+  if (pkg.violations.length === 0) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:60px 24px; color:var(--text-muted);">
+        <div style="font-size:40px; margin-bottom:12px;" aria-hidden="true">&#x2714;</div>
+        <p style="font-size:14px; font-weight:600;">No violations found</p>
+        <p style="font-size:13px;">This package passes all accessibility checks.</p>
+      </div>
+    `;
+    return;
+  }
+
+  body.innerHTML = pkg.violations.map((cat, ci) => `
+    <div class="category-group">
+      <button class="category-header${ci === 0 ? ' open' : ''}"
+        aria-expanded="${ci === 0 ? 'true' : 'false'}"
+        onclick="toggleCategory(this)">
+        <span class="category-header-left">
+          <span>${cat.category}</span>
+          <span class="category-count">${cat.items.length}</span>
+        </span>
+        <span class="category-chevron" aria-hidden="true">&#x25B6;</span>
+      </button>
+      <div class="category-body${ci === 0 ? ' open' : ''}" role="region">
+        ${cat.items.map(item => renderViolationItem(item)).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderViolationItem(item) {
+  const preTag = item.preExisting ? '<span class="violation-pre-tag">(pre-existing)</span>' : '';
+  const sevClass = 'sev-' + item.severity + '-badge';
+  const isSkipped = item.skipped;
+
+  return `
+    <div class="violation-item ${item.preExisting ? 'pre-existing' : ''} ${isSkipped ? 'skipped-item' : ''}" data-violation-id="${item.id}">
+      <div class="violation-summary" tabindex="0" onclick="toggleViolation(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleViolation(this);}">
+        <div>
+          <div class="violation-name">${item.name} ${preTag}</div>
+          <div class="violation-meta">${item.severity} severity</div>
+        </div>
+        <span class="violation-severity ${sevClass}">${item.severity}</span>
+      </div>
+      <div class="violation-detail" id="detail-${item.id}">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" aria-selected="true" onclick="switchTab(this, '${item.id}', 'why')">Why</button>
+          <button class="detail-tab" role="tab" aria-selected="false" onclick="switchTab(this, '${item.id}', 'where')">Where</button>
+          <button class="detail-tab" role="tab" aria-selected="false" onclick="switchTab(this, '${item.id}', 'how')">How</button>
+        </div>
+        <div class="tab-content active" id="tab-why-${item.id}" role="tabpanel">
+          <p>${item.why}</p>
+        </div>
+        <div class="tab-content" id="tab-where-${item.id}" role="tabpanel">
+          <p>${item.where}</p>
+        </div>
+        <div class="tab-content" id="tab-how-${item.id}" role="tabpanel">
+          <p>${item.how}</p>
+        </div>
+
+        ${isSkipped ? `
+          <div class="skipped-banner">
+            <span>
+              <span class="skip-info">&#x25A0; Skipped (${item.skipType})</span>
+              <span class="skip-reason">${item.skipReason}</span>
+            </span>
+            <button class="skip-btn unskip" onclick="unskipViolation('${item.id}')">Unskip</button>
+          </div>
+        ` : `
+          <div class="skip-controls">
+            <button class="skip-btn" onclick="openSkipDropdown(this)">Skip this violation</button>
+            <div class="skip-dropdown" id="skip-dropdown-${item.id}">
+              <label for="skip-type-${item.id}">Skip type</label>
+              <select id="skip-type-${item.id}">
+                <option value="temporary">Temporary (this sprint)</option>
+                <option value="permanent">Permanent (accepted risk)</option>
+              </select>
+              <label for="skip-reason-${item.id}">Reason (required)</label>
+              <textarea id="skip-reason-${item.id}" placeholder="Why is this being skipped?"></textarea>
+              <div class="skip-error" id="skip-error-${item.id}">A reason is required to skip a violation.</div>
+              <div class="skip-actions">
+                <button class="skip-btn primary" onclick="confirmSkip('${item.id}')">Confirm Skip</button>
+                <button class="skip-btn" onclick="cancelSkip(this)">Cancel</button>
+              </div>
+            </div>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+// ── Accordion ──
+function toggleCategory(btn) {
+  const isOpen = btn.classList.contains('open');
+  btn.classList.toggle('open');
+  btn.setAttribute('aria-expanded', !isOpen);
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+function toggleViolation(el) {
+  const detail = el.nextElementSibling;
+  const isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open');
+  el.setAttribute('aria-expanded', !isOpen);
+}
+
+// ── Tabs ──
+function switchTab(btn, itemId, tab) {
+  const parent = btn.closest('.violation-detail');
+  parent.querySelectorAll('.detail-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+  parent.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
+  document.getElementById('tab-' + tab + '-' + itemId).classList.add('active');
+}
+
+// ── Skip Flow ──
+function openSkipDropdown(btn) {
+  const dropdown = btn.nextElementSibling;
+  dropdown.classList.toggle('open');
+}
+
+function cancelSkip(btn) {
+  btn.closest('.skip-dropdown').classList.remove('open');
+}
+
+function confirmSkip(itemId) {
+  const reason = document.getElementById('skip-reason-' + itemId).value.trim();
+  const errorEl = document.getElementById('skip-error-' + itemId);
+  if (!reason) {
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  const skipType = document.getElementById('skip-type-' + itemId).value;
+
+  // Update data
+  for (const pkg of packages) {
+    for (const cat of pkg.violations) {
+      const item = cat.items.find(i => i.id === itemId);
+      if (item) {
+        item.skipped = true;
+        item.skipType = skipType;
+        item.skipReason = reason;
+        break;
+      }
+    }
+  }
+
+  // Re-render sidebar
+  const pkg = packages.find(p => p.id === selectedPackage);
+  if (pkg) {
+    renderSidebar(pkg);
+    selectPackage(selectedPackage);
+  }
+}
+
+function unskipViolation(itemId) {
+  for (const pkg of packages) {
+    for (const cat of pkg.violations) {
+      const item = cat.items.find(i => i.id === itemId);
+      if (item) {
+        item.skipped = false;
+        item.skipType = undefined;
+        item.skipReason = undefined;
+        break;
+      }
+    }
+  }
+  const pkg = packages.find(p => p.id === selectedPackage);
+  if (pkg) {
+    renderSidebar(pkg);
+    selectPackage(selectedPackage);
+  }
+}
+
+// ── Close Sidebar ──
+function closeSidebar() {
+  selectedPackage = null;
+  document.getElementById('gridArea').classList.remove('sidebar-open');
+  document.getElementById('sidebarPanel').classList.remove('open');
+  renderGrid();
+}
+
+// ── Scope Toggle ──
+function setScope(scope) {
+  currentScope = scope;
+  document.querySelectorAll('.scope-toggle button').forEach(btn => {
+    const isActive = btn.dataset.scope === scope;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-checked', isActive);
+  });
+  updateBanner();
+  renderGrid();
+  if (selectedPackage) {
+    const pkg = packages.find(p => p.id === selectedPackage);
+    if (pkg) renderSidebar(pkg);
+  }
+}
+
+// ── Filter ──
+function filterPackages(value) {
+  currentFilter = value;
+  renderGrid();
+}
+
+// ── Theme ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').innerHTML = isDark ? '&#x263D;' : '&#x2600;';
+}
+
+// ── Update Banner ──
+function updateBanner() {
+  const banner = document.getElementById('verdictBanner');
+  const failedPkgs = packages.filter(p => p.status === 'failed');
+  const totalNew = packages.reduce((s, p) => s + p.newCount, 0);
+  const totalPre = packages.reduce((s, p) => s + p.preExisting, 0);
+  const totalViolations = totalNew + totalPre;
+
+  document.getElementById('statPackages').textContent = packages.length;
+  document.getElementById('statFailed').textContent = failedPkgs.length;
+  document.getElementById('statPassed').textContent = packages.length - failedPkgs.length;
+  document.getElementById('statViolations').textContent = totalViolations;
+  document.getElementById('statNew').textContent = totalNew;
+
+  if (failedPkgs.length === 0) {
+    banner.classList.add('passing');
+    document.getElementById('verdictText').textContent = 'PASSING';
+    document.getElementById('verdictLabel').textContent = 'All packages pass accessibility checks';
+    banner.querySelector('.icon').innerHTML = '&#x2705;';
+  } else {
+    banner.classList.remove('passing');
+    document.getElementById('verdictText').textContent = 'BLOCKED';
+    document.getElementById('verdictLabel').textContent = failedPkgs.length + ' package' + (failedPkgs.length !== 1 ? 's have' : ' has') + ' new accessibility violations';
+    banner.querySelector('.icon').innerHTML = '&#x26D4;';
+  }
+}
+
+// ── Fix Mode ──
+let fixIssues = [];
+let fixIndex = 0;
+let fixStates = {}; // key -> 'pending'|'resolved'|'skipped'
+
+function collectFixIssues() {
+  fixIssues = [];
+  fixStates = {};
+  const sevOrder = { critical: 0, serious: 1, moderate: 2, minor: 3 };
+  packages.forEach(pkg => {
+    if (!pkg.violations) return;
+    pkg.violations.forEach(cat => {
+      if (!cat.items) return;
+      cat.items.forEach((item, ii) => {
+        if (item.preExisting) return; // skip baseline
+        fixIssues.push({ ...item, pkgName: pkg.name, pkgId: pkg.id, category: cat.category });
+      });
+    });
+  });
+  fixIssues.sort((a, b) => (sevOrder[a.severity] || 9) - (sevOrder[b.severity] || 9));
+  fixIssues.forEach((issue, i) => {
+    fixStates[i] = 'pending';
+  });
+}
+
+function enterFixMode() {
+  collectFixIssues();
+  if (fixIssues.length === 0) return;
+  fixIndex = 0;
+  document.getElementById('fixModeOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderFixMode();
+}
+
+function exitFixMode() {
+  document.getElementById('fixModeOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderFixMode() {
+  const total = fixIssues.length;
+  const resolved = Object.values(fixStates).filter(s => s !== 'pending').length;
+
+  // Check all done
+  if (resolved >= total) {
+    document.getElementById('fixStepper').style.display = 'none';
+    document.getElementById('fixIssueCard').style.display = 'none';
+    document.getElementById('fixActions').style.display = 'none';
+    document.getElementById('fixComplete').classList.add('visible');
+    document.getElementById('fixModeProgress').textContent = total + '/' + total + ' resolved';
+    return;
+  }
+
+  document.getElementById('fixStepper').style.display = '';
+  document.getElementById('fixIssueCard').style.display = '';
+  document.getElementById('fixActions').style.display = '';
+  document.getElementById('fixComplete').classList.remove('visible');
+
+  // Progress text
+  document.getElementById('fixModeProgress').textContent = resolved + '/' + total + ' resolved';
+
+  // Stepper dots
+  var stepperHtml = '<div class="fix-stepper-title">Issue ' + (fixIndex + 1) + ' of ' + total + ' — most critical first</div>';
+  stepperHtml += '<div class="fix-stepper-subtitle">Fix or skip each issue to proceed</div>';
+  stepperHtml += '<div class="stepper-dots">';
+  var maxDots = Math.min(total, 10);
+  var startDot = Math.max(0, Math.min(fixIndex - 4, total - maxDots));
+  for (var i = startDot; i < startDot + maxDots && i < total; i++) {
+    if (i > startDot) stepperHtml += '<div class="stepper-line' + (fixStates[i-1] !== 'pending' ? ' done' : '') + '"></div>';
+    var dotClass = 'stepper-dot';
+    if (i === fixIndex) dotClass += ' active';
+    else if (fixStates[i] === 'resolved') dotClass += ' done';
+    else if (fixStates[i] === 'skipped') dotClass += ' skipped-dot';
+    stepperHtml += '<div class="' + dotClass + '" onclick="goToFixIssue(' + i + ')">' + (i + 1) + '</div>';
+  }
+  stepperHtml += '</div>';
+  document.getElementById('fixStepper').innerHTML = stepperHtml;
+
+  // Issue card
+  var issue = fixIssues[fixIndex];
+  var cardHtml = '<div class="fix-card">';
+  cardHtml += '<div class="fix-card-header">';
+  cardHtml += '<div class="fix-card-title">' + issue.name + '</div>';
+  cardHtml += '<span class="fix-card-severity ' + issue.severity + '">';
+  cardHtml += '<span class="sev-shape ' + issue.severity + '"></span> ' + issue.severity.toUpperCase();
+  cardHtml += '</span></div>';
+  cardHtml += '<div class="fix-card-category">' + issue.category + '</div>';
+
+  // Section 1: Why this matters
+  cardHtml += '<div class="fix-section">';
+  cardHtml += '<div class="fix-section-header"><span class="fix-section-num">1</span><span class="fix-section-label">WHY THIS MATTERS</span></div>';
+  cardHtml += '<p>' + (issue.why || 'This accessibility issue prevents some users from accessing content or functionality on the page.') + '</p>';
+  cardHtml += '</div>';
+
+  // Section 2: The Element
+  cardHtml += '<div class="fix-section">';
+  cardHtml += '<div class="fix-section-header"><span class="fix-section-num">2</span><span class="fix-section-label">THE ELEMENT</span></div>';
+  if (issue.where) {
+    cardHtml += '<div class="fix-code-block">' + issue.where + '</div>';
+  } else {
+    cardHtml += '<div class="fix-code-block"><code>' + escapeHtml(issue.html || '<element>') + '</code></div>';
+  }
+  if (issue.selector) {
+    cardHtml += '<div class="fix-selector"><div class="fix-selector-label">CSS Selector</div>';
+    cardHtml += '<div class="fix-selector-value">' + issue.selector + '</div></div>';
+  }
+  if (issue.screenshot !== false) {
+    cardHtml += '<div class="fix-screenshot-placeholder">📷 Screenshot placeholder — element highlighted on page</div>';
+  }
+  cardHtml += '</div>';
+
+  // Section 3: How to fix
+  cardHtml += '<div class="fix-section">';
+  cardHtml += '<div class="fix-section-header"><span class="fix-section-num">3</span><span class="fix-section-label">HOW TO FIX</span></div>';
+  cardHtml += '<p>' + (issue.how || 'Review the element and ensure it meets WCAG accessibility guidelines.') + '</p>';
+  cardHtml += '</div>';
+
+  // AI panel placeholder
+  cardHtml += '<div class="fix-ai-panel" id="fixAiPanel">';
+  cardHtml += '<div class="fix-ai-header">✨ AI-Generated Fix</div>';
+  cardHtml += '<div class="fix-ai-diff">';
+  cardHtml += '<div class="diff-removed">- &lt;div onclick="handler()"&gt;</div>';
+  cardHtml += '<div class="diff-added">+ &lt;button type="button" onclick="handler()"&gt;</div>';
+  cardHtml += '</div>';
+  cardHtml += '<div class="fix-ai-actions">';
+  cardHtml += '<button class="fix-btn fix-btn-manual" onclick="applyAiFix()">Apply Fix</button>';
+  cardHtml += "<button class=\"fix-btn\" onclick=\"document.getElementById('fixAiPanel').classList.remove('open')\">Dismiss</button>";
+  cardHtml += '</div></div>';
+
+  cardHtml += '</div>'; // close fix-card
+  document.getElementById('fixIssueCard').innerHTML = cardHtml;
+
+  // Actions
+  var actionsHtml = '<div class="fix-actions-left">';
+  actionsHtml += '<button class="fix-btn fix-btn-ai" onclick="showAiFix()">✨ Fix with AI</button>';
+  actionsHtml += '<button class="fix-btn fix-btn-manual" onclick="resolveFixIssue()">✓ Mark as Fixed</button>';
+  actionsHtml += '</div>';
+  actionsHtml += '<div class="fix-actions-right">';
+  actionsHtml += '<button class="fix-btn fix-btn-skip" onclick="skipFixIssue()">Skip →</button>';
+  actionsHtml += '<button class="fix-btn" onclick="goToFixIssue(fixIndex - 1)" ' + (fixIndex === 0 ? 'disabled' : '') + '>← Prev</button>';
+  actionsHtml += '<button class="fix-btn" onclick="goToFixIssue(fixIndex + 1)" ' + (fixIndex >= fixIssues.length - 1 ? 'disabled' : '') + '>Next →</button>';
+  actionsHtml += '</div>';
+  document.getElementById('fixActions').innerHTML = actionsHtml;
+}
+
+function goToFixIssue(idx) {
+  if (idx < 0 || idx >= fixIssues.length) return;
+  fixIndex = idx;
+  renderFixMode();
+  document.getElementById('fixModeOverlay').scrollTop = 0;
+}
+
+function resolveFixIssue() {
+  fixStates[fixIndex] = 'resolved';
+  advanceToNextPending();
+}
+
+function skipFixIssue() {
+  fixStates[fixIndex] = 'skipped';
+  advanceToNextPending();
+}
+
+function showAiFix() {
+  document.getElementById('fixAiPanel').classList.add('open');
+}
+
+function applyAiFix() {
+  document.getElementById('fixAiPanel').classList.remove('open');
+  fixStates[fixIndex] = 'resolved';
+  advanceToNextPending();
+}
+
+function advanceToNextPending() {
+  for (var i = fixIndex + 1; i < fixIssues.length; i++) {
+    if (fixStates[i] === 'pending') { fixIndex = i; renderFixMode(); document.getElementById('fixModeOverlay').scrollTop = 0; return; }
+  }
+  for (var i = 0; i < fixIndex; i++) {
+    if (fixStates[i] === 'pending') { fixIndex = i; renderFixMode(); document.getElementById('fixModeOverlay').scrollTop = 0; return; }
+  }
+  renderFixMode();
+}
+
+// ── Init ──
+updateBanner();
+renderGrid();
+</script>
+</body>
+</html>

@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN A11Y - Package Report</title>
+<style>
+  :root {
+    --bg-page: #F8F9FA;
+    --bg-card: #FFFFFF;
+    --bg-header: #FFFFFF;
+    --text-primary: #162D3D;
+    --text-secondary: #374151;
+    --text-muted: #6b7280;
+    --brand-blue: #0073E1;
+    --success: #059669;
+    --success-bg: #ecfdf5;
+    --error: #dc2626;
+    --error-bg: #fef2f2;
+    --warning: #ca8a04;
+    --warning-bg: #fefce8;
+    --serious: #ea580c;
+    --serious-bg: #fff7ed;
+    --purple: #7c3aed;
+    --purple-bg: #f5f3ff;
+    --border: #e5e7eb;
+    --border-strong: #d1d5db;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --code-bg: #fef3c7;
+    --code-text: #92400e;
+    --banner-red: #dc2626;
+    --tag-bg: #f3f4f6;
+    --tag-text: #4b5563;
+    --radius: 8px;
+    --radius-sm: 4px;
+    --font-sans: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-mono: Monaco, Menlo, Consolas, 'Courier New', monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg-page: #111827;
+    --bg-card: #1f2937;
+    --bg-header: #1f2937;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --border: #374151;
+    --border-strong: #4b5563;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+    --code-bg: #422006;
+    --code-text: #fde68a;
+    --tag-bg: #374151;
+    --tag-text: #d1d5db;
+    --success-bg: #064e3b;
+    --error-bg: #450a0a;
+    --warning-bg: #422006;
+    --serious-bg: #431407;
+    --purple-bg: #2e1065;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+  }
+
+  .header-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .header-pr-number {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text-secondary);
+    transition: background 0.15s;
+  }
+  .theme-toggle:hover { background: var(--tag-bg); }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 2px;
+  }
+
+  /* ── Main ── */
+  .main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* ── Status Bar ── */
+  .status-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+  }
+
+  .status-bar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .status-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 5px 12px;
+    border-radius: 6px;
+    background: var(--error);
+    color: #fff;
+  }
+  .status-badge--passed {
+    background: var(--success);
+  }
+
+  .status-badge-icon {
+    font-size: 14px;
+  }
+
+  .status-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .status-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .status-timestamp {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  /* ── First-run onboarding banner ── */
+  .first-run-banner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 24px;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  [data-theme="dark"] .first-run-banner {
+    background: #1e293b;
+    border-bottom-color: #334155;
+  }
+  .first-run-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4f46e5;
+    background: #eef2ff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  [data-theme="dark"] .first-run-chip {
+    color: #a5b4fc;
+    background: #312e81;
+  }
+  .first-run-chip svg { flex-shrink: 0; }
+  .first-run-items {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .first-run-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .first-run-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .first-run-dot--green { background: #059669; }
+  .first-run-dot--amber { background: #d97706; }
+  .first-run-dot--red { background: #dc2626; }
+  .first-run-sep {
+    color: var(--border-strong);
+    margin: 0 4px;
+  }
+  .pre-existing-deadline {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #92400e;
+    background: #fef3c7;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid #fcd34d;
+    margin-left: 10px;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  [data-theme="dark"] .pre-existing-deadline {
+    color: #fde68a;
+    background: #422006;
+    border-color: #92400e;
+  }
+  .pre-existing-deadline svg { flex-shrink: 0; }
+
+  /* ── Metric Cards (inside status bar) ── */
+  .metric-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .metric-card {
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.12s, box-shadow 0.12s;
+    user-select: none;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .metric-card:last-child { border-right: none; }
+
+  .metric-card:hover {
+    background: var(--tag-bg);
+  }
+  .metric-card:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: -2px;
+  }
+  .metric-card.active {
+    background: var(--tag-bg);
+  }
+  .metric-card.active::after {
+    display: none;
+  }
+
+  .metric-card-value {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 3px;
+    color: var(--text-primary);
+  }
+
+  .metric-card-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .metric-card--passed .metric-card-value { color: var(--success); }
+  .metric-card--failed .metric-card-value { color: var(--error); }
+  .metric-card--skipped .metric-card-value { color: var(--warning); }
+
+  /* ── Audit Sections ── */
+  .audit-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+
+  .audit-section--failed { border-left: none; }
+  .audit-section--passed { border-left: none; }
+  .audit-table-head--passed.audit-table-head { grid-template-columns: 1fr 1fr 90px 28px; }
+  .audit-row-summary--passed.audit-row-summary { grid-template-columns: 1fr 1fr 90px 28px; }
+
+  .audit-section-header {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .audit-section-header:focus-visible {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: -2px;
+  }
+
+  .audit-section.open > .audit-section-header {
+    border-bottom-color: var(--border);
+  }
+
+  .audit-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .audit-section-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .audit-section--failed .audit-section-title::before { background: var(--error); }
+  .audit-section--pre-existing .audit-section-title::before { background: var(--warning); }
+  .audit-section--passed .audit-section-title::before { background: var(--success); }
+
+  .audit-section-count {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  .chevron {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .audit-section.open .chevron { transform: rotate(90deg); }
+
+  .audit-section-body { display: block; }
+
+  /* ── Audit Row (table-like) ── */
+  .audit-table-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr 90px 28px;
+    gap: 8px;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    background: var(--tag-bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .audit-row {
+    border-bottom: 1px solid var(--border);
+  }
+  .audit-row:last-child { border-bottom: none; }
+
+  .audit-row-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 90px 28px;
+    gap: 8px;
+    padding: 12px 20px;
+    align-items: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .audit-row-summary:hover {
+    background: var(--tag-bg);
+  }
+
+  .audit-section--pre-existing { }
+
+  .audit-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 13px;
+    word-break: break-all;
+  }
+  .audit-test-col {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    word-break: break-all;
+  }
+
+  .audit-url a {
+    color: var(--brand-blue);
+    text-decoration: none;
+    font-size: 12px;
+    word-break: break-all;
+  }
+  .audit-url a:hover { text-decoration: underline; }
+
+  .audit-count {
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .audit-count.fail { color: var(--error); }
+  .audit-count.skip { color: var(--warning); }
+
+  .row-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    font-size: 12px;
+    margin-left: auto;
+  }
+  .audit-row.expanded .row-chevron {
+    transform: rotate(180deg);
+    color: var(--brand-blue);
+  }
+  .audit-row.expanded .btn-details-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* ── Expanded Detail ── */
+  .audit-details {
+    display: none;
+    padding: 0 20px 16px;
+    background: var(--bg-page);
+    border-top: 1px solid var(--border);
+  }
+  .audit-row.expanded .audit-details { display: block; }
+
+  /* ── Filters ── */
+  .package-filter-select, .severity-filter-select {
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: var(--font-sans);
+  }
+  .package-filter-select:focus, .severity-filter-select:focus { outline: 2px solid var(--brand-blue); outline-offset: 1px; }
+
+  .detail-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    margin: 4px 0;
+  }
+  .detail-toolbar-url {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .detail-toolbar-url a {
+    color: var(--brand-blue);
+    text-decoration: none;
+  }
+  .detail-toolbar-url a:hover { text-decoration: underline; }
+  .detail-toolbar .severity-filter-select {
+    margin-left: auto;
+  }
+
+  .violation.severity-hidden { display: none; }
+
+  /* ── Violation Card ── */
+  .violation {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 10px;
+  }
+  .violation + .violation.v-collapsed {
+    margin-top: 6px;
+  }
+
+  .violation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .violation-header .violation-chevron {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .violation.v-collapsed .violation-header .violation-chevron {
+    transform: rotate(-90deg);
+  }
+  .violation.v-collapsed .violation-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .violation.v-collapsed {
+    padding: 14px 24px;
+  }
+  .violation.v-collapsed .violation-element-wrapper,
+  .violation.v-collapsed .violation-fix-heading,
+  .violation.v-collapsed .violation-fix-list,
+  .violation.v-collapsed .violation-screenshot,
+  .violation.v-collapsed .btn-more-info,
+  .violation.v-collapsed .violation-more-info,
+  .violation.v-collapsed .violation-actions {
+    display: none;
+  }
+  .violation.v-collapsed .resolution-banner {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  .violation-rule {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .badge { display: none; }
+
+  .violation-element-wrapper {
+    position: relative;
+    margin-bottom: 16px;
+    display: inline-block;
+    max-width: 100%;
+  }
+  .violation-element {
+    background: var(--tag-bg);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 10px 42px 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+  .btn-copy-code {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+  }
+  .btn-copy-code svg { width: 14px; height: 14px; }
+  .btn-copy-code:hover { color: var(--text-primary); }
+
+  .severity-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+  .severity-badge--critical { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+  .severity-badge--serious { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+  .severity-badge--moderate { background: #fefce8; color: #a16207; border: 1px solid #fde68a; }
+  .severity-badge--minor { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+  [data-theme="dark"] .severity-badge--critical { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+  [data-theme="dark"] .severity-badge--serious { background: #431407; color: #fdba74; border-color: #7c2d12; }
+  [data-theme="dark"] .severity-badge--moderate { background: #422006; color: #fcd34d; border-color: #713f12; }
+  [data-theme="dark"] .severity-badge--minor { background: #1e3a5f; color: #93c5fd; border-color: #1e40af; }
+
+  .violation-fix-heading {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+
+  .violation-fix-list {
+    padding-left: 18px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .violation-fix-list li { margin-bottom: 4px; }
+  .violation-fix-list code {
+    background: var(--tag-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .violation-link {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .violation-link:hover { text-decoration: underline; color: var(--text-secondary); }
+
+  .violation-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--tag-bg);
+    color: var(--text-muted);
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--border);
+  }
+
+  /* ── Element Code Line + More Info Toggle ── */
+  .element-code-line {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 4px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 8px;
+  }
+  .element-more-info-toggle {
+    font-size: 11px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-family: var(--font-sans);
+  }
+  .element-more-info-toggle:hover { color: var(--text-secondary); }
+  .element-more-info-toggle:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+  .element-more-info-toggle .toggle-chevron {
+    font-size: 9px;
+    transition: transform 0.2s;
+  }
+  .element-more-info-toggle.open .toggle-chevron {
+    transform: rotate(90deg);
+  }
+  .element-more-info {
+    display: none;
+    margin-top: 10px;
+  }
+  .element-more-info.open {
+    display: block;
+  }
+  .violation.v-collapsed .element-more-info {
+    display: none;
+  }
+  .violation.v-collapsed .element-code-line,
+  .violation.v-collapsed .element-more-info-toggle {
+    display: none;
+  }
+
+  .violation-screenshot {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    width: 420px;
+    max-width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+
+  .violation-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 16px;
+    margin-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-skip {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .btn-skip:hover { color: var(--text-primary); }
+  .btn-skip:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; opacity: 1; }
+
+  .btn-fix-ai {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-fix-ai:hover { background: var(--tag-bg); color: var(--text-primary); }
+  .btn-fix-ai:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+  .btn-fix-ai .ai-icon { font-size: 13px; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal-box {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 28px; width: 420px; max-width: 90vw;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+  }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .modal-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; }
+  .modal-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px; display: block; }
+  .modal-textarea {
+    width: 100%; min-height: 68px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--tag-bg); color: var(--text-primary); font-family: var(--font-sans);
+    font-size: 13px; padding: 10px 12px; resize: vertical; margin-bottom: 16px;
+  }
+  .modal-textarea:focus { outline: 2px solid var(--brand-blue); outline-offset: -1px; }
+  .modal-radio-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .modal-radio-label {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);
+    cursor: pointer; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+    transition: background 0.1s;
+  }
+  .modal-radio-label:hover { background: var(--tag-bg); }
+  .modal-radio-label input[type="radio"] { accent-color: var(--brand-blue); }
+  .modal-radio-label .radio-desc { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal-btn {
+    font-family: var(--font-sans); font-size: 12px; font-weight: 600; padding: 8px 20px;
+    border-radius: 6px; cursor: pointer; transition: all 0.15s;
+    border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+  }
+  .modal-btn:hover { background: var(--tag-bg); }
+  .modal-btn.primary { background: var(--text-primary); color: var(--bg-card); border-color: var(--text-primary); }
+  .modal-btn.primary:hover { opacity: 0.85; }
+
+  /* AI loading modal */
+  .ai-spinner {
+    width: 36px; height: 36px; border: 3px solid var(--border);
+    border-top-color: var(--brand-blue); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-modal-status { font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: center; margin-bottom: 4px; }
+  .ai-modal-detail { font-size: 12px; color: var(--text-muted); text-align: center; }
+  .ai-loading.hidden { display: none; }
+  .ai-done { display: none; text-align: center; }
+  .ai-done.visible { display: block; }
+  .ai-done-icon { font-size: 32px; margin-bottom: 8px; color: var(--success); }
+
+  /* ── Resolution Banner ── */
+  .resolution-banner {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    border-radius: 20px;
+    transition: all 0.2s;
+    background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb;
+  }
+  .resolution-banner .banner-icon {
+    font-size: 13px; line-height: 1;
+  }
+  .resolution-banner .banner-label { white-space: nowrap; }
+  .resolution-banner .banner-undo {
+    background: none; border: none; cursor: pointer;
+    font-size: 10px; font-weight: 600; font-family: var(--font-sans);
+    padding: 2px 6px; border-radius: 3px; transition: all 0.15s;
+    color: #6b7280; opacity: 0.6; margin-left: 4px;
+  }
+  .resolution-banner .banner-undo:hover { opacity: 1; }
+  .resolution-banner.done,
+  .resolution-banner.ai-fixed,
+  .resolution-banner.skipped-banner {
+    background: #f3f4f6; color: #6b7280; border-color: #e5e7eb;
+  }
+  .resolution-banner.done .banner-undo,
+  .resolution-banner.ai-fixed .banner-undo,
+  .resolution-banner.skipped-banner .banner-undo { color: #6b7280; }
+  [data-theme="dark"] .resolution-banner,
+  [data-theme="dark"] .resolution-banner.done,
+  [data-theme="dark"] .resolution-banner.ai-fixed,
+  [data-theme="dark"] .resolution-banner.skipped-banner {
+    background: #374151; color: #9ca3af; border-color: #4b5563;
+  }
+  [data-theme="dark"] .resolution-banner .banner-undo { color: #9ca3af; }
+
+  /* ── Pre-existing visual treatment ── */
+  .violation.pre-existing {
+    border-left: none;
+    background: var(--bg-card);
+  }
+  .pre-existing-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 600; color: var(--warning);
+    background: var(--warning-bg); padding: 2px 8px; border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+    margin-left: auto; cursor: help;
+  }
+  .pre-existing-section-header {
+    font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.04em; padding: 16px 0 4px; border-bottom: 1px solid var(--border);
+    margin-bottom: 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .pre-existing-tooltip {
+    position: relative; display: inline-flex; align-items: center; margin-left: 6px; vertical-align: middle;
+  }
+  .pre-existing-tooltip .tooltip-icon {
+    width: 14px; height: 14px; border-radius: 50%; background: var(--tag-bg);
+    border: 1px solid var(--border); display: inline-flex; align-items: center;
+    justify-content: center; font-size: 9px; color: var(--text-muted); cursor: help;
+    font-weight: 700;
+  }
+  .pre-existing-tooltip .tooltip-text {
+    display: none; position: absolute; top: calc(100% + 6px); right: -8px;
+    background: var(--text-primary); color: var(--bg-card);
+    font-size: 11px; font-weight: 400; padding: 8px 12px; border-radius: 6px;
+    width: 260px; text-transform: none; letter-spacing: 0; line-height: 1.4;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100; white-space: normal;
+  }
+  .pre-existing-tooltip:hover .tooltip-text { display: block; }
+  .pre-existing-tooltip .tooltip-text::after {
+    content: ''; position: absolute; bottom: 100%; right: 12px;
+    border: 5px solid transparent; border-bottom-color: var(--text-primary);
+  }
+
+  /* ── Audit Row All Done ── */
+  .audit-row.all-done .audit-row-summary {
+    opacity: 0.5;
+  }
+  .audit-row.all-done .audit-test-col::after {
+    content: ' \2713 All fixed';
+    color: var(--success);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    margin-left: 8px;
+  }
+
+  /* ── More Info Toggle ── */
+  .violation-more-info {
+    display: none;
+    padding-top: 8px;
+  }
+  .violation-more-info.open { display: block; }
+
+  .btn-more-info {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    font-family: var(--font-sans);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 14px;
+    transition: color 0.15s;
+  }
+  .btn-more-info:hover { color: var(--text-secondary); }
+  .btn-more-info:focus-visible { outline: 2px solid var(--brand-blue); outline-offset: 2px; }
+  .btn-more-info .chevron-sm {
+    display: inline-block;
+    transition: transform 0.2s;
+    font-size: 10px;
+  }
+  .btn-more-info.open .chevron-sm { transform: rotate(90deg); }
+
+  /* ── Mark as Done Button ── */
+  .btn-done {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: opacity 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-done:hover { opacity: 0.8; }
+  .btn-done:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 2px; }
+
+  .violation.resolved {
+    position: relative;
+  }
+  .violation.resolved .violation-header {
+    opacity: 1;
+    pointer-events: none;
+  }
+  .violation.resolved .violation-header .violation-rule,
+  .violation.resolved .violation-header .violation-chevron {
+    opacity: 0.35;
+  }
+  .violation.resolved .violation-header .severity-badge {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .violation.resolved .violation-header .resolution-banner {
+    opacity: 1;
+    pointer-events: auto;
+    margin-left: auto;
+  }
+  .violation.resolved .violation-element-wrapper,
+  .violation.resolved .violation-fix-heading,
+  .violation.resolved .violation-fix-list,
+  .violation.resolved .btn-more-info,
+  .violation.resolved .violation-more-info,
+  .violation.resolved .violation-screenshot,
+  .violation.resolved .element-code-line,
+  .violation.resolved .element-more-info-toggle,
+  .violation.resolved .element-more-info {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .violation.resolved .violation-actions .btn-skip,
+  .violation.resolved .violation-actions .btn-fix-ai,
+  .violation.resolved .violation-actions .btn-copy-selector {
+    display: none;
+  }
+  .violation.resolved .btn-done { display: none; }
+  .violation.resolved .resolution-banner { opacity: 1; }
+  .btn-undo {
+    display: none;
+  }
+  .violation.resolved .violation-actions .btn-undo { display: none; }
+
+  /* ── Passed Items ── */
+  .passed-list {
+    list-style: none;
+    padding: 12px 20px 16px;
+  }
+
+  .passed-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+  .passed-item:last-child { border-bottom: none; }
+
+  .passed-check {
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .metric-cards { grid-template-columns: repeat(4, 1fr); }
+    .audit-table-head,
+    .audit-row-summary {
+      grid-template-columns: 1fr;
+      font-size: 12px;
+    }
+    .audit-table-head { display: none; }
+    .audit-row-summary > * { text-align: left !important; }
+    .audit-count::before { content: attr(data-label) ": "; font-weight: 400; }
+  }
+
+  @media (max-width: 600px) {
+    .metric-cards { grid-template-columns: repeat(4, 1fr); }
+    .header { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SKIP MODAL -->
+<div class="modal-overlay" id="skipModal">
+  <div class="modal-box">
+    <div class="modal-title">Ignore this violation</div>
+    <div class="modal-subtitle" id="skipModalRule"></div>
+    <label class="modal-label">Reason</label>
+    <textarea class="modal-textarea" id="skipReason" placeholder="Why are you ignoring this violation?"></textarea>
+    <label class="modal-label">Scope</label>
+    <div class="modal-radio-group">
+      <label class="modal-radio-label">
+        <input type="radio" name="skipScope" value="this-pr" checked>
+        Ignore for this PR only
+        <span class="radio-desc">Will reappear next scan</span>
+      </label>
+      <label class="modal-radio-label">
+        <input type="radio" name="skipScope" value="forever">
+        Ignore forever
+        <span class="radio-desc">Add to permanent ignore list</span>
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="skipModalCancel">Cancel</button>
+      <button class="modal-btn primary" id="skipModalConfirm">Ignore Violation</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI FIX MODAL -->
+<div class="modal-overlay" id="aiModal">
+  <div class="modal-box">
+    <div class="modal-title">Fix with AI</div>
+    <div class="modal-subtitle" id="aiModalRule"></div>
+    <div class="ai-loading" id="aiLoading">
+      <div class="ai-spinner"></div>
+      <div class="ai-modal-status">Analyzing violation...</div>
+      <div class="ai-modal-detail">Generating fix suggestion</div>
+    </div>
+    <div class="ai-done" id="aiDone">
+      <div class="ai-done-icon">&#10003;</div>
+      <div class="ai-modal-status" style="color:var(--success);">Fix applied successfully</div>
+      <div class="ai-modal-detail">The code change has been applied to your branch</div>
+    </div>
+    <div class="modal-actions" id="aiModalActions">
+      <button class="modal-btn" id="aiModalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="header" role="banner">
+  <div class="header-left">
+    <span class="header-title">ELEVEN A11Y Report</span>
+    <span class="header-pr-number">#4521</span>
+  </div>
+  <div class="header-right">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+      <span id="themeIcon" aria-hidden="true">&#9788;</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="main" id="main">
+
+  <!-- Status Bar -->
+  <section class="status-bar" aria-labelledby="statusTitle" role="region">
+    <div class="status-bar-top">
+      <div class="status-bar-left">
+        <span class="status-badge status-badge--passed"><span class="status-badge-icon" aria-hidden="true">&#10003;</span> PR Not Blocked</span>
+        <div>
+          <div class="status-title" id="statusTitle">No new violations — this PR is clear to merge</div>
+          <div class="status-subtitle">No new issues detected — pre-existing violations won't block your merge</div>
+        </div>
+      </div>
+      <div class="status-timestamp">April 9, 2026 &middot; 12:36 PM</div>
+    </div>
+
+
+    <div class="metric-cards" role="list" aria-label="Package filter cards">
+      <div class="metric-card metric-card--failed" role="button" tabindex="0" data-filter="failed">
+        <div class="metric-card-value">0</div>
+        <div class="metric-card-label">Violated Components</div>
+      </div>
+      <div class="metric-card metric-card--skipped active" role="button" tabindex="0" data-filter="pre-existing">
+        <div class="metric-card-value">5</div>
+        <div class="metric-card-label">Pre-existing Violations <span class="pre-existing-tooltip"><span class="tooltip-icon">?</span><span class="tooltip-text">Pre-existing violations were found on your first scan. They are non-blocking and won't fail your PR, but should be resolved within 60 days.</span></span></div>
+      </div>
+      <div class="metric-card metric-card--passed" role="button" tabindex="0" data-filter="passed">
+        <div class="metric-card-value">2</div>
+        <div class="metric-card-label">Passed Components</div>
+      </div>
+      <div class="metric-card metric-card--total" role="button" tabindex="0" data-filter="all">
+        <div class="metric-card-value">4</div>
+        <div class="metric-card-label">Total Components</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Package Filter -->
+  <div style="display:flex;align-items:center;justify-content:flex-start;margin-bottom:14px;">
+    <select class="package-filter-select" id="packageFilterGlobal">
+      <option value="all">All packages</option>
+      <option value="@wix/ecom-checkout">@wix/ecom-checkout</option>
+      <option value="@wix/blog-editor">@wix/blog-editor</option>
+      <option value="@wix/forms-ui">@wix/forms-ui</option>
+      <option value="@wix/members-area">@wix/members-area</option>
+    </select>
+  </div>
+
+  <!-- No Violated Components section — first run has no new violations -->
+  <section class="audit-section audit-section--failed" id="failedSection" aria-labelledby="failedTitle" style="display:none;">
+    <div class="audit-section-header" id="failedTitle">
+      <span class="audit-section-title">Violated Components <span class="audit-section-count">0</span></span>
+    </div>
+    <div class="audit-section-body" role="region"></div>
+  </section>
+
+  <!-- ── PRE-EXISTING AUDITS (all violations on first run) ── -->
+  <section class="audit-section audit-section--pre-existing open" id="preExistingSection" aria-labelledby="preExistingTitle">
+    <div class="audit-section-header" id="preExistingTitle">
+      <span class="audit-section-title">
+        Pre-existing Violations <span class="audit-section-count">5</span>
+        <span class="pre-existing-deadline">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5V8l2.5 1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          60 days left — fix by June 8, 2026
+        </span>
+      </span>
+    </div>
+    <div class="audit-section-body" role="region">
+      <div class="audit-table-head" aria-hidden="true">
+        <span>Component</span>
+        <span>Package</span>
+        <span>Violations</span>
+      </div>
+
+      <!-- Pre-existing Row 1: @wix/ecom-checkout — 3 violations -->
+      <div class="audit-row" id="preRow1" data-package="@wix/ecom-checkout" data-pre-existing="3">
+        <div class="audit-row-summary">
+          <span class="audit-test-col">FailingTest-failing-test-a11y</span>
+          <span class="audit-name">@wix/ecom-checkout</span>
+          <span class="audit-count skip" data-label="Violations">3</span>
+          <span class="row-chevron" aria-hidden="true">&#9662;</span>
+        </div>
+        <div class="audit-details">
+          <div class="detail-toolbar">
+            <span class="detail-toolbar-url">Test URL: <a href="https://ssrdev.wixsite.com/ecom-checkout-e2e" target="_blank" rel="noopener">ssrdev.wixsite.com/ecom-checkout-e2e</a></span>
+            <select class="severity-filter-select" data-target="preRow1">
+              <option value="all">All severities</option>
+              <option value="critical">Critical</option>
+              <option value="serious">Serious</option>
+              <option value="moderate">Moderate</option>
+              <option value="minor">Minor</option>
+            </select>
+          </div>
+          <div class="violation pre-existing" data-severity="critical">
+            <div class="violation-header">
+              <span class="violation-rule">Buttons must have discernible text</span>
+            </div>
+            <code class="element-code-line">&lt;button class="close-btn"&gt;&lt;/button&gt;</code>
+            <button class="element-more-info-toggle" type="button" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><span class="toggle-chevron">&#9654;</span> More info</button>
+            <div class="element-more-info">
+              <div class="violation-screenshot" style="display:block" aria-label="Screenshot placeholder">Screenshot</div>
+              <div class="violation-element-wrapper"><div class="violation-element">&lt;button class="close-btn"&gt;&lt;/button&gt;</div><button class="btn-copy-code" type="button" onclick="this.innerHTML='&#10003;';setTimeout(()=>this.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1&quot;/></svg>',800)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+            </div>
+            <div class="violation-fix-heading">Fix any of:</div>
+            <ul class="violation-fix-list">
+              <li>Add an <code>aria-label</code> attribute</li>
+              <li>Add visible text content</li>
+              <li>Add a <code>title</code> attribute</li>
+            </ul>
+            <a class="violation-link" href="https://dequeuniversity.com/rules/axe/4.6/button-name" target="_blank" rel="noopener">Learn more at deque.com &rarr;</a>
+            <div class="violation-tags">
+              <span class="tag">WCAG 2.1 A</span>
+              <span class="tag">Section 508</span>
+              <span class="tag">cat.name-role-value</span>
+            </div>
+            <div class="violation-actions">
+              <button class="btn-fix-ai" type="button"><span class="ai-icon">&#10024;</span> Fix with AI</button>
+              <button class="btn-skip" type="button">Ignore</button>
+            </div>
+          </div>
+
+          <div class="violation pre-existing" data-severity="serious">
+            <div class="violation-header">
+              <span class="violation-rule">Color contrast insufficient</span>
+            </div>
+            <code class="element-code-line">&lt;span class="price-label" style="color:#999"&gt;$29.99&lt;/span&gt;</code>
+            <button class="element-more-info-toggle" type="button" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><span class="toggle-chevron">&#9654;</span> More info</button>
+            <div class="element-more-info">
+              <div class="violation-screenshot" style="display:block" aria-label="Screenshot placeholder">Screenshot</div>
+              <div class="violation-element-wrapper"><div class="violation-element">&lt;span class="price-label" style="color:#999"&gt;$29.99&lt;/span&gt;</div><button class="btn-copy-code" type="button" onclick="this.innerHTML='&#10003;';setTimeout(()=>this.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1&quot;/></svg>',800)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+            </div>
+            <div class="violation-fix-heading">Fix any of:</div>
+            <ul class="violation-fix-list">
+              <li>Darken text color to <code>#595959</code> for sufficient contrast</li>
+              <li>Increase font size to meet contrast requirements</li>
+            </ul>
+            <a class="violation-link" href="https://dequeuniversity.com/rules/axe/4.6/color-contrast" target="_blank" rel="noopener">Learn more at deque.com &rarr;</a>
+            <div class="violation-tags">
+              <span class="tag">WCAG 1.4.3 AA</span>
+              <span class="tag">cat.color</span>
+            </div>
+            <div class="violation-actions">
+              <button class="btn-fix-ai" type="button"><span class="ai-icon">&#10024;</span> Fix with AI</button>
+              <button class="btn-skip" type="button">Ignore</button>
+            </div>
+          </div>
+
+          <div class="violation pre-existing" data-severity="moderate">
+            <div class="violation-header">
+              <span class="violation-rule">Link must have discernible text</span>
+            </div>
+            <code class="element-code-line">&lt;a href="/terms" class="footer-link"&gt;&lt;/a&gt;</code>
+            <button class="element-more-info-toggle" type="button" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><span class="toggle-chevron">&#9654;</span> More info</button>
+            <div class="element-more-info">
+              <div class="violation-screenshot" style="display:block" aria-label="Screenshot placeholder">Screenshot</div>
+              <div class="violation-element-wrapper"><div class="violation-element">&lt;a href="/terms" class="footer-link"&gt;&lt;/a&gt;</div><button class="btn-copy-code" type="button" onclick="this.innerHTML='&#10003;';setTimeout(()=>this.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1&quot;/></svg>',800)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+            </div>
+            <div class="violation-fix-heading">Fix any of:</div>
+            <ul class="violation-fix-list">
+              <li>Add visible link text</li>
+              <li>Add an <code>aria-label</code> attribute</li>
+            </ul>
+            <a class="violation-link" href="https://dequeuniversity.com/rules/axe/4.6/link-name" target="_blank" rel="noopener">Learn more at deque.com &rarr;</a>
+            <div class="violation-tags">
+              <span class="tag">WCAG 2.1 A</span>
+              <span class="tag">cat.name-role-value</span>
+            </div>
+            <div class="violation-actions">
+              <button class="btn-fix-ai" type="button"><span class="ai-icon">&#10024;</span> Fix with AI</button>
+              <button class="btn-skip" type="button">Ignore</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pre-existing Row 2: @wix/blog-editor — 2 violations -->
+      <div class="audit-row" id="preRow2" data-package="@wix/blog-editor" data-pre-existing="2">
+        <div class="audit-row-summary">
+          <span class="audit-test-col">BlogEditor-blog-editor-a11y</span>
+          <span class="audit-name">@wix/blog-editor</span>
+          <span class="audit-count skip" data-label="Violations">2</span>
+          <span class="row-chevron" aria-hidden="true">&#9662;</span>
+        </div>
+        <div class="audit-details">
+          <div class="detail-toolbar">
+            <span class="detail-toolbar-url">Test URL: <a href="https://ssrdev.wixsite.com/blog-editor-e2e" target="_blank" rel="noopener">ssrdev.wixsite.com/blog-editor-e2e</a></span>
+            <select class="severity-filter-select" data-target="preRow2">
+              <option value="all">All severities</option>
+              <option value="critical">Critical</option>
+              <option value="serious">Serious</option>
+              <option value="moderate">Moderate</option>
+              <option value="minor">Minor</option>
+            </select>
+          </div>
+          <div class="violation pre-existing" data-severity="critical">
+            <div class="violation-header">
+              <span class="violation-rule">Images must have alternative text</span>
+            </div>
+            <code class="element-code-line">&lt;img src="y"&gt;</code>
+            <button class="element-more-info-toggle" type="button" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><span class="toggle-chevron">&#9654;</span> More info</button>
+            <div class="element-more-info">
+              <div class="violation-screenshot" style="display:block" aria-label="Screenshot placeholder">Screenshot</div>
+              <div class="violation-element-wrapper"><div class="violation-element">&lt;img src="y"&gt;</div><button class="btn-copy-code" type="button" onclick="this.innerHTML='&#10003;';setTimeout(()=>this.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1&quot;/></svg>',800)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+            </div>
+            <div class="violation-fix-heading">Fix any of:</div>
+            <ul class="violation-fix-list">
+              <li>Add an <code>alt</code> attribute</li>
+              <li>Add an <code>aria-label</code> attribute</li>
+              <li>Add <code>role="presentation"</code> for decorative images</li>
+            </ul>
+            <a class="violation-link" href="https://dequeuniversity.com/rules/axe/4.6/image-alt" target="_blank" rel="noopener">Learn more at deque.com &rarr;</a>
+            <div class="violation-tags">
+              <span class="tag">WCAG 2.1 A</span>
+              <span class="tag">Section 508</span>
+              <span class="tag">cat.text-alternatives</span>
+            </div>
+            <div class="violation-actions">
+              <button class="btn-fix-ai" type="button"><span class="ai-icon">&#10024;</span> Fix with AI</button>
+              <button class="btn-skip" type="button">Ignore</button>
+            </div>
+          </div>
+
+          <div class="violation pre-existing" data-severity="serious">
+            <div class="violation-header">
+              <span class="violation-rule">ARIA roles must conform to valid values</span>
+            </div>
+            <code class="element-code-line">&lt;div role="blogpost" class="entry-wrapper"&gt;...&lt;/div&gt;</code>
+            <button class="element-more-info-toggle" type="button" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')"><span class="toggle-chevron">&#9654;</span> More info</button>
+            <div class="element-more-info">
+              <div class="violation-screenshot" style="display:block" aria-label="Screenshot placeholder">Screenshot</div>
+              <div class="violation-element-wrapper"><div class="violation-element">&lt;div role="blogpost" class="entry-wrapper"&gt;...&lt;/div&gt;</div><button class="btn-copy-code" type="button" onclick="this.innerHTML='&#10003;';setTimeout(()=>this.innerHTML='<svg viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot;><rect x=&quot;9&quot; y=&quot;9&quot; width=&quot;13&quot; height=&quot;13&quot; rx=&quot;2&quot;/><path d=&quot;M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1&quot;/></svg>',800)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button></div>
+            </div>
+            <div class="violation-fix-heading">Fix any of:</div>
+            <ul class="violation-fix-list">
+              <li>Use a valid ARIA role such as <code>article</code></li>
+              <li>Remove the invalid <code>role</code> attribute</li>
+            </ul>
+            <a class="violation-link" href="https://dequeuniversity.com/rules/axe/4.6/aria-roles" target="_blank" rel="noopener">Learn more at deque.com &rarr;</a>
+            <div class="violation-tags">
+              <span class="tag">WCAG 2.1 A</span>
+              <span class="tag">cat.aria</span>
+            </div>
+            <div class="violation-actions">
+              <button class="btn-fix-ai" type="button"><span class="ai-icon">&#10024;</span> Fix with AI</button>
+              <button class="btn-skip" type="button">Ignore</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PASSED AUDITS ── -->
+  <section class="audit-section audit-section--passed" id="passedSection" aria-labelledby="passedTitle">
+    <div class="audit-section-header" id="passedTitle">
+      <span class="audit-section-title">
+        Passed Components <span class="audit-section-count">2</span>
+      </span>
+    </div>
+    <div class="audit-section-body" role="region">
+      <div class="audit-table-head audit-table-head--passed" aria-hidden="true">
+        <span>Component</span>
+        <span>Package</span>
+        <span></span>
+      </div>
+
+      <!-- Passed Row 1 -->
+      <div class="audit-row" id="passRow1" data-package="@wix/forms-ui" data-pre-existing="0">
+        <div class="audit-row-summary audit-row-summary--passed">
+          <span class="audit-test-col">AddressInput-address-input-a11y</span>
+          <span class="audit-name">@wix/forms-ui</span>
+          <span></span>
+          <span class="row-chevron" aria-hidden="true">&#9662;</span>
+        </div>
+        <div class="audit-details">
+          <div style="padding:12px 0 4px;font-size:12px;color:var(--text-muted);">Test URL: <a href="https://ssrdev.wixsite.com/address-input-e2e" target="_blank" rel="noopener" style="color:var(--brand-blue);">ssrdev.wixsite.com/address-input-e2e</a></div>
+          <ul class="passed-list" role="list">
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Links fully operable by keyboard</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Axe accessibility checks (16 rules passed)</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Dropdowns keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Modals keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Radio buttons keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Checkboxes keyboard operable</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Passed Row 2 -->
+      <div class="audit-row" id="passRow2" data-package="@wix/members-area" data-pre-existing="0">
+        <div class="audit-row-summary audit-row-summary--passed">
+          <span class="audit-test-col">AddressInput-address-input-editor-a11y</span>
+          <span class="audit-name">@wix/members-area</span>
+          <span></span>
+          <span class="row-chevron" aria-hidden="true">&#9662;</span>
+        </div>
+        <div class="audit-details">
+          <div style="padding:12px 0 4px;font-size:12px;color:var(--text-muted);">Test URL: <a href="https://ssrdev.wixsite.com/addressinput-editor" target="_blank" rel="noopener" style="color:var(--brand-blue);">ssrdev.wixsite.com/addressinput-editor</a></div>
+          <ul class="passed-list" role="list">
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Links fully operable by keyboard</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Axe accessibility checks (21 rules passed)</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Dropdowns keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Modals keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Tabs keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Radio buttons keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Checkboxes keyboard operable</li>
+            <li class="passed-item" role="listitem"><span class="passed-check" aria-hidden="true">&#10003;</span> Toggles keyboard operable</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Theme toggle
+  const toggle = document.getElementById('themeToggle');
+  const icon = document.getElementById('themeIcon');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    icon.innerHTML = theme === 'dark' ? '&#9790;' : '&#9788;';
+    try { localStorage.setItem('eleven-theme', theme); } catch(e) {}
+  }
+
+  toggle.addEventListener('click', function() {
+    setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // Restore theme
+  try {
+    const saved = localStorage.getItem('eleven-theme');
+    if (saved) setTheme(saved);
+  } catch(e) {}
+
+  // Section collapse/expand
+  function toggleSection(headerEl) {
+    const section = headerEl.closest('.audit-section');
+    const isOpen = section.classList.toggle('open');
+    headerEl.setAttribute('aria-expanded', isOpen);
+  }
+
+  // Keyboard support for section headers
+  document.querySelectorAll('.audit-section-header').forEach(function(h) {
+    h.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleSection(h);
+      }
+    });
+  });
+
+  // Toggle details row
+  function toggleDetails(rowId) {
+    var row = document.getElementById(rowId);
+    if (row) row.classList.toggle('expanded');
+  }
+
+  // Make entire row summary clickable
+  document.querySelectorAll('.audit-row-summary').forEach(function(summary) {
+    summary.addEventListener('click', function() {
+      var row = summary.closest('.audit-row');
+      if (row) row.classList.toggle('expanded');
+    });
+  });
+
+  // Metric card filtering
+  var metricCards = document.querySelectorAll('.metric-card[data-filter]');
+  var failedSection = document.getElementById('failedSection');
+  var passedSection = document.getElementById('passedSection');
+  var preExistingSection = document.getElementById('preExistingSection');
+  var allAuditRows = document.querySelectorAll('.audit-row');
+  var activeMetricFilter = 'pre-existing';
+
+  function applyAllFilters() {
+    var pkgFilter = document.getElementById('packageFilterGlobal').value;
+
+    // Show/hide sections based on metric filter
+    var showFailed = true, showPassed = true, showPreExisting = true;
+    if (activeMetricFilter === 'passed') {
+      showFailed = false; showPreExisting = false;
+    } else if (activeMetricFilter === 'failed') {
+      showPassed = false; showPreExisting = false;
+    } else if (activeMetricFilter === 'pre-existing') {
+      showFailed = false; showPassed = false;
+    }
+    failedSection.style.display = showFailed ? '' : 'none';
+    passedSection.style.display = showPassed ? '' : 'none';
+    preExistingSection.style.display = showPreExisting ? '' : 'none';
+
+    // Filter individual rows by package
+    allAuditRows.forEach(function(row) {
+      var pkg = row.getAttribute('data-package') || '';
+      var show = true;
+      if (pkgFilter !== 'all' && pkg !== pkgFilter) show = false;
+      row.style.display = show ? '' : 'none';
+    });
+  }
+
+  function filterByCard(card) {
+    metricCards.forEach(function(c) { c.classList.remove('active'); });
+    card.classList.add('active');
+    activeMetricFilter = card.getAttribute('data-filter');
+    applyAllFilters();
+  }
+
+  metricCards.forEach(function(card) {
+    card.addEventListener('click', function() { filterByCard(card); });
+    card.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        filterByCard(card);
+      }
+    });
+  });
+
+  // Package filter
+  document.getElementById('packageFilterGlobal').addEventListener('change', function() {
+    applyAllFilters();
+  });
+
+  // Apply default filter on load
+  applyAllFilters();
+
+  // Severity dropdown filter inside each component detail
+  document.querySelectorAll('.severity-filter-select').forEach(function(select) {
+    select.addEventListener('change', function() {
+      var sev = select.value;
+      var detailContainer = select.closest('.audit-details');
+      var violations = detailContainer.querySelectorAll('.violation');
+      violations.forEach(function(v) {
+        if (sev === 'all') {
+          v.classList.remove('severity-hidden');
+        } else {
+          v.classList.toggle('severity-hidden', v.getAttribute('data-severity') !== sev);
+        }
+      });
+      // Hide/show pre-existing section headers based on visible cards
+      detailContainer.querySelectorAll('.pre-existing-section-header').forEach(function(h) {
+        var next = h.nextElementSibling;
+        var hasVisible = false;
+        while (next && next.classList.contains('violation')) {
+          if (!next.classList.contains('severity-hidden')) hasVisible = true;
+          next = next.nextElementSibling;
+        }
+        h.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  });
+
+  // ── Transform violations: wrap learn-more + tags in collapsible, add Done button ──
+  var allViolations = document.querySelectorAll('.violation');
+  var violationList = Array.from(allViolations);
+
+  // Add severity badges next to rule names
+  violationList.forEach(function(v) {
+    var sev = v.getAttribute('data-severity');
+    if (!sev) return;
+    var rule = v.querySelector('.violation-rule');
+    if (!rule) return;
+    var badge = document.createElement('span');
+    badge.className = 'severity-badge severity-badge--' + sev;
+    badge.textContent = sev.charAt(0).toUpperCase() + sev.slice(1);
+    rule.insertAdjacentElement('afterend', badge);
+  });
+
+  // Add collapse chevron to each violation header and make it toggleable
+  violationList.forEach(function(v) {
+    var header = v.querySelector('.violation-header');
+    if (!header) return;
+    var chevron = document.createElement('span');
+    chevron.className = 'violation-chevron';
+    chevron.setAttribute('aria-hidden', 'true');
+    chevron.textContent = '\u25BE';
+    header.appendChild(chevron);
+    header.addEventListener('click', function() {
+      v.classList.toggle('v-collapsed');
+    });
+  });
+
+  // Collapse all violations except the first one in each component detail
+  document.querySelectorAll('.audit-details').forEach(function(detail) {
+    var violations = detail.querySelectorAll('.violation');
+    violations.forEach(function(v, i) {
+      if (i > 0) v.classList.add('v-collapsed');
+    });
+  });
+
+  var currentViolationIndex = 0;
+
+  violationList.forEach(function(v, idx) {
+    // Wrap link + tags in "More info" collapsible
+    var link = v.querySelector('.violation-link');
+    var tags = v.querySelector('.violation-tags');
+    if (link && tags) {
+      var wrapper = document.createElement('div');
+      wrapper.className = 'violation-more-info';
+      wrapper.id = 'moreInfo-' + idx;
+      link.parentNode.insertBefore(wrapper, link);
+      wrapper.appendChild(link);
+      wrapper.appendChild(tags);
+
+      var toggleBtn = document.createElement('button');
+      toggleBtn.className = 'btn-more-info';
+      toggleBtn.type = 'button';
+      toggleBtn.innerHTML = '<span class="chevron-sm" aria-hidden="true">&#9654;</span> More info';
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.addEventListener('click', function() {
+        var isOpen = wrapper.classList.toggle('open');
+        toggleBtn.classList.toggle('open');
+        toggleBtn.setAttribute('aria-expanded', String(isOpen));
+      });
+      // Place "More info" toggle + wrapper after the screenshot
+      var screenshot = v.querySelector('.violation-screenshot');
+      if (screenshot) {
+        screenshot.parentNode.insertBefore(toggleBtn, screenshot.nextSibling);
+        toggleBtn.parentNode.insertBefore(wrapper, toggleBtn.nextSibling);
+      } else {
+        wrapper.parentNode.insertBefore(toggleBtn, wrapper);
+      }
+    }
+
+    // Add Done + Undo buttons to actions
+    var actions = v.querySelector('.violation-actions');
+    if (actions) {
+      var undoBtn = document.createElement('button');
+      undoBtn.className = 'btn-undo';
+      undoBtn.type = 'button';
+      undoBtn.innerHTML = '&#8634; Undo';
+      undoBtn.addEventListener('click', function() {
+        v.classList.remove('resolved');
+        var auditRow = v.closest('.audit-row');
+        if (auditRow && auditRow.classList.contains('all-done')) {
+          auditRow.classList.remove('all-done');
+          auditRow.classList.add('expanded');
+        }
+        updateNavCounter(idx);
+      });
+
+      var doneBtn = document.createElement('button');
+      doneBtn.className = 'btn-done';
+      doneBtn.type = 'button';
+      doneBtn.innerHTML = '&#10003; Mark as Done';
+      doneBtn.addEventListener('click', function() {
+        v.classList.add('resolved');
+        var auditRow = v.closest('.audit-row');
+        if (auditRow && allViolationsDoneInRow(auditRow)) {
+          auditRow.classList.remove('expanded');
+          auditRow.classList.add('all-done');
+          openNextAuditRow(auditRow);
+        } else {
+          navigateToNextViolation(idx);
+        }
+      });
+      actions.insertBefore(undoBtn, actions.firstChild);
+      actions.insertBefore(doneBtn, actions.firstChild);
+    }
+  });
+
+  function allViolationsDoneInRow(auditRow) {
+    var violations = auditRow.querySelectorAll('.violation');
+    for (var i = 0; i < violations.length; i++) {
+      if (!violations[i].classList.contains('resolved')) return false;
+    }
+    return true;
+  }
+
+  function openNextAuditRow(currentRow) {
+    // Find the next audit row with unresolved violations
+    var allRows = Array.from(document.querySelectorAll('.audit-row'));
+    var currentIdx = allRows.indexOf(currentRow);
+    for (var i = currentIdx + 1; i < allRows.length; i++) {
+      if (!allRows[i].classList.contains('all-done')) {
+        allRows[i].classList.add('expanded');
+        allRows[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Highlight the first unresolved violation
+        var firstUnresolved = allRows[i].querySelector('.violation:not(.resolved)');
+        if (firstUnresolved) {
+          setTimeout(function() {
+            firstUnresolved.style.transition = 'box-shadow 0.3s';
+            firstUnresolved.style.boxShadow = '0 0 0 3px var(--brand-blue)';
+            setTimeout(function() { firstUnresolved.style.boxShadow = ''; }, 1500);
+          }, 400);
+        }
+        updateNavCounter(allRows.indexOf(allRows[i]));
+        return;
+      }
+    }
+    // Wrap around
+    for (var j = 0; j < currentIdx; j++) {
+      if (!allRows[j].classList.contains('all-done')) {
+        allRows[j].classList.add('expanded');
+        allRows[j].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        updateNavCounter(0);
+        return;
+      }
+    }
+    // All audits done
+    updateNavCounter(-1);
+  }
+
+  function navigateToNextViolation(fromIndex) {
+    // Find next unresolved violation
+    for (var i = fromIndex + 1; i < violationList.length; i++) {
+      if (!violationList[i].classList.contains('resolved')) {
+        scrollToViolation(i);
+        return;
+      }
+    }
+    // Wrap around from beginning
+    for (var j = 0; j < fromIndex; j++) {
+      if (!violationList[j].classList.contains('resolved')) {
+        scrollToViolation(j);
+        return;
+      }
+    }
+    // All resolved
+    updateNavCounter(-1);
+  }
+
+  function scrollToViolation(idx) {
+    var v = violationList[idx];
+    // Make sure parent audit row is expanded
+    var auditRow = v.closest('.audit-row');
+    if (auditRow && !auditRow.classList.contains('expanded')) {
+      auditRow.classList.add('expanded');
+    }
+    // Make sure parent section is open
+    var section = v.closest('.audit-section');
+    if (section && !section.classList.contains('open')) {
+      section.classList.add('open');
+      var header = section.querySelector('.audit-section-header');
+      if (header) header.setAttribute('aria-expanded', 'true');
+    }
+    // Scroll into view
+    v.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Flash highlight
+    v.style.transition = 'box-shadow 0.3s';
+    v.style.boxShadow = '0 0 0 3px var(--brand-blue)';
+    setTimeout(function() { v.style.boxShadow = ''; }, 1500);
+    updateNavCounter(idx);
+  }
+
+  function updateNavCounter(idx) {
+    // no-op: counter removed
+  }
+
+  // ── Skip Modal ──
+  var skipModal = document.getElementById('skipModal');
+  var skipModalRule = document.getElementById('skipModalRule');
+  var skipReason = document.getElementById('skipReason');
+  var pendingSkipViolation = null;
+
+  function addResolutionBanner(v, type, iconHtml, labelText) {
+    removeResolutionBanner(v);
+    var banner = document.createElement('div');
+    banner.className = 'resolution-banner ' + type;
+    banner.innerHTML = '<span class="banner-icon">' + iconHtml + '</span><span class="banner-label">' + labelText + '</span>';
+    var undoBtn = document.createElement('button');
+    undoBtn.className = 'banner-undo';
+    undoBtn.type = 'button';
+    undoBtn.textContent = 'Undo';
+    undoBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      v.classList.remove('resolved');
+      v.classList.remove('v-collapsed');
+      removeResolutionBanner(v);
+      var idx = violationList.indexOf(v);
+      updateNavCounter(idx);
+    });
+    banner.appendChild(undoBtn);
+    // Place banner inside the header (before the chevron) so it sits in the flex row
+    var header = v.querySelector('.violation-header');
+    var chevron = header ? header.querySelector('.violation-chevron') : null;
+    if (header && chevron) {
+      header.insertBefore(banner, chevron);
+    } else if (header) {
+      header.appendChild(banner);
+    } else {
+      v.appendChild(banner);
+    }
+    // Auto-collapse this violation and open the next one
+    v.classList.add('v-collapsed');
+    openNextViolation(v);
+  }
+
+  function openNextViolation(resolvedV) {
+    var detail = resolvedV.closest('.audit-details');
+    if (!detail) return;
+    var violations = detail.querySelectorAll('.violation');
+    var foundResolved = false;
+    for (var i = 0; i < violations.length; i++) {
+      if (violations[i] === resolvedV) {
+        foundResolved = true;
+        continue;
+      }
+      if (foundResolved && violations[i].classList.contains('v-collapsed') && !violations[i].classList.contains('resolved')) {
+        violations[i].classList.remove('v-collapsed');
+        violations[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+    }
+    for (var j = 0; j < violations.length; j++) {
+      if (violations[j] === resolvedV) return;
+      if (violations[j].classList.contains('v-collapsed') && !violations[j].classList.contains('resolved')) {
+        violations[j].classList.remove('v-collapsed');
+        violations[j].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+    }
+  }
+
+  function removeResolutionBanner(v) {
+    var old = v.querySelector('.resolution-banner');
+    if (old) old.remove();
+  }
+
+  document.querySelectorAll('.btn-skip').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var v = btn.closest('.violation');
+      pendingSkipViolation = v;
+      var rule = v.querySelector('.violation-rule');
+      skipModalRule.textContent = rule ? rule.textContent : '';
+      skipReason.value = '';
+      document.querySelector('input[name="skipScope"][value="this-pr"]').checked = true;
+      skipModal.classList.add('open');
+    });
+  });
+
+  document.getElementById('skipModalCancel').addEventListener('click', function() {
+    skipModal.classList.remove('open');
+    pendingSkipViolation = null;
+  });
+  skipModal.addEventListener('click', function(e) { if (e.target === skipModal) { skipModal.classList.remove('open'); pendingSkipViolation = null; } });
+
+  document.getElementById('skipModalConfirm').addEventListener('click', function() {
+    if (!pendingSkipViolation) return;
+    var scope = document.querySelector('input[name="skipScope"]:checked').value;
+    var reason = skipReason.value.trim();
+    var label = scope === 'forever' ? 'Skipped forever' : 'Skipped for this PR';
+    pendingSkipViolation.classList.add('resolved');
+    addResolutionBanner(pendingSkipViolation, 'skipped-banner', '&#8856;', label + (reason ? ' — ' + reason : ''));
+    skipModal.classList.remove('open');
+    var idx = violationList.indexOf(pendingSkipViolation);
+    pendingSkipViolation = null;
+    updateNavCounter(idx);
+  });
+
+  // ── AI Fix Modal ──
+  var aiModal = document.getElementById('aiModal');
+  var aiModalRule = document.getElementById('aiModalRule');
+  var aiLoading = document.getElementById('aiLoading');
+  var aiDone = document.getElementById('aiDone');
+  var aiModalActions = document.getElementById('aiModalActions');
+  var pendingAiViolation = null;
+
+  document.querySelectorAll('.btn-fix-ai').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var v = btn.closest('.violation');
+      pendingAiViolation = v;
+      var rule = v.querySelector('.violation-rule');
+      aiModalRule.textContent = rule ? rule.textContent : '';
+      aiLoading.classList.remove('hidden');
+      aiDone.classList.remove('visible');
+      aiModalActions.innerHTML = '<button class="modal-btn" id="aiModalCancelInner">Cancel</button>';
+      document.getElementById('aiModalCancelInner').addEventListener('click', function() {
+        aiModal.classList.remove('open'); pendingAiViolation = null;
+      });
+      aiModal.classList.add('open');
+      setTimeout(function() {
+        aiLoading.classList.add('hidden');
+        aiDone.classList.add('visible');
+        aiModalActions.innerHTML = '<button class="modal-btn primary" id="aiDismiss">Close</button>';
+        document.getElementById('aiDismiss').addEventListener('click', function() {
+          if (pendingAiViolation) {
+            pendingAiViolation.classList.add('resolved');
+                        addResolutionBanner(pendingAiViolation, 'ai-fixed', '&#9889;', 'Fixed by AI');
+            var idx = violationList.indexOf(pendingAiViolation);
+            updateNavCounter(idx);
+          }
+          aiModal.classList.remove('open');
+          pendingAiViolation = null;
+        });
+      }, 2500);
+    });
+  });
+  aiModal.addEventListener('click', function(e) { if (e.target === aiModal) { aiModal.classList.remove('open'); pendingAiViolation = null; } });
+
+  // ── Update Done button to show banner ──
+  violationList.forEach(function(v, idx) {
+    var doneBtn = v.querySelector('.btn-done');
+    if (doneBtn) {
+      // Add click handler that also adds resolution banner
+      doneBtn.addEventListener('click', function() {
+        addResolutionBanner(v, 'done', '&#10003;', 'Marked as done');
+      });
+    }
+    var undoBtn = v.querySelector('.btn-undo');
+    if (undoBtn) {
+      undoBtn.addEventListener('click', function() {
+        removeResolutionBanner(v);
+        v.style.opacity = '';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

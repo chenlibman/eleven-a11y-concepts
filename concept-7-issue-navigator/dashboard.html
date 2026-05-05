@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN — Accessibility Audit Report</title>
+<style>
+/* ========== CSS Custom Properties ========== */
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-nav: #fafafa;
+  --bg-hover: #f0f0f0;
+  --border: #e0e0e0;
+  --border-light: #eee;
+  --text: #111111;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+  --text-inverse: #ffffff;
+
+  --red: #d93025;
+  --red-bg: #fce8e6;
+  --orange: #e37400;
+  --orange-bg: #fef3e0;
+  --amber: #f9a825;
+  --amber-bg: #fff8e1;
+  --green: #1e8e3e;
+  --green-bg: #e6f4ea;
+  --purple: #7c3aed;
+  --purple-bg: #ede9fe;
+  --gold: #d4a017;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+
+  --nav-height: 72px;
+}
+
+[data-theme="dark"] {
+  --bg: #111111;
+  --bg-alt: #1a1a1a;
+  --bg-card: #1e1e1e;
+  --bg-nav: #181818;
+  --bg-hover: #2a2a2a;
+  --border: #333333;
+  --border-light: #2a2a2a;
+  --text: #f0f0f0;
+  --text-secondary: #aaaaaa;
+  --text-muted: #666666;
+  --text-inverse: #111111;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+  --red-bg: #3b1518;
+  --orange-bg: #3b2a10;
+  --amber-bg: #3b3010;
+  --green-bg: #0f2f18;
+  --purple-bg: #1f1535;
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ========== Header ========== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.header-subtitle { font-size: 13px; color: var(--text-secondary); }
+.pr-badge {
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: var(--mono);
+}
+.header-right { display: flex; align-items: center; gap: 16px; }
+.xp-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--gold);
+}
+.streak-badge {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 13px; font-weight: 600; color: var(--orange);
+}
+.theme-toggle {
+  background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 6px 12px; cursor: pointer; color: var(--text); font-size: 13px;
+  transition: background 0.2s;
+}
+.theme-toggle:hover { background: var(--bg-hover); }
+.theme-toggle:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+/* ========== Verdict Banner ========== */
+.verdict-banner {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.verdict-row {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.verdict-label {
+  font-size: 22px; font-weight: 800; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.verdict-status {
+  display: inline-block; padding: 2px 12px; border-radius: var(--radius-pill);
+  font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.verdict-status.blocked { background: var(--red-bg); color: var(--red); }
+.verdict-status.in-progress { background: var(--orange-bg); color: var(--orange); }
+.verdict-status.resolved { background: var(--green-bg); color: var(--green); }
+.verdict-status.passing { background: var(--green-bg); color: var(--green); }
+.verdict-detail { font-size: 14px; color: var(--text-secondary); }
+.bulk-fix-btn {
+  background: var(--purple); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: opacity 0.2s;
+}
+.bulk-fix-btn:hover { opacity: 0.9; }
+.bulk-fix-btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+/* Audit Stats Strip */
+.audit-stats-strip {
+  display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap;
+}
+.audit-stat {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: var(--radius-pill);
+  font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.audit-stat .audit-stat-value {
+  font-size: 18px; font-weight: 800;
+}
+.audit-stat.total .audit-stat-value { color: var(--purple); }
+.audit-stat.passed { border-color: var(--green); background: var(--green-bg); }
+.audit-stat.passed .audit-stat-value { color: var(--green); }
+.audit-stat.failed { border-color: var(--red); background: var(--red-bg); }
+.audit-stat.failed .audit-stat-value { color: var(--red); }
+.audit-stat.skipped { border-color: var(--amber); background: var(--amber-bg); }
+.audit-stat.skipped .audit-stat-value { color: var(--amber); }
+
+/* Progress Bar */
+.progress-section { margin-top: 12px; }
+.progress-bar-bg {
+  height: 8px; background: var(--border); border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: var(--radius-pill);
+  transition: width 0.5s ease, background 0.3s;
+}
+.progress-bar-fill.low { background: var(--red); }
+.progress-bar-fill.mid { background: var(--orange); }
+.progress-bar-fill.high { background: var(--green); }
+.progress-text {
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+  display: flex; justify-content: space-between;
+}
+
+/* ========== Issue Nav Bar ========== */
+.issue-nav-wrapper {
+  position: sticky;
+  top: 49px;
+  z-index: 90;
+  background: var(--bg-nav);
+  border-bottom: 2px solid var(--border);
+  padding: 0 24px;
+}
+.issue-nav-inner {
+  display: flex; align-items: stretch;
+  overflow-x: auto; scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  gap: 0;
+  padding: 10px 0 0 0;
+}
+.issue-nav-inner::-webkit-scrollbar { height: 4px; }
+.issue-nav-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.nav-section-label {
+  display: flex; align-items: center;
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; color: var(--text-muted);
+  padding: 8px 12px 8px 4px; white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-divider {
+  width: 1px; background: var(--border); margin: 8px 4px; flex-shrink: 0;
+  align-self: stretch;
+}
+
+.nav-pill {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 6px 14px 8px; min-width: 80px;
+  border: 1px solid transparent; border-bottom: 3px solid transparent;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: all 0.2s; position: relative;
+  background: transparent; font-family: var(--font);
+  color: var(--text);
+}
+.nav-pill:hover { background: var(--bg-hover); }
+.nav-pill:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+.nav-pill.active {
+  background: var(--bg-card);
+  border-color: var(--border);
+  border-bottom-color: var(--bg-card);
+  font-weight: 600;
+  margin-bottom: -2px;
+  padding-bottom: 10px;
+}
+.nav-pill.fixed { opacity: 0.55; }
+.nav-pill.fixed .pill-label { text-decoration: none; }
+.nav-pill.skipped { opacity: 0.4; }
+.nav-pill.skipped .pill-label { text-decoration: line-through; }
+.nav-pill.pre-existing { border-style: dashed; border-color: var(--border); opacity: 0.7; }
+.nav-pill.pre-existing.active { opacity: 1; border-bottom-color: var(--bg-card); }
+
+.pill-top { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.pill-number { font-weight: 700; font-family: var(--mono); font-size: 12px; }
+.pill-severity {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.pill-severity.critical { background: var(--red); }
+.pill-severity.serious { background: var(--orange); }
+.pill-severity.moderate { background: var(--amber); }
+.pill-status-icon { font-size: 13px; }
+.pill-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; max-width: 90px; overflow: hidden; text-overflow: ellipsis; }
+.pill-pkg { font-size: 10px; color: var(--text-muted); font-family: var(--mono); margin-top: 1px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ========== Celebration State ========== */
+.celebration-container {
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; padding: 80px 24px; text-align: center;
+}
+.celebration-container.visible { display: flex; }
+.celebration-icon { font-size: 64px; margin-bottom: 16px; }
+.celebration-title { font-size: 28px; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+.celebration-sub { font-size: 16px; color: var(--text-secondary); }
+
+/* ========== Main Detail Area ========== */
+.detail-area { padding: 24px; max-width: 900px; margin: 0 auto; }
+.detail-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.detail-header { padding: 20px 24px; border-bottom: 1px solid var(--border-light); }
+.detail-severity-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+.severity-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: var(--radius-pill);
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+}
+.severity-badge.critical { background: var(--red-bg); color: var(--red); }
+.severity-badge.critical::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+.severity-badge.serious { background: var(--orange-bg); color: var(--orange); }
+.severity-badge.serious::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 1px; background: var(--orange); transform: rotate(45deg); }
+.severity-badge.moderate { background: var(--amber-bg); color: var(--amber); }
+.severity-badge.moderate::before { content: ""; display: inline-block; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 7px solid var(--amber); }
+
+.detail-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.detail-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.detail-package {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; font-family: var(--mono);
+  padding: 2px 8px; border-radius: var(--radius-sm);
+  background: var(--bg-alt); border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.detail-source {
+  font-size: 12px; color: var(--text-muted);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.benchmark-tag {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  padding: 2px 8px; border-radius: var(--radius-pill);
+  background: var(--bg-alt); border: 1px dashed var(--border);
+  color: var(--text-muted);
+}
+
+/* Tabs */
+.detail-tabs { display: flex; border-bottom: 1px solid var(--border-light); background: var(--bg-alt); }
+.detail-tab {
+  padding: 10px 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; background: none;
+  color: var(--text-muted); border-bottom: 2px solid transparent;
+  transition: all 0.2s; font-family: var(--font);
+}
+.detail-tab:hover { color: var(--text); background: var(--bg-hover); }
+.detail-tab.active { color: var(--text); border-bottom-color: var(--text); }
+.detail-tab:focus-visible { outline: 2px solid var(--purple); outline-offset: -2px; }
+
+.tab-content { padding: 20px 24px; min-height: 200px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.tab-panel h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.tab-panel p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6; }
+.tab-panel ul { padding-left: 20px; margin-bottom: 12px; }
+.tab-panel li { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; }
+.wcag-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 13px; color: var(--purple); text-decoration: none;
+  font-weight: 600;
+}
+.wcag-link:hover { text-decoration: underline; }
+
+/* Code Snippet */
+.code-block {
+  background: #1e1e1e; color: #d4d4d4; padding: 14px 16px;
+  border-radius: var(--radius-sm); font-family: var(--mono);
+  font-size: 13px; overflow-x: auto; line-height: 1.6;
+  margin-bottom: 12px;
+}
+.code-block .line-number { color: #555; margin-right: 12px; user-select: none; }
+
+/* Diff */
+.diff-block {
+  background: #1e1e1e; color: #d4d4d4; padding: 14px 16px;
+  border-radius: var(--radius-sm); font-family: var(--mono);
+  font-size: 13px; overflow-x: auto; line-height: 1.8;
+  margin: 12px 0; border: 1px solid var(--purple);
+}
+.diff-block .diff-remove { background: #3b1518; color: #f87171; display: block; padding: 0 4px; margin: 0 -4px; }
+.diff-block .diff-add { background: #0f2f18; color: #6ee7b7; display: block; padding: 0 4px; margin: 0 -4px; }
+
+/* ========== Actions ========== */
+.detail-actions {
+  padding: 16px 24px; border-top: 1px solid var(--border-light);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; transition: all 0.2s;
+  font-family: var(--font);
+}
+.btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.btn-ai { background: var(--purple); color: #fff; }
+.btn-ai:hover { opacity: 0.9; }
+.btn-secondary { background: var(--bg-alt); color: var(--text); border-color: var(--border); }
+.btn-secondary:hover { background: var(--bg-hover); }
+.btn-tertiary { background: none; color: var(--text-muted); border-color: var(--border); position: relative; }
+.btn-tertiary:hover { background: var(--bg-hover); }
+
+.ai-diff-container {
+  display: none; padding: 0 24px 16px;
+}
+.ai-diff-container.visible { display: block; }
+.ai-diff-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ai-diff-label { font-size: 13px; font-weight: 600; color: var(--purple); }
+.btn-apply-ai {
+  background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.btn-apply-ai:hover { opacity: 0.9; }
+
+/* Skip Dropdown */
+.skip-container { position: relative; display: inline-block; }
+.skip-dropdown {
+  display: none; position: absolute; bottom: 100%; left: 0;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-md);
+  min-width: 240px; z-index: 50; padding: 4px 0;
+  margin-bottom: 4px;
+}
+.skip-dropdown.visible { display: block; }
+.skip-dropdown-title {
+  padding: 8px 14px; font-size: 12px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-light);
+}
+.skip-option {
+  display: block; width: 100%; text-align: left;
+  padding: 8px 14px; font-size: 13px; color: var(--text);
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font);
+}
+.skip-option:hover { background: var(--bg-hover); }
+.skip-option:focus-visible { background: var(--bg-hover); outline: none; }
+
+/* Resolved Overlay */
+.resolved-overlay {
+  display: none; padding: 40px 24px; text-align: center;
+}
+.resolved-overlay.visible { display: block; }
+.resolved-icon { font-size: 40px; margin-bottom: 8px; }
+.resolved-text { font-size: 16px; font-weight: 600; color: var(--green); }
+.resolved-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* ========== Bottom Navigation ========== */
+.bottom-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px; max-width: 900px; margin: 0 auto 40px;
+}
+.nav-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  background: var(--bg-alt); color: var(--text);
+  border: 1px solid var(--border); transition: all 0.2s;
+  font-family: var(--font);
+}
+.nav-btn:hover { background: var(--bg-hover); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-btn:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--text); color: var(--bg); padding: 12px 20px;
+  border-radius: var(--radius-md); font-size: 14px; font-weight: 500;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-lg); z-index: 200;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+.toast.visible { transform: translateX(-50%) translateY(0); }
+.toast-undo {
+  background: none; border: 1px solid rgba(255,255,255,0.3); color: inherit;
+  padding: 4px 12px; border-radius: var(--radius-sm); cursor: pointer;
+  font-size: 13px; font-weight: 600; font-family: var(--font);
+}
+.toast-undo:hover { background: rgba(255,255,255,0.1); }
+
+/* ========== Bulk Fix Modal ========== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 300;
+  justify-content: center; align-items: center;
+}
+.modal-overlay.visible { display: flex; }
+.modal {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  max-width: 560px; width: 90%; box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.modal-header {
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 18px; font-weight: 700; }
+.modal-close {
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  color: var(--text-muted); padding: 4px;
+}
+.modal-close:hover { color: var(--text); }
+.modal-body { padding: 20px 24px; }
+.modal-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+.modal-issue-list { list-style: none; padding: 0; }
+.modal-issue-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 0; border-bottom: 1px solid var(--border-light);
+  font-size: 14px;
+}
+.modal-issue-item:last-child { border-bottom: none; }
+.modal-footer {
+  padding: 16px 24px; border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+
+/* ========== Demo Controls ========== */
+.demo-controls {
+  position: fixed; bottom: 16px; right: 16px; z-index: 150;
+}
+.demo-toggle {
+  background: var(--text); color: var(--bg); border: none;
+  border-radius: var(--radius-pill); padding: 8px 16px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+.demo-panel {
+  display: none; position: absolute; bottom: 100%; right: 0;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+  padding: 12px; min-width: 200px; margin-bottom: 8px;
+}
+.demo-panel.visible { display: block; }
+.demo-panel-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+.demo-option {
+  display: block; width: 100%; text-align: left;
+  padding: 6px 10px; font-size: 13px; background: none;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  color: var(--text); font-family: var(--font);
+}
+.demo-option:hover { background: var(--bg-hover); }
+.demo-option.active { background: var(--purple-bg); color: var(--purple); font-weight: 600; }
+
+/* ========== Confetti ========== */
+.confetti-canvas {
+  position: fixed; inset: 0; z-index: 250; pointer-events: none;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 640px) {
+  .header { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .verdict-banner { padding: 12px 16px; }
+  .issue-nav-wrapper { padding: 0 16px; }
+  .detail-area { padding: 16px; }
+  .bottom-nav { padding: 12px 16px; }
+  .detail-actions { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header" role="banner">
+  <div class="header-left">
+    <span class="logo" aria-label="ELEVEN accessibility audit tool">ELEVEN</span>
+    <span class="header-subtitle">Accessibility Audit</span>
+    <span class="pr-badge" aria-label="Pull request number 482">PR #482</span>
+  </div>
+  <div class="header-right">
+    <span class="xp-badge" role="status" aria-label="Experience points"><span aria-hidden="true">&#9733;</span> <span id="xpCount">240</span> XP</span>
+    <span class="streak-badge" role="status" aria-label="Fix streak"><span aria-hidden="true">&#128293;</span> <span id="streakCount">0</span> streak</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+      <span id="themeIcon">&#9790;</span> Dark
+    </button>
+  </div>
+</header>
+
+<!-- Verdict Banner -->
+<section class="verdict-banner" role="region" aria-label="Audit verdict">
+  <div class="verdict-row">
+    <div>
+      <div class="verdict-label">
+        Verdict: <span class="verdict-status" id="verdictBadge">Blocked</span>
+      </div>
+      <div class="verdict-detail" id="verdictDetail">6 new issues to resolve · 3 pre-existing (non-blocking)</div>
+    </div>
+    <button class="bulk-fix-btn" id="bulkFixBtn" aria-label="Fix all issues with AI">
+      <span aria-hidden="true">&#10024;</span> Bulk Fix All with AI
+    </button>
+  </div>
+  <div class="audit-stats-strip" role="status" aria-label="Audit-level statistics">
+    <div class="audit-stat total">
+      <span class="audit-stat-value">47</span>
+      <span>Total Audits</span>
+    </div>
+    <div class="audit-stat passed">
+      <span class="audit-stat-value">38</span>
+      <span>Passed</span>
+    </div>
+    <div class="audit-stat failed">
+      <span class="audit-stat-value">6</span>
+      <span>Failed</span>
+    </div>
+    <div class="audit-stat skipped">
+      <span class="audit-stat-value">3</span>
+      <span>Skipped</span>
+    </div>
+  </div>
+  <div class="progress-section">
+    <div class="progress-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressBar">
+      <div class="progress-bar-fill low" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="progress-text">
+      <span id="progressLabel">0 / 6 resolved</span>
+      <span id="progressPct">0%</span>
+    </div>
+  </div>
+</section>
+
+<!-- Issue Nav Bar -->
+<nav class="issue-nav-wrapper" role="navigation" aria-label="Issue navigator">
+  <div class="issue-nav-inner" id="issueNav" role="tablist" aria-label="Issues">
+    <!-- Populated by JS -->
+  </div>
+</nav>
+
+<!-- Celebration Container -->
+<div class="celebration-container" id="celebration" role="status" aria-live="polite">
+  <div class="celebration-icon" aria-hidden="true">&#127881;</div>
+  <div class="celebration-title">All Issues Resolved!</div>
+  <div class="celebration-sub">This PR is now accessibility-compliant. Great work!</div>
+</div>
+
+<!-- Main Detail Area -->
+<main class="detail-area" id="detailArea" role="main">
+  <div class="detail-card" id="detailCard">
+    <!-- Header -->
+    <div class="detail-header" id="detailHeader"></div>
+    <!-- Tabs -->
+    <div class="detail-tabs" role="tablist" aria-label="Issue details">
+      <button class="detail-tab active" data-tab="why" role="tab" aria-selected="true" id="tabWhy">Why</button>
+      <button class="detail-tab" data-tab="where" role="tab" aria-selected="false" id="tabWhere">Where</button>
+      <button class="detail-tab" data-tab="how" role="tab" aria-selected="false" id="tabHow">How</button>
+    </div>
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <div class="tab-panel active" id="panelWhy" role="tabpanel" aria-labelledby="tabWhy"></div>
+      <div class="tab-panel" id="panelWhere" role="tabpanel" aria-labelledby="tabWhere"></div>
+      <div class="tab-panel" id="panelHow" role="tabpanel" aria-labelledby="tabHow"></div>
+    </div>
+    <!-- AI Diff -->
+    <div class="ai-diff-container" id="aiDiffContainer">
+      <div class="ai-diff-header">
+        <span class="ai-diff-label"><span aria-hidden="true">&#10024;</span> AI-Suggested Fix</span>
+        <button class="btn-apply-ai" id="applyAiBtn">Apply Fix</button>
+      </div>
+      <div id="aiDiffContent"></div>
+    </div>
+    <!-- Resolved overlay -->
+    <div class="resolved-overlay" id="resolvedOverlay">
+      <div class="resolved-icon" aria-hidden="true">&#10004;&#65039;</div>
+      <div class="resolved-text" id="resolvedText">Issue resolved!</div>
+      <div class="resolved-sub">Moving to next open issue...</div>
+    </div>
+    <!-- Actions -->
+    <div class="detail-actions" id="detailActions">
+      <button class="btn btn-ai" id="fixAiBtn" aria-label="Fix with AI"><span aria-hidden="true">&#10024;</span> Fix with AI</button>
+      <button class="btn btn-secondary" id="fixManualBtn">Fix manually</button>
+      <div class="skip-container">
+        <button class="btn btn-tertiary" id="skipBtn" aria-haspopup="true" aria-expanded="false">
+          <span aria-hidden="true">&#9197;</span> Skip
+        </button>
+        <div class="skip-dropdown" id="skipDropdown" role="menu" aria-label="Skip reasons">
+          <div class="skip-dropdown-title">Select a reason</div>
+          <button class="skip-option" role="menuitem" data-reason="false-positive">False positive</button>
+          <button class="skip-option" role="menuitem" data-reason="not-applicable">Not applicable</button>
+          <button class="skip-option" role="menuitem" data-reason="will-fix-later">Will fix later</button>
+          <button class="skip-option" role="menuitem" data-reason="intentional">Intentional</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav" id="bottomNav">
+  <button class="nav-btn" id="prevBtn" aria-label="Previous issue">&#8592; Previous</button>
+  <button class="nav-btn" id="nextBtn" aria-label="Next issue">Next &#8594;</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="alert" aria-live="assertive">
+  <span id="toastMsg"></span>
+  <button class="toast-undo" id="toastUndo" style="display:none;">Undo</button>
+</div>
+
+<!-- Bulk Fix Modal -->
+<div class="modal-overlay" id="bulkModal" role="dialog" aria-modal="true" aria-label="Bulk fix with AI">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><span aria-hidden="true">&#10024;</span> Bulk Fix All with AI</div>
+      <button class="modal-close" id="bulkModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>AI will generate fixes for all remaining open issues. You can review each diff before applying.</p>
+      <ul class="modal-issue-list" id="bulkIssueList"></ul>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="bulkCancel">Cancel</button>
+      <button class="btn btn-ai" id="bulkConfirm"><span aria-hidden="true">&#10024;</span> Generate All Fixes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Demo Controls -->
+<div class="demo-controls">
+  <button class="demo-toggle" id="demoToggle">Demo States</button>
+  <div class="demo-panel" id="demoPanel">
+    <div class="demo-panel-title">Switch State</div>
+    <button class="demo-option active" data-state="blocked">Blocked (default)</button>
+    <button class="demo-option" data-state="in-progress">In Progress</button>
+    <button class="demo-option" data-state="all-resolved">All Resolved</button>
+    <button class="demo-option" data-state="all-passing">All Passing</button>
+  </div>
+</div>
+
+<!-- Confetti Canvas -->
+<canvas class="confetti-canvas" id="confettiCanvas"></canvas>
+
+<script>
+/* ================================================================
+   ELEVEN Issue Navigator — Concept 7 — Full Interactive Prototype
+   ================================================================ */
+
+// ========== Issue Data ==========
+const ISSUES_TEMPLATE = [
+  {
+    id: 1, title: 'Button missing accessible name', severity: 'critical',
+    pkg: '@wix/wsr-modal', source: 'axe-core', type: 'new', status: 'open',
+    why: {
+      impact: 'Screen readers announce this button without a label, making it impossible for blind users to understand its purpose.',
+      technical: 'The <code>&lt;button&gt;</code> element has no text content, <code>aria-label</code>, or <code>aria-labelledby</code> attribute. axe-core rule <code>button-name</code> requires at least one accessible name technique.'
+    },
+    where: {
+      file: 'src/components/Modal/ModalHeader.tsx',
+      line: 42,
+      snippet: '<button class="close-btn" onclick="closeModal()">\n  <svg>...</svg>\n</button>'
+    },
+    how: {
+      steps: [
+        'Add an <code>aria-label</code> attribute to the button describing its action.',
+        'Alternatively, add visually hidden text inside the button.',
+        'Verify the fix with a screen reader (VoiceOver or NVDA).'
+      ],
+      wcag: 'WCAG 2.1 — 4.1.2 Name, Role, Value (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+    },
+    diff: {
+      remove: '&lt;button class="close-btn" onclick="closeModal()"&gt;',
+      add: '&lt;button class="close-btn" onclick="closeModal()" aria-label="Close dialog"&gt;'
+    }
+  },
+  {
+    id: 2, title: 'Image missing alt text', severity: 'critical',
+    pkg: '@wix/wsr-avatar', source: 'axe-core', type: 'new', status: 'open',
+    why: {
+      impact: 'Screen readers cannot describe this image, leaving visually impaired users unaware of its content or purpose.',
+      technical: 'The <code>&lt;img&gt;</code> element is missing the <code>alt</code> attribute. axe-core rule <code>image-alt</code> requires all images to have alternative text.'
+    },
+    where: {
+      file: 'src/components/Avatar/Avatar.tsx',
+      line: 18,
+      snippet: '<img src="avatar.png" class="profile-avatar">'
+    },
+    how: {
+      steps: [
+        'Add a descriptive <code>alt</code> attribute to the image.',
+        'If the image is decorative, use <code>alt=""</code> to hide it from screen readers.',
+        'Test with axe DevTools browser extension to confirm the fix.'
+      ],
+      wcag: 'WCAG 2.1 — 1.1.1 Non-text Content (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content'
+    },
+    diff: {
+      remove: '&lt;img src="avatar.png" class="profile-avatar"&gt;',
+      add: '&lt;img src="avatar.png" class="profile-avatar" alt="User profile photo"&gt;'
+    }
+  },
+  {
+    id: 3, title: 'Insufficient color contrast', severity: 'serious',
+    pkg: '@wix/wsr-text', source: 'axe-core', type: 'new', status: 'open',
+    why: {
+      impact: 'Users with low vision or color blindness may not be able to read this text against its background.',
+      technical: 'The foreground color <code>#999</code> on background <code>#fff</code> produces a contrast ratio of 2.85:1, below the WCAG AA minimum of 4.5:1 for normal text.'
+    },
+    where: {
+      file: 'src/components/Text/Text.st.css',
+      line: 24,
+      snippet: '.subtitle {\n  color: #999;\n  font-size: 14px;\n}'
+    },
+    how: {
+      steps: [
+        'Darken the subtitle color to at least <code>#595959</code> (contrast ratio 7.1:1).',
+        'Use a contrast checker tool to verify the ratio meets WCAG AA (4.5:1 for normal text).',
+        'Consider adding a high-contrast mode for users who need it.'
+      ],
+      wcag: 'WCAG 2.1 — 1.4.3 Contrast (Minimum) (Level AA)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum'
+    },
+    diff: {
+      remove: '.subtitle { color: #999; }',
+      add: '.subtitle { color: #595959; } /* Contrast ratio: 7.1:1 &#10003; */'
+    }
+  },
+  {
+    id: 4, title: 'Interactive element not keyboard accessible', severity: 'serious',
+    pkg: '@wix/wsr-modal', source: 'keyboard', type: 'new', status: 'open',
+    why: {
+      impact: 'Users who rely on keyboard navigation cannot interact with this element, blocking essential functionality.',
+      technical: 'A <code>&lt;div&gt;</code> with an <code>onclick</code> handler is not focusable and lacks a <code>role</code> and <code>tabindex</code>. Keyboard users cannot activate it.'
+    },
+    where: {
+      file: 'src/components/Modal/ModalOverlay.tsx',
+      line: 15,
+      snippet: '<div class="overlay" onclick="closeModal()">\n  ...\n</div>'
+    },
+    how: {
+      steps: [
+        'Replace the <code>&lt;div&gt;</code> with a <code>&lt;button&gt;</code> element, or add <code>role="button"</code> and <code>tabindex="0"</code>.',
+        'Add a <code>keydown</code> handler for Enter and Space keys.',
+        'Test by pressing Tab to reach the element and Enter/Space to activate it.'
+      ],
+      wcag: 'WCAG 2.1 — 2.1.1 Keyboard (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+    },
+    diff: {
+      remove: '&lt;div class="overlay" onclick="closeModal()"&gt;',
+      add: '&lt;button class="overlay" onclick="closeModal()" aria-label="Close overlay"&gt;'
+    }
+  },
+  {
+    id: 5, title: 'Missing visible focus indicator', severity: 'moderate',
+    pkg: '@wix/wsr-button', source: 'focus-ring', type: 'new', status: 'fixed',
+    why: {
+      impact: 'Keyboard users cannot see which element is currently focused, making navigation confusing and error-prone.',
+      technical: 'The button has <code>outline: none</code> in CSS without a replacement focus style. The focus-ring audit detected no visible focus indicator.'
+    },
+    where: {
+      file: 'src/components/Button/Button.st.css',
+      line: 8,
+      snippet: '.root {\n  outline: none;\n  border: none;\n}'
+    },
+    how: {
+      steps: [
+        'Remove <code>outline: none</code> or add a custom focus style using <code>:focus-visible</code>.',
+        'Use a visible ring (e.g., <code>box-shadow: 0 0 0 2px #4A90D9</code>) that contrasts with the background.',
+        'Test by pressing Tab and verifying the focus ring is visible.'
+      ],
+      wcag: 'WCAG 2.1 — 2.4.7 Focus Visible (Level AA)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-visible'
+    },
+    diff: {
+      remove: '.root { outline: none; }',
+      add: '.root:focus-visible { box-shadow: 0 0 0 2px #4A90D9; }'
+    }
+  },
+  {
+    id: 6, title: 'Element unreachable via Tab key', severity: 'moderate',
+    pkg: '@wix/wsr-tooltip', source: 'tab-reachability', type: 'new', status: 'open',
+    why: {
+      impact: 'Keyboard-only users cannot reach this interactive tooltip trigger, preventing them from accessing its content.',
+      technical: 'The tooltip trigger is a <code>&lt;span&gt;</code> with no <code>tabindex</code>. The tab-reachability audit found it is not in the tab order.'
+    },
+    where: {
+      file: 'src/components/Tooltip/TooltipTrigger.tsx',
+      line: 22,
+      snippet: '<span class="tooltip-trigger" onmouseenter="showTip()">\n  <InfoIcon />\n</span>'
+    },
+    how: {
+      steps: [
+        'Add <code>tabindex="0"</code> to the trigger element.',
+        'Add <code>onfocus</code> and <code>onblur</code> handlers to show/hide the tooltip on keyboard focus.',
+        'Add <code>role="button"</code> or wrap in a <code>&lt;button&gt;</code>.',
+        'Test by pressing Tab to reach the element and seeing the tooltip appear.'
+      ],
+      wcag: 'WCAG 2.1 — 2.1.1 Keyboard (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard'
+    },
+    diff: {
+      remove: '&lt;span class="tooltip-trigger" onmouseenter="showTip()"&gt;',
+      add: '&lt;span class="tooltip-trigger" tabindex="0" role="button" onmouseenter="showTip()" onfocus="showTip()" onblur="hideTip()"&gt;'
+    }
+  },
+  {
+    id: 7, title: 'Invalid ARIA role', severity: 'serious',
+    pkg: '@wix/wsr-modal', source: 'axe-core', type: 'pre-existing', status: 'open',
+    why: {
+      impact: 'An invalid ARIA role causes assistive technology to misinterpret the element, potentially confusing users.',
+      technical: 'The element uses <code>role="modal"</code>, which is not a valid WAI-ARIA role. The correct role is <code>role="dialog"</code> with <code>aria-modal="true"</code>.'
+    },
+    where: {
+      file: 'src/components/Modal/Modal.tsx',
+      line: 8,
+      snippet: '<div class="modal-container" role="modal">\n  ...\n</div>'
+    },
+    how: {
+      steps: [
+        'Change <code>role="modal"</code> to <code>role="dialog"</code>.',
+        'Add <code>aria-modal="true"</code> to indicate it is a modal dialog.',
+        'Add <code>aria-labelledby</code> pointing to the modal title element.'
+      ],
+      wcag: 'WCAG 2.1 — 4.1.2 Name, Role, Value (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value'
+    },
+    diff: {
+      remove: '&lt;div class="modal-container" role="modal"&gt;',
+      add: '&lt;div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title"&gt;'
+    }
+  },
+  {
+    id: 8, title: 'Form input missing label', severity: 'serious',
+    pkg: '@wix/wsr-input', source: 'axe-core', type: 'pre-existing', status: 'open',
+    why: {
+      impact: 'Screen reader users cannot determine the purpose of this input field, making form completion difficult.',
+      technical: 'The <code>&lt;input&gt;</code> element has no associated <code>&lt;label&gt;</code>, <code>aria-label</code>, or <code>aria-labelledby</code>. axe-core rule <code>label</code> requires all form inputs to have accessible names.'
+    },
+    where: {
+      file: 'src/components/Input/Input.tsx',
+      line: 12,
+      snippet: '<input type="text" class="wsr-input" placeholder="Search...">'
+    },
+    how: {
+      steps: [
+        'Add a <code>&lt;label&gt;</code> element with a <code>for</code> attribute matching the input\'s <code>id</code>.',
+        'Alternatively, add <code>aria-label="Search"</code> to the input.',
+        'Do not rely on <code>placeholder</code> as the accessible name.'
+      ],
+      wcag: 'WCAG 2.1 — 1.3.1 Info and Relationships (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships'
+    },
+    diff: {
+      remove: '&lt;input type="text" class="wsr-input" placeholder="Search..."&gt;',
+      add: '&lt;label for="search-input" class="sr-only"&gt;Search&lt;/label&gt;\n&lt;input id="search-input" type="text" class="wsr-input" placeholder="Search..." aria-label="Search"&gt;'
+    }
+  },
+  {
+    id: 9, title: 'Focus order not logical', severity: 'moderate',
+    pkg: '@wix/wsr-modal', source: 'keyboard', type: 'pre-existing', status: 'open',
+    why: {
+      impact: 'Keyboard users navigate elements in an unexpected order, causing confusion and disorientation.',
+      technical: 'Elements inside the modal use explicit <code>tabindex</code> values (1, 2, 3) that override natural DOM order, creating an illogical focus sequence.'
+    },
+    where: {
+      file: 'src/components/Modal/ModalContent.tsx',
+      line: 30,
+      snippet: '<input tabindex="3" class="title-input" />\n<button tabindex="1" class="save-btn">Save</button>\n<button tabindex="2" class="cancel-btn">Cancel</button>'
+    },
+    how: {
+      steps: [
+        'Remove explicit <code>tabindex</code> values greater than 0.',
+        'Reorder the DOM elements to match the desired focus sequence.',
+        'Use <code>tabindex="0"</code> only when necessary for non-interactive elements.'
+      ],
+      wcag: 'WCAG 2.1 — 2.4.3 Focus Order (Level A)',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-order'
+    },
+    diff: {
+      remove: '&lt;input tabindex="3" class="title-input" /&gt;\n&lt;button tabindex="1"&gt;Save&lt;/button&gt;',
+      add: '&lt;input tabindex="0" class="title-input" /&gt;\n&lt;button tabindex="0"&gt;Save&lt;/button&gt;'
+    }
+  }
+];
+
+// ========== State ==========
+let issues = JSON.parse(JSON.stringify(ISSUES_TEMPLATE));
+let selectedIssueId = 1;
+let activeTab = 'why';
+let xp = 240;
+let streak = 0;
+let lastSkippedId = null;
+let lastSkippedReason = null;
+let toastTimer = null;
+
+// ========== DOM Refs ==========
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+// ========== Helpers ==========
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function getNewIssues() { return issues.filter(i => i.type === 'new'); }
+function getPreExisting() { return issues.filter(i => i.type === 'pre-existing'); }
+function getOpenNewIssues() { return getNewIssues().filter(i => i.status === 'open'); }
+function getResolvedCount() { return getNewIssues().filter(i => i.status !== 'open').length; }
+function getTotalNew() { return getNewIssues().length; }
+function getIssueById(id) { return issues.find(i => i.id === id); }
+
+const severityOrder = { critical: 0, serious: 1, moderate: 2 };
+function sortedIssues(arr) {
+  return [...arr].sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+}
+
+// ========== Render Nav Bar ==========
+function renderNavBar() {
+  const nav = $('#issueNav');
+  nav.innerHTML = '';
+
+  const newSorted = sortedIssues(getNewIssues());
+  const preSorted = sortedIssues(getPreExisting());
+
+  // New issues section
+  const newLabel = document.createElement('div');
+  newLabel.className = 'nav-section-label';
+  newLabel.textContent = `New Issues (${getNewIssues().length})`;
+  nav.appendChild(newLabel);
+
+  newSorted.forEach(issue => nav.appendChild(createPill(issue)));
+
+  if (preSorted.length > 0) {
+    const divider = document.createElement('div');
+    divider.className = 'nav-divider';
+    divider.setAttribute('role', 'separator');
+    nav.appendChild(divider);
+
+    const preLabel = document.createElement('div');
+    preLabel.className = 'nav-section-label';
+    preLabel.textContent = `Pre-existing (${preSorted.length})`;
+    nav.appendChild(preLabel);
+
+    preSorted.forEach(issue => nav.appendChild(createPill(issue)));
+  }
+}
+
+function createPill(issue) {
+  const pill = document.createElement('button');
+  pill.className = 'nav-pill';
+  pill.setAttribute('role', 'tab');
+  pill.setAttribute('aria-selected', issue.id === selectedIssueId ? 'true' : 'false');
+  pill.setAttribute('tabindex', issue.id === selectedIssueId ? '0' : '-1');
+  pill.dataset.issueId = issue.id;
+
+  if (issue.id === selectedIssueId) pill.classList.add('active');
+  if (issue.status === 'fixed' || issue.status === 'ai-fixed') pill.classList.add('fixed');
+  if (issue.status === 'skipped') pill.classList.add('skipped');
+  if (issue.type === 'pre-existing') pill.classList.add('pre-existing');
+
+  let statusIcon = '';
+  if (issue.status === 'fixed') statusIcon = '<span class="pill-status-icon" style="color:var(--green)" aria-label="Fixed">&#10003;</span>';
+  else if (issue.status === 'ai-fixed') statusIcon = '<span class="pill-status-icon" style="color:var(--purple)" aria-label="AI fixed">&#10003;</span>';
+  else if (issue.status === 'skipped') statusIcon = '<span class="pill-status-icon" style="color:var(--text-muted)" aria-label="Skipped">&#8212;</span>';
+
+  const truncTitle = issue.title.length > 14 ? issue.title.substring(0, 14) + '...' : issue.title;
+
+  pill.innerHTML = `
+    <div class="pill-top">
+      ${statusIcon}
+      <span class="pill-severity ${issue.severity}" aria-label="${issue.severity}"></span>
+      <span class="pill-number">#${issue.id}</span>
+    </div>
+    <div class="pill-label" title="${issue.title}">${truncTitle}</div>
+    <div class="pill-pkg">${issue.pkg}</div>
+  `;
+
+  pill.addEventListener('click', () => selectIssue(issue.id));
+  return pill;
+}
+
+// ========== Nav keyboard ==========
+document.addEventListener('keydown', (e) => {
+  const nav = $('#issueNav');
+  const pills = [...nav.querySelectorAll('.nav-pill')];
+  const focused = document.activeElement;
+  const idx = pills.indexOf(focused);
+  if (idx === -1) return;
+
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = pills[idx + 1] || pills[0];
+    next.focus();
+    selectIssue(parseInt(next.dataset.issueId));
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = pills[idx - 1] || pills[pills.length - 1];
+    prev.focus();
+    selectIssue(parseInt(prev.dataset.issueId));
+  }
+});
+
+// ========== Select Issue ==========
+function selectIssue(id) {
+  selectedIssueId = id;
+  activeTab = 'why';
+  renderNavBar();
+  renderDetail();
+  scrollPillIntoView(id);
+}
+
+function scrollPillIntoView(id) {
+  const pill = $(`[data-issue-id="${id}"]`);
+  if (pill) pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+// ========== Render Detail ==========
+function renderDetail() {
+  const issue = getIssueById(selectedIssueId);
+  if (!issue) return;
+
+  // Show/hide sections
+  const isResolved = issue.status !== 'open';
+  $('#resolvedOverlay').classList.toggle('visible', false);
+  $('#aiDiffContainer').classList.toggle('visible', false);
+  $('#detailActions').style.display = isResolved ? 'none' : '';
+  $$('.detail-tabs .detail-tab').forEach(t => t.style.display = isResolved ? 'none' : '');
+  $$('.tab-content .tab-panel').forEach(p => p.style.display = '');
+
+  // Header
+  const benchmarkTag = issue.type === 'pre-existing' ? '<span class="benchmark-tag" title="First detected during initial scan — non-blocking">Pre-existing</span>' : '';
+  const statusLabel = issue.status === 'fixed' ? '<span style="color:var(--green);font-weight:700;margin-left:8px;">[Fixed]</span>'
+    : issue.status === 'ai-fixed' ? '<span style="color:var(--purple);font-weight:700;margin-left:8px;">[AI Fixed]</span>'
+    : issue.status === 'skipped' ? '<span style="color:var(--text-muted);font-weight:700;margin-left:8px;">[Skipped]</span>'
+    : '';
+
+  $('#detailHeader').innerHTML = `
+    <div class="detail-severity-row">
+      <span class="severity-badge ${issue.severity}">${issue.severity}</span>
+      ${benchmarkTag}
+      ${statusLabel}
+    </div>
+    <div class="detail-title">${issue.title}</div>
+    <div class="detail-meta">
+      <span class="detail-package">${issue.pkg}</span>
+      <span class="detail-source">Source: ${issue.source}</span>
+    </div>
+  `;
+
+  // Tab content
+  $('#panelWhy').innerHTML = `
+    <h4>User Impact</h4>
+    <p>${issue.why.impact}</p>
+    <h4>Technical Detail</h4>
+    <p>${issue.why.technical}</p>
+  `;
+
+  $('#panelWhere').innerHTML = `
+    <h4>File Location</h4>
+    <p><code style="font-family:var(--mono);background:var(--bg-alt);padding:2px 6px;border-radius:3px;">${issue.where.file}:${issue.where.line}</code></p>
+    <h4>Code Snippet</h4>
+    <div class="code-block"><code>${escapeHtml(issue.where.snippet).replace(/\n/g, '<br>')}</code></div>
+  `;
+
+  let stepsHtml = issue.how.steps.map(s => `<li>${s}</li>`).join('');
+  $('#panelHow').innerHTML = `
+    <h4>Fix Steps</h4>
+    <ol style="padding-left:20px;margin-bottom:12px;">${stepsHtml}</ol>
+    <a class="wcag-link" href="${issue.how.wcagUrl}" target="_blank" rel="noopener">${issue.how.wcag} &#8599;</a>
+  `;
+
+  // AI diff content
+  if (issue.diff) {
+    $('#aiDiffContent').innerHTML = `
+      <div class="diff-block">
+        <span class="diff-remove">- ${issue.diff.remove}</span>
+        <span class="diff-add">+ ${issue.diff.add}</span>
+      </div>
+    `;
+  }
+
+  // Set active tab
+  setActiveTab(activeTab);
+
+  // Update prev/next buttons
+  updateBottomNav();
+}
+
+// ========== Tabs ==========
+function setActiveTab(tab) {
+  activeTab = tab;
+  $$('.detail-tab').forEach(t => {
+    const isActive = t.dataset.tab === tab;
+    t.classList.toggle('active', isActive);
+    t.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+  $$('.tab-panel').forEach(p => p.classList.toggle('active', false));
+  $(`#panel${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+}
+
+$$('.detail-tab').forEach(t => {
+  t.addEventListener('click', () => setActiveTab(t.dataset.tab));
+});
+
+// ========== Actions ==========
+// Fix with AI
+$('#fixAiBtn').addEventListener('click', () => {
+  const container = $('#aiDiffContainer');
+  container.classList.toggle('visible');
+});
+
+// Apply AI fix
+$('#applyAiBtn').addEventListener('click', () => {
+  const issue = getIssueById(selectedIssueId);
+  if (!issue || issue.status !== 'open') return;
+  resolveIssue(issue.id, 'ai-fixed');
+});
+
+// Fix manually
+$('#fixManualBtn').addEventListener('click', () => {
+  const issue = getIssueById(selectedIssueId);
+  if (!issue || issue.status !== 'open') return;
+  resolveIssue(issue.id, 'fixed');
+});
+
+// Skip
+$('#skipBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const dd = $('#skipDropdown');
+  const isVisible = dd.classList.contains('visible');
+  dd.classList.toggle('visible', !isVisible);
+  $('#skipBtn').setAttribute('aria-expanded', !isVisible);
+});
+
+$$('.skip-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const reason = opt.dataset.reason;
+    const issue = getIssueById(selectedIssueId);
+    if (!issue || issue.status !== 'open') return;
+    issue.skipReason = reason;
+    lastSkippedId = issue.id;
+    lastSkippedReason = reason;
+    resolveIssue(issue.id, 'skipped');
+    $('#skipDropdown').classList.remove('visible');
+    showToast(`Skipped #${issue.id}: ${reason.replace(/-/g, ' ')}`, true);
+  });
+});
+
+// Close skip dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.skip-container')) {
+    $('#skipDropdown').classList.remove('visible');
+    $('#skipBtn').setAttribute('aria-expanded', 'false');
+  }
+});
+
+// ========== Resolve Issue ==========
+function resolveIssue(id, status) {
+  const issue = getIssueById(id);
+  if (!issue) return;
+  issue.status = status;
+
+  // XP + streak
+  if (status === 'fixed' || status === 'ai-fixed') {
+    xp += status === 'ai-fixed' ? 15 : 25;
+    streak++;
+    $('#xpCount').textContent = xp;
+    $('#streakCount').textContent = streak;
+    if (status !== 'ai-fixed') {
+      showToast(`Issue #${id} fixed! +25 XP`, false);
+    } else {
+      showToast(`Issue #${id} AI-fixed! +15 XP`, false);
+    }
+  }
+
+  // Show resolved overlay briefly then advance
+  $('#resolvedOverlay').classList.add('visible');
+  $('#detailActions').style.display = 'none';
+  $('#aiDiffContainer').classList.remove('visible');
+  $('#resolvedText').textContent = status === 'skipped' ? 'Issue skipped' : status === 'ai-fixed' ? 'AI fix applied!' : 'Issue resolved!';
+
+  updateVerdict();
+  renderNavBar();
+
+  setTimeout(() => {
+    $('#resolvedOverlay').classList.remove('visible');
+    // Auto-advance to next open issue
+    const nextOpen = findNextOpenIssue(id);
+    if (nextOpen) {
+      selectIssue(nextOpen.id);
+    } else {
+      // All resolved
+      renderDetail();
+      checkAllResolved();
+    }
+  }, 1200);
+}
+
+function findNextOpenIssue(afterId) {
+  const allSorted = [...sortedIssues(getNewIssues()), ...sortedIssues(getPreExisting())];
+  const currentIdx = allSorted.findIndex(i => i.id === afterId);
+  // Look forward first
+  for (let i = currentIdx + 1; i < allSorted.length; i++) {
+    if (allSorted[i].status === 'open') return allSorted[i];
+  }
+  // Then look from start
+  for (let i = 0; i < currentIdx; i++) {
+    if (allSorted[i].status === 'open') return allSorted[i];
+  }
+  return null;
+}
+
+// ========== Update Verdict ==========
+function updateVerdict() {
+  const resolved = getResolvedCount();
+  const total = getTotalNew();
+  const pct = total > 0 ? Math.round((resolved / total) * 100) : 100;
+  const openNew = getOpenNewIssues().length;
+
+  // Pre-existing count
+  const preExistingCount = getPreExisting().length;
+  const preExistingText = preExistingCount > 0 ? ` · ${preExistingCount} pre-existing (non-blocking)` : '';
+
+  // Badge
+  const badge = $('#verdictBadge');
+  badge.classList.remove('blocked', 'in-progress', 'resolved', 'passing');
+  if (openNew === 0 && total > 0) {
+    badge.textContent = 'Resolved';
+    badge.classList.add('resolved');
+    $('#verdictDetail').textContent = 'All new issues resolved' + preExistingText;
+  } else if (resolved > 0) {
+    badge.textContent = 'In Progress';
+    badge.classList.add('in-progress');
+    $('#verdictDetail').textContent = `${openNew} issue${openNew !== 1 ? 's' : ''} remaining` + preExistingText;
+  } else {
+    badge.textContent = 'Blocked';
+    badge.classList.add('blocked');
+    $('#verdictDetail').textContent = `${openNew} new issue${openNew !== 1 ? 's' : ''} to resolve` + preExistingText;
+  }
+
+  // Progress bar
+  $('#progressFill').style.width = pct + '%';
+  const fillEl = $('#progressFill');
+  fillEl.classList.remove('low', 'mid', 'high');
+  if (pct < 33) fillEl.classList.add('low');
+  else if (pct < 75) fillEl.classList.add('mid');
+  else fillEl.classList.add('high');
+  $('#progressBar').setAttribute('aria-valuenow', pct);
+  $('#progressLabel').textContent = `${resolved} / ${total} resolved`;
+  $('#progressPct').textContent = pct + '%';
+
+  // Bulk fix button visibility
+  $('#bulkFixBtn').style.display = openNew > 0 ? '' : 'none';
+}
+
+function checkAllResolved() {
+  const openNew = getOpenNewIssues().length;
+  if (openNew === 0) {
+    showCelebration();
+  }
+}
+
+// ========== Celebration ==========
+function showCelebration() {
+  $('#celebration').classList.add('visible');
+  $('#detailArea').style.display = 'none';
+  $('#bottomNav').style.display = 'none';
+  fireConfetti();
+}
+
+function hideCelebration() {
+  $('#celebration').classList.remove('visible');
+  $('#detailArea').style.display = '';
+  $('#bottomNav').style.display = '';
+}
+
+// ========== Confetti ==========
+function fireConfetti() {
+  const canvas = $('#confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#d93025', '#e37400', '#f9a825', '#1e8e3e', '#7c3aed', '#d4a017'];
+
+  for (let i = 0; i < 150; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 8 + 4,
+      h: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: Math.random() * 4 + 2,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 10,
+      opacity: 1
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.vy += 0.05;
+      if (frame > 60) p.opacity -= 0.01;
+      if (p.opacity <= 0) return;
+      alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive && frame < 200) requestAnimationFrame(animate);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  animate();
+}
+
+// ========== Bottom Nav ==========
+function updateBottomNav() {
+  const allSorted = [...sortedIssues(getNewIssues()), ...sortedIssues(getPreExisting())];
+  const idx = allSorted.findIndex(i => i.id === selectedIssueId);
+  $('#prevBtn').disabled = idx <= 0;
+  $('#nextBtn').disabled = idx >= allSorted.length - 1;
+}
+
+$('#prevBtn').addEventListener('click', () => {
+  const allSorted = [...sortedIssues(getNewIssues()), ...sortedIssues(getPreExisting())];
+  const idx = allSorted.findIndex(i => i.id === selectedIssueId);
+  if (idx > 0) selectIssue(allSorted[idx - 1].id);
+});
+
+$('#nextBtn').addEventListener('click', () => {
+  const allSorted = [...sortedIssues(getNewIssues()), ...sortedIssues(getPreExisting())];
+  const idx = allSorted.findIndex(i => i.id === selectedIssueId);
+  if (idx < allSorted.length - 1) selectIssue(allSorted[idx + 1].id);
+});
+
+// ========== Toast ==========
+function showToast(msg, showUndo) {
+  clearTimeout(toastTimer);
+  const toast = $('#toast');
+  $('#toastMsg').textContent = msg;
+  $('#toastUndo').style.display = showUndo ? '' : 'none';
+  toast.classList.add('visible');
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('visible');
+    lastSkippedId = null;
+  }, 5000);
+}
+
+$('#toastUndo').addEventListener('click', () => {
+  if (lastSkippedId !== null) {
+    const issue = getIssueById(lastSkippedId);
+    if (issue) {
+      issue.status = 'open';
+      delete issue.skipReason;
+      updateVerdict();
+      renderNavBar();
+      selectIssue(lastSkippedId);
+      hideCelebration();
+    }
+    lastSkippedId = null;
+  }
+  $('#toast').classList.remove('visible');
+  clearTimeout(toastTimer);
+});
+
+// ========== Dark Mode ==========
+$('#themeToggle').addEventListener('click', () => {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  $('#themeIcon').innerHTML = isDark ? '&#9790;' : '&#9788;';
+  $('#themeToggle').innerHTML = `<span id="themeIcon">${isDark ? '&#9790;' : '&#9788;'}</span> ${isDark ? 'Dark' : 'Light'}`;
+});
+
+// ========== Bulk Fix Modal ==========
+$('#bulkFixBtn').addEventListener('click', () => {
+  const openIssues = issues.filter(i => i.status === 'open' && i.type === 'new');
+  const list = $('#bulkIssueList');
+  list.innerHTML = '';
+  openIssues.forEach(i => {
+    const li = document.createElement('li');
+    li.className = 'modal-issue-item';
+    li.innerHTML = `<span class="pill-severity ${i.severity}" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;"></span>
+      <span style="font-weight:600;">#${i.id}</span>
+      <span>${i.title}</span>`;
+    list.appendChild(li);
+  });
+  $('#bulkModal').classList.add('visible');
+});
+
+$('#bulkModalClose').addEventListener('click', () => $('#bulkModal').classList.remove('visible'));
+$('#bulkCancel').addEventListener('click', () => $('#bulkModal').classList.remove('visible'));
+$('#bulkModal').addEventListener('click', (e) => { if (e.target === $('#bulkModal')) $('#bulkModal').classList.remove('visible'); });
+
+$('#bulkConfirm').addEventListener('click', () => {
+  $('#bulkModal').classList.remove('visible');
+  const openNew = issues.filter(i => i.status === 'open' && i.type === 'new');
+  let delay = 0;
+  openNew.forEach((issue, idx) => {
+    setTimeout(() => {
+      issue.status = 'ai-fixed';
+      xp += 15;
+      streak++;
+      $('#xpCount').textContent = xp;
+      $('#streakCount').textContent = streak;
+      updateVerdict();
+      renderNavBar();
+      if (idx === openNew.length - 1) {
+        renderDetail();
+        checkAllResolved();
+      }
+    }, delay);
+    delay += 400;
+  });
+});
+
+// ========== Demo Controls ==========
+$('#demoToggle').addEventListener('click', () => {
+  $('#demoPanel').classList.toggle('visible');
+});
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.demo-controls')) $('#demoPanel').classList.remove('visible');
+});
+
+$$('.demo-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    $$('.demo-option').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    applyDemoState(opt.dataset.state);
+  });
+});
+
+function applyDemoState(state) {
+  // Reset
+  issues = JSON.parse(JSON.stringify(ISSUES_TEMPLATE));
+  xp = 240; streak = 0;
+  hideCelebration();
+
+  if (state === 'blocked') {
+    // Default state — issue 5 is pre-fixed
+  } else if (state === 'in-progress') {
+    issues[0].status = 'fixed';
+    issues[1].status = 'ai-fixed';
+    issues[4].status = 'fixed'; // #5 was already fixed
+    xp = 295; streak = 3;
+  } else if (state === 'all-resolved') {
+    issues.forEach(i => {
+      if (i.type === 'new') i.status = 'fixed';
+    });
+    xp = 365; streak = 5;
+  } else if (state === 'all-passing') {
+    issues = [];
+    xp = 400; streak = 7;
+  }
+
+  $('#xpCount').textContent = xp;
+  $('#streakCount').textContent = streak;
+  updateVerdict();
+  renderNavBar();
+
+  if (state === 'all-passing') {
+    // All passing: no issues at all
+    const badge = $('#verdictBadge');
+    badge.textContent = 'Passing';
+    badge.classList.remove('blocked', 'in-progress', 'resolved');
+    badge.classList.add('passing');
+    $('#verdictDetail').textContent = 'No accessibility issues found';
+    $('#progressFill').style.width = '100%';
+    $('#progressFill').className = 'progress-bar-fill high';
+    $('#progressLabel').textContent = 'All checks passed';
+    $('#progressPct').textContent = '100%';
+    $('#bulkFixBtn').style.display = 'none';
+    showCelebration();
+    return;
+  }
+
+  if (state === 'all-resolved') {
+    selectedIssueId = 1;
+    renderNavBar();
+    showCelebration();
+    return;
+  }
+
+  // Select first open issue
+  const firstOpen = [...sortedIssues(getNewIssues()), ...sortedIssues(getPreExisting())].find(i => i.status === 'open');
+  selectedIssueId = firstOpen ? firstOpen.id : issues[0]?.id || 1;
+  renderNavBar();
+  renderDetail();
+  $('#detailArea').style.display = '';
+  $('#bottomNav').style.display = '';
+}
+
+// ========== Init ==========
+function init() {
+  const firstOpen = sortedIssues(getNewIssues()).find(i => i.status === 'open');
+  selectedIssueId = firstOpen ? firstOpen.id : 1;
+  updateVerdict();
+  renderNavBar();
+  renderDetail();
+}
+
+init();
+</script>
+</body>
+</html>

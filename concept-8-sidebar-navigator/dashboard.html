@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN - Accessibility Audit Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  --top-bar-h: 56px;
+  --sidebar-w: 300px;
+  --critical: #E62214;
+  --serious: #FE620F;
+  --moderate: #868AA5;
+  --success: #25A55A;
+  --focus-ring: #3b82f6;
+}
+
+[data-theme="dark"] {
+  --bg-body: #080809;
+  --bg-sidebar: #0e0e10;
+  --bg-card: #131315;
+  --bg-hover: #1c1c1f;
+  --bg-code: #1c1c1f;
+  --bg-topbar: #0e0e10;
+  --border: #2a2a2f;
+  --border-subtle: #1f1f23;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a0a0ab;
+  --text-muted: #919197;
+  --bg-active-filter: #f4f4f5;
+  --text-active-filter: #0a0a0b;
+  --bg-inactive-filter: #1c1c1f;
+  --text-inactive-filter: #c0c0cc;
+  --sidebar-active-bg: #1c1c1f;
+  --diff-add-bg: #132616;
+  --diff-add-text: #4ade80;
+  --diff-remove-bg: #2d1215;
+  --diff-remove-text: #f87171;
+  --skip-overlay: rgba(8,8,9,0.7);
+}
+
+[data-theme="light"] {
+  --bg-body: #f0f0f2;
+  --bg-sidebar: #fafafa;
+  --bg-card: #ffffff;
+  --bg-hover: #ebebed;
+  --bg-code: #f0f0f2;
+  --bg-topbar: #ffffff;
+  --border: #e0e0e3;
+  --border-subtle: #ebebed;
+  --text-primary: #111113;
+  --text-secondary: #4a4a52;
+  --text-muted: #6b6b78;
+  --bg-active-filter: #111113;
+  --text-active-filter: #ffffff;
+  --bg-inactive-filter: #ebebed;
+  --text-inactive-filter: #4a4a52;
+  --sidebar-active-bg: #e6e6ea;
+  --diff-add-bg: #dcfce7;
+  --diff-add-text: #166534;
+  --diff-remove-bg: #fee2e2;
+  --diff-remove-text: #991b1b;
+  --skip-overlay: rgba(255,255,255,0.6);
+}
+
+body {
+  font-family: var(--font-stack);
+  background: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* TOP BAR */
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--top-bar-h);
+  background: var(--bg-topbar);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(22,24,26,0.07);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100;
+  gap: 16px;
+}
+.top-bar-brand {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+.top-bar-brand .logo {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.top-bar-brand .subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.dark-mode-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 32px; height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  margin-left: auto;
+  transition: background 0.2s;
+}
+.dark-mode-toggle:hover { background: var(--bg-hover); }
+.dark-mode-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* LAYOUT */
+.page-wrapper {
+  margin-top: var(--top-bar-h);
+  height: calc(100vh - var(--top-bar-h));
+  display: flex;
+  flex-direction: column;
+}
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--bg-sidebar);
+  border-right: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+/* Summary filter tabs */
+.summary-filters {
+  display: flex;
+  gap: 0;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+.filter-tab {
+  flex: 1;
+  padding: 14px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  font-family: var(--font-stack);
+  border-right: 1px solid var(--border-subtle);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.filter-tab:last-child { border-right: none; }
+.filter-tab:hover { background: var(--bg-hover); color: var(--text-primary); }
+.filter-tab:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.filter-tab.active {
+  color: var(--text-primary);
+  font-weight: 700;
+  background: var(--bg-hover);
+}
+.filter-tab.active::after {
+  display: none;
+}
+.filter-tab .count {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  display: block;
+}
+.filter-tab .label {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+.filter-tab--failed .count { color: var(--critical); }
+.filter-tab--failed.active { color: var(--critical); }
+.filter-tab--failed.active::after { background: var(--critical); }
+.filter-tab--skipped .count { color: var(--serious); }
+.filter-tab--skipped.active { color: var(--serious); }
+.filter-tab--skipped.active::after { background: var(--serious); }
+.filter-tab--passed .count { color: var(--success); }
+.filter-tab--passed.active { color: var(--success); }
+.filter-tab--passed.active::after { background: var(--success); }
+.filter-tab--pre-existing .count { color: var(--text-muted); }
+.filter-tab--pre-existing.active { color: var(--text-secondary); }
+.filter-tab--pre-existing.active::after { background: var(--text-muted); }
+.filter-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: help;
+  vertical-align: middle;
+  margin-left: 2px;
+  line-height: 1;
+  position: relative;
+}
+.filter-tooltip-trigger .filter-tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-primary);
+  color: var(--bg-card);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  width: 220px;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.filter-tooltip-trigger:hover .filter-tooltip-box,
+.filter-tooltip-trigger:focus .filter-tooltip-box {
+  display: block;
+}
+
+.sidebar-title {
+  padding: 12px 14px 4px;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+}
+.rule-groups {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 6px 10px;
+}
+.rule-groups::-webkit-scrollbar { width: 5px; }
+.rule-groups::-webkit-scrollbar-track { background: transparent; }
+.rule-groups::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Package Tree ── */
+.pkg-tree-node {
+  margin-bottom: 2px;
+}
+.pkg-tree-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.1s;
+  user-select: none;
+}
+.pkg-tree-header:hover { background: var(--bg-hover); }
+.pkg-tree-chevron {
+  font-size: 12px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  width: 12px;
+  text-align: center;
+}
+.pkg-tree-node.open > .pkg-tree-header > .pkg-tree-chevron {
+  transform: rotate(90deg);
+}
+.pkg-tree-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+.pkg-tree-name {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.pkg-tree-badge {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pkg-tree-badge.has-new {
+  background: var(--critical);
+  color: #fff;
+}
+.pkg-tree-badge.pre-existing-only {
+  background: var(--border);
+  color: var(--text-secondary);
+}
+.pkg-tree-badge.passed-only {
+  background: rgba(34,197,94,0.12);
+  color: var(--success);
+}
+.pkg-tree-children {
+  display: none;
+  padding-left: 14px;
+}
+.pkg-tree-node.open > .pkg-tree-children {
+  display: block;
+}
+
+/* Component items inside packages */
+.comp-tree-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.1s;
+  margin-bottom: 1px;
+  border-left: 2px solid transparent;
+}
+.comp-tree-item:hover { background: var(--bg-hover); }
+.comp-tree-item.active {
+  background: var(--sidebar-active-bg);
+  border-left-color: var(--text-muted);
+}
+.comp-tree-item.passed-comp {
+  opacity: 0.6;
+}
+.comp-tree-item.passed-comp:hover { opacity: 0.85; }
+.comp-tree-icon {
+  font-size: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+.comp-tree-icon.violated { color: var(--critical); }
+.comp-tree-icon.pre-existing-icon { color: var(--text-muted); }
+.comp-tree-icon.passed-icon { color: var(--success); }
+.comp-tree-info {
+  flex: 1;
+  min-width: 0;
+}
+.comp-tree-name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.comp-tree-item.active .comp-tree-name { font-weight: 600; }
+.comp-tree-counts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.comp-tree-counts .new-dot { color: var(--critical); font-weight: 600; }
+.comp-tree-counts .bl-dot { color: var(--text-muted); }
+
+/* Pre-existing filter: flip emphasis — bl-dot prominent, new-dot muted */
+[data-filter-mode="pre-existing"] .comp-tree-counts .bl-dot { color: var(--text-primary); font-weight: 600; }
+[data-filter-mode="pre-existing"] .comp-tree-counts .new-dot { color: var(--text-muted); font-weight: 400; }
+
+/* Legacy support for rule-group items (kept for backward compat) */
+.rule-group-item {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  margin-bottom: 4px;
+  transition: all 0.15s;
+}
+.rule-group-item:hover { background: var(--bg-hover); }
+.rule-group-item:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.rule-group-item.active {
+  background: var(--sidebar-active-bg);
+  border-left-color: transparent;
+}
+.rule-group-name {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rule-group-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.wcag-tag {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.category-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.category-dot.keyboard { background: var(--focus-ring); }
+.category-dot.contrast { background: var(--serious); }
+.category-dot.aria { background: var(--success); }
+.category-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.rule-group-pkg {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rule-group-counts {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.rule-group-counts .issue-total { font-weight: 600; color: var(--text-secondary); }
+.rule-group-counts .new-count { color: var(--text-primary); font-weight: 600; }
+.rule-group-counts .bl-count { color: var(--text-muted); }
+
+/* Summary Banner — full width above sidebar+main */
+.summary-banner {
+  padding: 0;
+  background: var(--bg-card);
+  border-bottom: 0;
+}
+.summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.summary-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--critical);
+  color: #fff;
+  flex-shrink: 0;
+}
+.summary-badge-icon { font-size: 12px; }
+.summary-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.summary-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.summary-stats {
+  display: flex;
+  gap: 0;
+}
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  border-right: 1px solid var(--border-subtle);
+}
+.summary-stat:last-child { border-right: none; }
+.summary-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.summary-stat-value.total { color: var(--text-primary); }
+.summary-stat-value.new { color: var(--text-primary); }
+.summary-stat-value.baseline { color: var(--text-muted); }
+.summary-stat-value.critical { color: var(--critical); }
+.summary-stat-value.serious { color: var(--serious); }
+.summary-stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 28px;
+}
+.main-content::-webkit-scrollbar { width: 5px; }
+.main-content::-webkit-scrollbar-track { background: transparent; }
+.main-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.main-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.main-title {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.main-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* SIDEBAR PACKAGE FILTER */
+.sidebar-package-filter {
+  padding: 6px 10px 8px;
+}
+
+/* PACKAGE FILTER DROPDOWN */
+.package-filter-wrapper {
+  position: relative;
+}
+.package-filter-btn {
+  width: 100%;
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.package-filter-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.package-filter-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.package-filter-btn.active {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+.package-filter-btn .chevron-down {
+  font-size: 12px;
+  transition: transform 0.15s;
+}
+.package-filter-btn.open .chevron-down {
+  transform: rotate(180deg);
+}
+.package-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  min-width: 200px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  z-index: 100;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.package-dropdown.open { display: block; }
+.package-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: background 0.1s;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.package-dropdown-item:last-child { border-bottom: none; }
+.package-dropdown-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.package-dropdown-item.active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.package-dropdown-item .pkg-count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-family: var(--font-stack);
+}
+.package-dropdown-item .pkg-check {
+  width: 14px;
+  font-size: 12px;
+  color: var(--focus-ring);
+  flex-shrink: 0;
+}
+
+/* SEVERITY FILTER PILLS */
+.severity-dropdown-wrap {
+  position: relative;
+  margin-left: auto;
+}
+.severity-dropdown-btn {
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 28px 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  transition: all 0.15s;
+}
+.severity-dropdown-btn:hover { border-color: var(--text-muted); }
+.severity-dropdown-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.severity-dropdown-btn::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid var(--text-muted);
+}
+.severity-dropdown-btn .sev-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.severity-dropdown-btn .sev-dot.critical { background: var(--critical); }
+.severity-dropdown-btn .sev-dot.serious { background: var(--serious); }
+.severity-dropdown-btn .sev-dot.moderate { background: var(--moderate); }
+.severity-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 50;
+  padding: 4px;
+}
+.severity-dropdown-menu.open { display: block; }
+.severity-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  background: none;
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.1s;
+}
+.severity-dropdown-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.severity-dropdown-item:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.severity-dropdown-item.active { color: var(--text-primary); font-weight: 600; }
+.severity-dropdown-item .sev-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.severity-dropdown-item .sev-dot.critical { background: var(--critical); }
+.severity-dropdown-item .sev-dot.serious { background: var(--serious); }
+.severity-dropdown-item .sev-dot.moderate { background: var(--moderate); }
+.severity-dropdown-item .sev-count {
+  margin-left: auto;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* PROGRESS BAR — removed */
+
+/* VIOLATION CARDS */
+.violation-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(22,24,26,0.06), 0 0 1px rgba(22,24,26,0.04);
+  transition: opacity 0.3s, border-color 0.2s, box-shadow 0.2s;
+}
+.violation-card:hover { border-color: rgba(22,24,26,0.18); box-shadow: 0 4px 14px rgba(22,24,26,0.10), 0 0 1px rgba(22,24,26,0.06); }
+.violation-card.skipped { opacity: 0.4; }
+.violation-card.resolved {
+  opacity: 0.35;
+  pointer-events: none;
+}
+.violation-card.resolved .card-actions { pointer-events: auto; }
+.violation-card.resolved .btn-fix,
+.violation-card.resolved .btn-skip,
+.violation-card.resolved .btn-done { display: none; }
+.violation-card.resolved .btn-undo { display: inline-flex; }
+
+/* Collapsible cards */
+.violation-card.v-collapsed {
+  padding: 12px 20px;
+  cursor: pointer;
+}
+.violation-card.v-collapsed .selector-badge,
+.violation-card.v-collapsed .card-html-path,
+.violation-card.v-collapsed .card-location,
+.violation-card.v-collapsed .card-screenshot,
+.violation-card.v-collapsed .card-fix-hint,
+.violation-card.v-collapsed .card-footer,
+.violation-card.v-collapsed .card-actions-bottom,
+.violation-card.v-collapsed .card-wcag,
+.violation-card.v-collapsed .card-more-info-toggle {
+  display: none;
+}
+
+.card-more-info-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0;
+  transition: color 0.15s;
+}
+.card-more-info-toggle:hover { color: var(--text-primary); }
+.card-more-info-toggle .toggle-chevron {
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.card-more-info-toggle.open .toggle-chevron {
+  transform: rotate(90deg);
+}
+.card-more-info {
+  display: none;
+}
+.card-more-info.open {
+  display: block;
+}
+.violation-card.v-collapsed .card-more-info { display: none; }
+.violation-card.v-collapsed .card-rule-name {
+  margin-bottom: 0;
+}
+.violation-card + .violation-card.v-collapsed {
+  margin-top: 6px;
+}
+/* Chevron for collapse/expand */
+.card-top-row .card-chevron {
+  margin-left: auto;
+  font-size: 16px;
+  color: var(--text-secondary);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.violation-card.v-collapsed .card-top-row .card-chevron {
+  transform: rotate(-90deg);
+}
+/* Resolution banner in collapsed card */
+.violation-card.v-collapsed .card-resolution-banner {
+  display: inline-flex;
+  margin-left: auto;
+  margin-top: 0;
+}
+.violation-card.resolved.v-collapsed {
+  pointer-events: auto;
+  opacity: 0.5;
+}
+.violation-card.resolved.v-collapsed .card-resolution-banner { pointer-events: auto; }
+
+.card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  /* tightened from 10px implied */
+}
+.card-top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.severity-badge.critical { background: transparent; color: var(--critical); border: 1px solid var(--critical); }
+.severity-badge.serious  { background: transparent; color: var(--serious);  border: 1px solid var(--serious); }
+.severity-badge.moderate { background: transparent; color: var(--moderate); border: 1px solid var(--moderate); }
+.severity-icon { font-size: 12px; }
+
+.status-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-hover);
+  color: var(--text-muted);
+}
+.status-tag.new {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+.status-tag.baseline,
+.status-tag.pre-existing {
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.status-tag.skipped-tag {
+  color: var(--moderate);
+  border-color: var(--moderate);
+}
+
+.card-rule-name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.card-wcag {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.selector-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-code);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border-subtle);
+}
+.card-location {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.card-html-path {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: var(--bg-code);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin: 8px 0 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  border: 1px solid var(--border-subtle);
+  max-width: 520px;
+}
+.card-fix-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 8px 0 6px;
+  padding: 6px 10px;
+  background: var(--bg-code);
+  border-radius: 4px;
+  max-width: 520px;
+}
+.card-fix-hint-icon {
+  color: var(--text-secondary);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.card-screenshot {
+  width: 520px;
+  max-width: 100%;
+  height: 80px;
+  border-radius: 6px;
+  margin: 8px 0 6px;
+  background: var(--bg-code);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+.card-screenshot-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.card-screenshot-placeholder-icon {
+  font-size: 20px;
+  opacity: 0.4;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.card-fix-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid var(--focus-ring);
+  background: transparent;
+  color: var(--focus-ring);
+  transition: all 0.15s;
+}
+.card-fix-all:hover {
+  background: var(--focus-ring);
+  color: #fff;
+}
+.card-fix-all:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.card-fix-all svg {
+  flex-shrink: 0;
+}
+.card-learn-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--focus-ring);
+  text-decoration: none;
+}
+.card-learn-more:hover {
+  text-decoration: underline;
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.card-actions-bottom {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+.card-actions-bottom .btn-done {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border);
+  font-weight: 700;
+  padding: 7px 16px;
+}
+.card-actions-bottom .btn-done:hover { opacity: 0.85; }
+.card-actions-bottom .btn-fix {
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+}
+.card-actions-bottom .btn-skip {
+  margin-left: auto;
+}
+.btn-fix, .btn-skip, .btn-unskip, .btn-apply, .btn-done, .btn-undo {
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.btn-done {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.btn-done:hover { border-color: var(--text-secondary); }
+.btn-undo {
+  display: none;
+  border-color: var(--text-muted);
+  color: var(--text-secondary);
+}
+.btn-undo:hover { border-color: var(--text-primary); color: var(--text-primary); }
+.btn-fix:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.btn-skip:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.btn-unskip { border-color: var(--moderate); color: var(--moderate); }
+.btn-unskip:hover { background: var(--moderate); color: #000; }
+.btn-apply { border-color: var(--success); color: var(--success); }
+.btn-apply:hover { background: var(--success); color: #000; }
+.btn-fix:focus-visible, .btn-skip:focus-visible, .btn-unskip:focus-visible, .btn-apply:focus-visible, .btn-done:focus-visible, .btn-undo:focus-visible {
+  outline: 2px solid var(--focus-ring); outline-offset: 2px;
+}
+
+/* DIFF PANEL */
+.diff-panel {
+  display: none;
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.diff-panel.open { display: block; }
+.diff-line {
+  padding: 2px 14px;
+  white-space: pre;
+}
+.diff-line.remove {
+  background: var(--diff-remove-bg);
+  color: var(--diff-remove-text);
+}
+.diff-line.add {
+  background: var(--diff-add-bg);
+  color: var(--diff-add-text);
+}
+.diff-actions {
+  padding: 10px 14px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+}
+
+/* SKIP DROPDOWN — removed, replaced by modal */
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px 22px 18px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+.modal-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.modal-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+  display: block;
+}
+.modal-textarea {
+  width: 100%;
+  min-height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  font-family: var(--font-stack);
+  font-size: 13px;
+  padding: 9px 11px;
+  resize: vertical;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.modal-textarea:focus {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -1px;
+  border-color: var(--focus-ring);
+}
+.modal-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.modal-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 7px 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: background 0.1s, border-color 0.15s;
+}
+.modal-radio-label:hover { background: var(--bg-hover); border-color: var(--text-muted); }
+.modal-radio-label:has(input:checked) { border-color: var(--text-muted); background: var(--bg-hover); }
+.modal-radio-label input[type="radio"] {
+  accent-color: var(--text-primary);
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+.modal-radio-label .radio-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+.modal-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.modal-btn {
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+}
+.modal-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--text-muted); }
+.modal-btn.primary {
+  background: var(--text-primary);
+  color: var(--bg-card);
+  border-color: var(--text-primary);
+}
+.modal-btn.primary:hover { opacity: 0.85; }
+.modal-btn:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* AI FIX LOADING MODAL */
+.ai-modal-content {
+  text-align: center;
+  padding: 12px 0 6px;
+}
+.ai-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--border);
+  border-top-color: var(--text-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.ai-modal-status {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+.ai-modal-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.ai-modal-done { display: none; }
+.ai-modal-done.visible { display: block; }
+.ai-modal-loading.hidden { display: none; }
+.ai-done-icon {
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: var(--success);
+}
+
+/* RESOLUTION BANNER on cards */
+.card-resolution-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+}
+.card-resolution-banner.resolved-manual,
+.card-resolution-banner.resolved-ai,
+.card-resolution-banner.resolved-skipped {
+  background: rgba(0,0,0,0.05);
+  color: #374151;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .card-resolution-banner.resolved-manual,
+[data-theme="dark"] .card-resolution-banner.resolved-ai,
+[data-theme="dark"] .card-resolution-banner.resolved-skipped {
+  background: rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  border-color: rgba(255,255,255,0.15);
+}
+.card-resolution-banner .banner-icon {
+  font-size: 14px;
+}
+
+/* SIDEBAR PASSED ITEMS */
+.rule-group-item.passed {
+  border-left-color: transparent;
+}
+.rule-group-item.passed:hover { background: var(--bg-hover); }
+.rule-group-passed-icon {
+  color: var(--success);
+  font-size: 12px;
+  margin-right: 4px;
+}
+.sidebar-section-label {
+  padding: 14px 14px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* PASSED COMPONENT CARDS */
+.passed-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(22,24,26,0.05), 0 0 1px rgba(22,24,26,0.03);
+}
+.passed-card .passed-icon {
+  color: var(--success);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.passed-card .passed-info {
+  flex: 1;
+  min-width: 0;
+}
+.passed-card .passed-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.passed-card .passed-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.passed-card .passed-pkg {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ALL-SECTION LABEL */
+.all-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  padding: 16px 4px 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.all-section-label:first-child { padding-top: 4px; }
+
+/* CELEBRATION */
+.celebration {
+  display: none;
+  text-align: center;
+  padding: 80px 20px;
+}
+.celebration.show { display: block; }
+.celebration-icon { font-size: 64px; margin-bottom: 16px; }
+.celebration h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.celebration p { font-size: 16px; color: var(--text-secondary); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main-content { padding: 16px; }
+  .card-top-row { flex-wrap: wrap; }
+  .card-actions { width: 100%; margin-top: 8px; }
+  .summary-top { flex-direction: column; gap: 8px; }
+}
+h1.logo {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: inherit;
+}
+h2.modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  line-height: 1.5;
+}
+.card-more-info-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* ── Rule-grouped violation card (concept-A style) ── */
+.violation-card .instances-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.violation-card .violation-instances {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+/* ── Violation Instance — redesigned ── */
+.violation-card .violation-instance {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg-body);
+  transition: opacity 0.2s;
+}
+.violation-card .violation-instance + .violation-instance { margin-top: 6px; }
+
+/* ── Resolved — subtle, no border, no fade ── */
+.violation-card .violation-instance.resolved-instance {
+}
+.violation-card .violation-instance.resolved-instance .instance-num {
+  font-size: 0;
+  background: rgba(34,197,94,0.12);
+  border-color: rgba(34,197,94,0.45);
+}
+.violation-card .violation-instance.resolved-instance .instance-num::after {
+  content: '✓';
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--success);
+}
+.violation-card .violation-instance.resolved-instance .instance-resolution-label {
+  color: var(--text-muted);
+  background: transparent;
+}
+.violation-card .violation-instance.resolved-instance .instance-more-info-toggle { display: none; }
+
+/* ── Skipped — no border, matches resolved style ── */
+.violation-card .violation-instance.skipped-instance {
+}
+.violation-card .violation-instance.skipped-instance .instance-num {
+  font-size: 0;
+  background: rgba(234,179,8,0.1);
+  border-color: rgba(234,179,8,0.4);
+}
+.violation-card .violation-instance.skipped-instance .instance-num::after {
+  content: '–';
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--moderate);
+}
+.violation-card .violation-instance.skipped-instance .instance-code {
+  color: var(--text-muted);
+}
+.violation-card .violation-instance.skipped-instance .instance-resolution-label {
+  color: var(--text-muted);
+  background: transparent;
+}
+.violation-card .violation-instance.skipped-instance .instance-more-info-toggle { display: none; }
+
+/* Row 1: index badge · code selector · copy btn */
+.violation-card .instance-row-1 {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px 5px;
+  gap: 7px;
+}
+.violation-card .instance-num {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #c8c8cc;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3a3a3f;
+}
+.violation-card .instance-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: calc(100% - 80px);
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+[data-theme="light"] .violation-card .instance-code { color: #0550ae; }
+[data-theme="dark"]  .violation-card .instance-code { color: #79c0ff; }
+.violation-card .btn-copy-selector {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  padding: 0;
+}
+.violation-card .btn-copy-selector:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border); }
+.violation-card .btn-copy-selector:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Row 2: More info toggle · spacer · actions */
+.violation-card .instance-row-2 {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px 8px;
+  gap: 6px;
+}
+.violation-card .instance-more-info-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-family: var(--font-stack);
+  transition: all 0.15s;
+}
+.violation-card .instance-more-info-toggle:hover { color: var(--text-primary); background: var(--bg-hover); }
+.violation-card .instance-more-info-toggle:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.violation-card .instance-more-info-toggle .toggle-chevron {
+  font-size: 12px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.violation-card .instance-more-info-toggle.open .toggle-chevron { transform: rotate(90deg); }
+
+/* Actions cluster (right side of row-2) */
+.violation-card .instance-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+.violation-card .instance-actions button {
+  font-family: var(--font-stack);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.violation-card .instance-actions button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Fix with AI — outlined with emphasis */
+.violation-card .instance-actions .btn-instance-fix {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-secondary);
+  font-weight: 500;
+}
+.violation-card .instance-actions .btn-instance-fix:hover { border-color: var(--border); color: var(--text-secondary); }
+
+/* Tertiary: Ignore issue — plain text, no border */
+.violation-card .instance-actions .btn-instance-skip {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  font-weight: 400;
+}
+.violation-card .instance-actions .btn-instance-skip:hover { color: var(--text-primary); }
+
+/* Undo — subtle outlined */
+.violation-card .instance-actions .btn-instance-undo,
+.violation-card .instance-actions .btn-instance-unskip {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.violation-card .instance-actions .btn-instance-undo:hover,
+.violation-card .instance-actions .btn-instance-unskip:hover { border-color: var(--text-primary); color: var(--text-primary); }
+
+/* Inline resolution label */
+.violation-card .instance-resolution-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--bg-hover);
+  white-space: nowrap;
+}
+
+/* More info panel */
+.violation-card .instance-more-info {
+  display: none;
+  border-top: 1px solid var(--border-subtle);
+  padding: 12px 14px;
+  background: var(--bg-card);
+}
+.violation-card .instance-more-info.open {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+/* Screenshot placeholder */
+.violation-card .info-screenshot {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+  min-height: 90px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--bg-body);
+}
+.violation-card .info-screenshot-icon { font-size: 22px; opacity: 0.28; }
+
+/* HTML element code block — styled like GitHub/DevTools */
+.violation-card .info-html-block {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 12px 16px;
+  border-radius: 6px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0;
+  border: 1px solid var(--border);
+}
+[data-theme="light"] .violation-card .info-html-block { background: #f6f8fa; color: #1f2328; border-color: #d0d7de; }
+[data-theme="dark"]  .violation-card .info-html-block { background: #161b22; color: #e6edf3; border-color: #30363d; }
+/* Fix any of section */
+.violation-card .card-fix-options {
+  margin: 0 0 14px;
+  padding: 8px 10px 12px;
+  background: transparent;
+  border: none;
+}
+.violation-card .card-fix-options-heading {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.violation-card .card-fix-options ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.violation-card .card-fix-options ul li {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  line-height: 1.5;
+}
+.violation-card .card-fix-options ul li::before {
+  content: '•';
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1;
+}
+.violation-card .card-fix-options ul li code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--text-primary);
+}
+
+/* Hide instances section when card collapsed */
+.violation-card.v-collapsed .instances-count,
+.violation-card.v-collapsed .violation-instances,
+.violation-card.v-collapsed .card-fix-options {
+  display: none;
+}
+/* Modal required asterisk */
+.modal-required {
+  color: var(--critical);
+  font-weight: 600;
+  margin-left: 1px;
+}
+
+/* Modal scope tooltip */
+.modal-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: help;
+  margin-left: 5px;
+  vertical-align: middle;
+  position: relative;
+}
+.modal-tooltip-trigger:hover .modal-tooltip-box,
+.modal-tooltip-trigger:focus .modal-tooltip-box {
+  display: block;
+}
+.modal-tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 230px;
+  background: var(--text-primary);
+  color: var(--bg-card);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  white-space: normal;
+  pointer-events: none;
+  z-index: 200;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.modal-tooltip-box strong { font-weight: 600; }
+
+/* Footer always visible — collapsed cards show fix-all + learn more */
+.violation-card.v-collapsed .card-footer {
+  border-top: none;
+  padding-top: 4px;
+  margin-top: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- SKIP MODAL -->
+<div class="modal-overlay" id="skipModal" role="dialog" aria-modal="true" aria-labelledby="skipModalTitle">
+  <div class="modal-box">
+    <h2 class="modal-title" id="skipModalTitle">Reason</h2>
+    <div id="skipModalRule" style="display:none"></div>
+    <textarea class="modal-textarea" id="skipReason" placeholder="Why are you ignoring this violation?"></textarea>
+    <label class="modal-label">Scope <span class="modal-required">*</span><span class="modal-tooltip-trigger" tabindex="0" aria-label="Scope info: 'This PR only' will reappear on the next scan. 'Forever' adds it to your permanent ignore list and it won't be flagged again.">?<span class="modal-tooltip-box"><strong>This PR only</strong> — will reappear on the next scan.<br><strong>Forever</strong> — adds to permanent ignore list and won't be flagged again.</span></span></label>
+    <div class="modal-radio-group">
+      <label class="modal-radio-label">
+        <input type="radio" name="skipScope" value="this-pr" checked>
+        Ignore for this PR only
+      </label>
+      <label class="modal-radio-label">
+        <input type="radio" name="skipScope" value="forever">
+        Ignore forever
+      </label>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="skipModalCancel">Cancel</button>
+      <button class="modal-btn primary" id="skipModalConfirm">Ignore Violation</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI FIX MODAL -->
+<div class="modal-overlay" id="aiModal" role="dialog" aria-modal="true" aria-labelledby="aiModalTitle">
+  <div class="modal-box">
+    <h2 class="modal-title" id="aiModalTitle">Fix with AI</h2>
+    <div id="aiModalRule" style="display:none"></div>
+    <div class="ai-modal-content">
+      <div class="ai-modal-loading" id="aiLoading">
+        <div class="ai-spinner"></div>
+        <div class="ai-modal-status">Analyzing violation...</div>
+        <div class="ai-modal-detail">Generating fix suggestion</div>
+      </div>
+      <div class="ai-modal-done" id="aiDone">
+        <div class="ai-done-icon">&#10003;</div>
+        <div class="ai-modal-status" style="color:var(--success);">Fix applied successfully</div>
+        <div class="ai-modal-detail">The code change has been applied to your branch</div>
+      </div>
+    </div>
+    <div class="modal-actions" id="aiModalActions">
+      <button class="modal-btn" id="aiModalCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<header class="top-bar" role="banner">
+  <div class="top-bar-brand">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="flex-shrink:0;opacity:0.85">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-13c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 8.5c0-1.33 2.67-2 4-2s4 .67 4 2V17H8v-1.5z"/>
+      </svg>
+      <h1 class="logo">ELEVEN</h1>
+    </div>
+    <span class="subtitle">PR #1247</span>
+  </div>
+  <button class="dark-mode-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle theme">
+    <span id="themeIcon">&#9790;</span>
+  </button>
+</header>
+
+<!-- PAGE WRAPPER -->
+<div class="page-wrapper">
+
+  <!-- SUMMARY BANNER — full width -->
+  <div class="summary-banner" id="summaryBanner">
+    <div class="summary-top">
+      <div class="summary-status">
+        <span class="summary-badge"><span class="summary-badge-icon">&#10005;</span> PR Blocked</span>
+        <div class="summary-text">
+          <div class="summary-title">New violations are blocking this PR from merging</div>
+          <div class="summary-subtitle">Resolve new violations to unblock your merge — pre-existing issues won't block</div>
+        </div>
+      </div>
+      <!-- stats hidden, counts in filter tabs -->
+      <span id="stat-total" style="display:none">31</span>
+      <span id="stat-new" style="display:none">18</span>
+      <span id="stat-baseline" style="display:none">13</span>
+      <span id="stat-critical" style="display:none">10</span>
+      <span id="stat-serious" style="display:none">11</span>
+    </div>
+    <div class="summary-filters" role="group" aria-label="Audit filters">
+      <button class="filter-tab filter-tab--failed active" data-filter="failed" aria-pressed="true"><span class="count" id="count-failed">9</span><span class="label">Failed Components</span></button>
+      <button class="filter-tab filter-tab--pre-existing" data-filter="pre-existing" aria-pressed="false"><span class="count" id="count-pre-existing">13</span><span class="label">Pre-existing <span class="filter-tooltip-trigger" tabindex="0" aria-label="Info about pre-existing violations">?<span class="filter-tooltip-box">Pre-existing violations were found on your first scan. They are non-blocking and won't fail your PR, but should be resolved within 60 days.</span></span></span></button>
+      <button class="filter-tab filter-tab--passed" data-filter="passed" aria-pressed="false"><span class="count" id="count-passed">38</span><span class="label">Passed Components</span></button>
+      <button class="filter-tab" data-filter="all" aria-pressed="false"><span class="count" id="count-total">43</span><span class="label">Total Components</span></button>
+    </div>
+  </div>
+
+  <!-- LAYOUT: sidebar + main -->
+  <div class="layout">
+    <!-- SIDEBAR: audits list -->
+    <aside class="sidebar" aria-label="Component tree">
+      <div class="sidebar-title" id="sidebarTitle">Components (43)</div>
+      <div class="rule-groups" role="list" aria-label="Components" id="ruleGroupsList">
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent" aria-label="Violation details">
+      <div class="main-header">
+        <h2 class="main-title" id="mainTitle">Packages</h2>
+        <span class="main-count" id="mainCount" aria-live="polite">31 items</span>
+        <div class="severity-dropdown-wrap" id="severityFilters">
+          <button class="severity-dropdown-btn" id="sevDropdownBtn" type="button" aria-haspopup="listbox" aria-expanded="false">All severities</button>
+          <div class="severity-dropdown-menu" id="sevDropdownMenu" role="listbox" aria-label="Filter by severity">
+            <button class="severity-dropdown-item active" role="option" aria-selected="true" data-severity="all">All severities</button>
+            <button class="severity-dropdown-item" role="option" aria-selected="false" data-severity="critical"><span class="sev-dot critical"></span> Critical <span class="sev-count" id="pill-critical-count"></span></button>
+            <button class="severity-dropdown-item" role="option" aria-selected="false" data-severity="serious"><span class="sev-dot serious"></span> Serious <span class="sev-count" id="pill-serious-count"></span></button>
+            <button class="severity-dropdown-item" role="option" aria-selected="false" data-severity="moderate"><span class="sev-dot moderate"></span> Moderate <span class="sev-count" id="pill-moderate-count"></span></button>
+          </div>
+        </div>
+      </div>
+    <div id="violationsList" aria-live="polite"></div>
+    <div class="celebration" id="celebration">
+      <div class="celebration-icon">&#127881;</div>
+      <h3>All New Violations Resolved!</h3>
+      <p>Every new accessibility violation has been addressed. Great work!</p>
+    </div>
+  </main>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ---- DATA ----
+  const ruleGroups = [
+    {
+      id: 'keyboard-accessible',
+      name: 'KeyboardNav-interactive-keyboard-a11y',
+      description: 'Interactive elements must be keyboard accessible',
+      wcag: 'WCAG 2.1.1',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard',
+      category: 'Keyboard Navigation',
+      categoryClass: 'keyboard',
+      pkg: '@wix/homepage',
+      fixOptions: [
+        'Replace <code>&lt;div&gt;</code> with a semantic <code>&lt;button&gt;</code> element',
+        'Add <code>tabindex="0"</code> and <code>onkeydown</code> handler for non-semantic elements',
+        'Add a valid <code>href</code> attribute to <code>&lt;a&gt;</code> elements',
+        'Add <code>aria-label</code> to icon-only interactive elements'
+      ],
+      diff: {
+        remove: '<div class="card-action" onclick="handleClick()">',
+        add: '<button class="card-action" onclick="handleClick()" type="button">'
+      },
+      violations: [
+        { selector: 'button.cta-primary', file: 'Hero.tsx:142', pkg: '@wix/homepage', severity: 'critical', status: 'new', htmlPath: 'html > body > main > section.hero > div.cta-wrapper > button.cta-primary', fixHint: 'Add tabindex="0" and keyboard event handlers', elementHtml: '<button class="cta-primary"\n        onclick="handleClick()">\n  Get Started\n</button>' },
+        { selector: 'div.card-action', file: 'ProductCard.tsx:89', pkg: '@wix/homepage', severity: 'critical', status: 'new', htmlPath: 'html > body > main > section.products > div.card > div.card-action', fixHint: 'Replace <div> with <button> element', elementHtml: '<div class="card-action"\n     onclick="handleProductClick(123)">\n  View Product\n</div>' },
+        { selector: 'a.nav-link', file: 'Navigation.tsx:34', pkg: '@wix/homepage', severity: 'critical', status: 'new', htmlPath: 'html > body > header > nav > ul > li > a.nav-link', fixHint: 'Add valid href attribute to the anchor', elementHtml: '<a class="nav-link"\n   onclick="navigate(\'products\')">\n  Products\n</a>' },
+        { selector: 'div.modal-close', file: 'Modal.tsx:201', pkg: '@wix/homepage', severity: 'critical', status: 'new', htmlPath: 'html > body > div.modal-overlay > div.modal > div.modal-close', fixHint: 'Replace <div> with <button> and add aria-label="Close"', elementHtml: '<div class="modal-close"\n     onclick="closeModal()">\n  ×\n</div>' },
+        { selector: 'button.filter-btn', file: 'Filters.tsx:67', pkg: '@wix/homepage', severity: 'critical', status: 'new', htmlPath: 'html > body > main > aside.filters > button.filter-btn', fixHint: 'Add role="button" and keyboard event handler', elementHtml: '<button class="filter-btn"\n        data-filter="price">\n  Price\n</button>' },
+        { selector: 'select.dropdown', file: 'Dropdown.tsx:12', pkg: '@wix/homepage', severity: 'serious', status: 'pre-existing', htmlPath: 'html > body > main > form > div.field > select.dropdown', fixHint: 'Remove outline suppression and style :focus-visible', elementHtml: '<select class="dropdown"\n        style="outline: none;">\n  <option>Choose...</option>\n</select>' },
+        { selector: 'a.footer-link', file: 'Footer.tsx:90', pkg: '@wix/homepage', severity: 'serious', status: 'pre-existing', htmlPath: 'html > body > footer > nav > a.footer-link', fixHint: 'Add :focus-visible outline with sufficient contrast', elementHtml: '<a class="footer-link"\n   href="/privacy">\n  Privacy Policy\n</a>' },
+        { selector: 'img.partner-logo', file: 'Partners.tsx:12', pkg: '@wix/homepage', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > main > section.partners > img.partner-logo', fixHint: 'Add alt with partner company name', elementHtml: '<img class="partner-logo"\n     src="partners/acme.png">' },
+        { selector: 'img.social-icon', file: 'SocialLinks.tsx:5', pkg: '@wix/homepage', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > footer > div.social > a > img.social-icon', fixHint: 'Add alt="" if decorative, or describe link target', elementHtml: '<img class="social-icon"\n     src="icons/twitter.svg">' },
+        { selector: 'img.payment-badge', file: 'Checkout.tsx:67', pkg: '@wix/homepage', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > main > section.checkout > div.payment > img.payment-badge', fixHint: 'Add alt describing the payment method', elementHtml: '<img class="payment-badge"\n     src="badges/visa.png">' },
+        { selector: 'button.menu-toggle', file: 'Header.tsx:78', pkg: '@wix/homepage', severity: 'serious', status: 'pre-existing', htmlPath: 'html > body > header > button.menu-toggle', fixHint: 'Add aria-label="Toggle menu" to the button', elementHtml: '<button class="menu-toggle"\n        onclick="toggleMenu()">\n  ☰\n</button>' },
+        { selector: 'button.scroll-top', file: 'ScrollTop.tsx:5', pkg: '@wix/homepage', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > button.scroll-top', fixHint: 'Add aria-label="Scroll to top"', elementHtml: '<button class="scroll-top"\n        onclick="scrollToTop()">\n  ↑\n</button>' }
+      ]
+    },
+    {
+      id: 'contrast',
+      name: 'ColorContrast-text-contrast-ratio-a11y',
+      description: 'Text must have sufficient contrast ratio',
+      wcag: 'WCAG 1.4.3',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum',
+      category: 'Color Contrast',
+      pkg: '@wix/forms',
+      categoryClass: 'contrast',
+      fixOptions: [
+        'Darken text color to at least <code>#595959</code> on white backgrounds (7.1:1)',
+        'Use <code>color-contrast()</code> or a contrast checker to verify 4.5:1 minimum ratio',
+        'Increase font-weight to <code>700</code> if keeping lighter color (large text threshold)',
+        'Replace placeholder text with a visible <code>&lt;label&gt;</code> element'
+      ],
+      diff: {
+        remove: '.helper-text { color: #999; }',
+        add: '.helper-text { color: #595959; } /* Contrast 7.1:1 \u2713 */'
+      },
+      violations: [
+        { selector: 'span.helper-text', file: 'FormField.tsx:56', pkg: '@wix/forms', severity: 'serious', status: 'new', htmlPath: 'html > body > main > form > div.field > span.helper-text', fixHint: 'Darken text color to meet 4.5:1 contrast ratio', elementHtml: '<span class="helper-text"\n      style="color: #999;">\n  Must be 8+ characters\n</span>' },
+        { selector: 'p.card-description', file: 'Card.tsx:34', pkg: '@wix/forms', severity: 'serious', status: 'new', htmlPath: 'html > body > main > section > div.card > p.card-description', fixHint: 'Change color from #999 to at least #595959', elementHtml: '<p class="card-description"\n   style="color: #999;">\n  Product description text goes here\n</p>' },
+        { selector: 'label.field-label', file: 'Input.tsx:19', pkg: '@wix/forms', severity: 'serious', status: 'new', htmlPath: 'html > body > main > form > div.field > label.field-label', fixHint: 'Increase label color contrast to 4.5:1 minimum', elementHtml: '<label class="field-label"\n       for="email">\n  Email address\n</label>' },
+        { selector: 'span.badge-text', file: 'Badge.tsx:8', pkg: '@wix/forms', severity: 'serious', status: 'new', htmlPath: 'html > body > main > div.badges > span.badge > span.badge-text', fixHint: 'Ensure badge text meets AA contrast on its background', elementHtml: '<span class="badge-text"\n      style="color: #bbb;">\n  New\n</span>' },
+        { selector: 'p.disclaimer', file: 'Footer.tsx:112', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > footer > div.legal > p.disclaimer', fixHint: 'Darken disclaimer text for readability', elementHtml: '<p class="disclaimer"\n   style="color: #aaa;">\n  Terms and conditions apply.\n</p>' },
+        { selector: 'span.timestamp', file: 'Comment.tsx:45', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > main > div.comments > div.comment > span.timestamp', fixHint: 'Use darker shade for timestamp text', elementHtml: '<span class="timestamp"\n      style="color: #ccc;">\n  2 hours ago\n</span>' },
+        { selector: 'small.copyright', file: 'Footer.tsx:130', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > footer > small.copyright', fixHint: 'Increase copyright text contrast ratio', elementHtml: '<small class="copyright"\n       style="color: #bbb;">\n  © 2024 Wix Ltd.\n</small>' },
+        { selector: 'img.trust-seal', file: 'Footer.tsx:88', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > footer > div.trust > img.trust-seal', fixHint: 'Add alt text describing the trust certification', elementHtml: '<img class="trust-seal"\n     src="seals/ssl-secure.png">' },
+        { selector: 'img.app-screenshot', file: 'AppStore.tsx:23', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > main > div.app-listing > img.app-screenshot', fixHint: 'Add alt describing the app screenshot content', elementHtml: '<img class="app-screenshot"\n     src="media/app-preview.jpg">' },
+        { selector: 'button.share-btn', file: 'ShareWidget.tsx:12', pkg: '@wix/forms', severity: 'moderate', status: 'pre-existing', htmlPath: 'html > body > main > div.share-widget > button.share-btn', fixHint: 'Add aria-label="Share this page"', elementHtml: '<button class="share-btn">\n  Share\n</button>' }
+      ]
+    }
+  ];
+
+  // Passed components (38 total — these have no violations)
+  const passedComponents = [
+    { name: 'HeadingStructure-page-heading-a11y', pkg: '@wix/blog-editor', wcag: 'WCAG 1.3.1' },
+    { name: 'LinkPurpose-link-identifiable-a11y', pkg: '@wix/navigation', wcag: 'WCAG 2.4.4' },
+    { name: 'LangAttr-language-attribute-a11y', pkg: '@wix/core', wcag: 'WCAG 3.1.1' },
+    { name: 'Landmarks-regions-defined-a11y', pkg: '@wix/layout', wcag: 'WCAG 1.3.1' },
+    { name: 'SkipNav-skip-navigation-a11y', pkg: '@wix/layout', wcag: 'WCAG 2.4.1' },
+    { name: 'TableHeaders-headers-associated-a11y', pkg: '@wix/data-table', wcag: 'WCAG 1.3.1' },
+    { name: 'FormErrors-error-identification-a11y', pkg: '@wix/forms', wcag: 'WCAG 3.3.1' },
+    { name: 'ErrorSuggestion-suggestion-provided-a11y', pkg: '@wix/forms', wcag: 'WCAG 3.3.3' },
+    { name: 'Autocomplete-input-autocomplete-a11y', pkg: '@wix/forms', wcag: 'WCAG 1.3.5' },
+    { name: 'PageTitle-title-descriptive-a11y', pkg: '@wix/core', wcag: 'WCAG 2.4.2' },
+    { name: 'TextResize-resize-text-200-a11y', pkg: '@wix/layout', wcag: 'WCAG 1.4.4' },
+    { name: 'Reflow-reflow-320px-a11y', pkg: '@wix/layout', wcag: 'WCAG 1.4.10' },
+    { name: 'MotionControl-animation-control-a11y', pkg: '@wix/animations', wcag: 'WCAG 2.3.3' },
+    { name: 'MediaControls-audio-video-a11y', pkg: '@wix/media', wcag: 'WCAG 1.2.1' },
+    { name: 'Captions-captions-provided-a11y', pkg: '@wix/media', wcag: 'WCAG 1.2.2' },
+    { name: 'ListStructure-list-correct-a11y', pkg: '@wix/content', wcag: 'WCAG 1.3.1' },
+    { name: 'AriaRoles-roles-valid-a11y', pkg: '@wix/tabs', wcag: 'WCAG 4.1.2' },
+    { name: 'AriaProps-properties-valid-a11y', pkg: '@wix/accordion', wcag: 'WCAG 4.1.2' },
+    { name: 'AriaState-state-reflects-ui-a11y', pkg: '@wix/toggle', wcag: 'WCAG 4.1.2' },
+    { name: 'TouchTarget-minimum-size-a11y', pkg: '@wix/mobile-nav', wcag: 'WCAG 2.5.8' },
+    { name: 'DragAlt-drag-alternative-a11y', pkg: '@wix/drag-drop', wcag: 'WCAG 2.5.7' },
+    { name: 'StatusMsg-messages-announced-a11y', pkg: '@wix/toast', wcag: 'WCAG 4.1.3' },
+    { name: 'ConsistentNav-navigation-a11y', pkg: '@wix/navigation', wcag: 'WCAG 3.2.3' },
+    { name: 'ConsistentId-identification-a11y', pkg: '@wix/design-system', wcag: 'WCAG 3.2.4' },
+    { name: 'KeyboardTrap-no-trap-a11y', pkg: '@wix/modal', wcag: 'WCAG 2.1.2' },
+    { name: 'Timing-timing-adjustable-a11y', pkg: '@wix/session', wcag: 'WCAG 2.2.1' },
+    { name: 'PointerGestures-gestures-alt-a11y', pkg: '@wix/maps', wcag: 'WCAG 2.5.1' },
+    { name: 'LabelInName-label-matches-a11y', pkg: '@wix/forms', wcag: 'WCAG 2.5.3' },
+    { name: 'HoverContent-hover-persistent-a11y', pkg: '@wix/tooltip', wcag: 'WCAG 1.4.13' },
+    { name: 'Orientation-not-restricted-a11y', pkg: '@wix/layout', wcag: 'WCAG 1.3.4' },
+    { name: 'InputPurpose-identify-purpose-a11y', pkg: '@wix/checkout', wcag: 'WCAG 1.3.5' },
+    { name: 'NonTextContrast-contrast-sufficient-a11y', pkg: '@wix/icons', wcag: 'WCAG 1.4.11' },
+    { name: 'TextSpacing-spacing-adjustable-a11y', pkg: '@wix/typography', wcag: 'WCAG 1.4.12' },
+    { name: 'FocusObscured-focus-not-obscured-a11y', pkg: '@wix/popover', wcag: 'WCAG 2.4.11' },
+    { name: 'FocusAppearance-appearance-visible-a11y', pkg: '@wix/design-system', wcag: 'WCAG 2.4.13' },
+    { name: 'HeadingOrder-heading-logical-a11y', pkg: '@wix/content', wcag: 'WCAG 1.3.1' },
+    { name: 'IframeTitle-title-provided-a11y', pkg: '@wix/embeds', wcag: 'WCAG 2.4.1' },
+    { name: 'SvgName-svg-accessible-name-a11y', pkg: '@wix/icons', wcag: 'WCAG 1.1.1' },
+  ];
+
+  // State
+  let activeFilter = 'failed';
+  let activeSeverity = 'all'; // 'all', 'critical', 'serious', 'moderate'
+  let activePackage = 'all'; // 'all' or a specific package name
+  let activeRuleGroup = null; // null = show all
+  var lastResolvedKey = null; // Track which violation was just resolved for auto-expand
+  var lastSkipKey = null; // Track which violation was just skipped — always keep card open
+  var pendingScrollTarget = null; // passed component name to scroll to after render
+  // Track per-violation state: 'active', 'skipped', 'resolved'
+  const violationState = {};
+  ruleGroups.forEach(rg => {
+    rg.violations.forEach((v, i) => {
+      violationState[rg.id + '-' + i] = { state: 'active', skipReason: null, resolvedBy: null, skipScope: null };
+    });
+  });
+
+  // ---- HELPERS ----
+  function severityIcon(sev) {
+    if (sev === 'critical') return '\u25CF';
+    if (sev === 'serious') return '\u25C6';
+    return '\u25CB';
+  }
+
+  function getCounts() {
+    let total = 0, newCount = 0, preExistingCount = 0, skippedCount = 0;
+    let criticalCount = 0, seriousCount = 0;
+    ruleGroups.forEach(rg => {
+      rg.violations.forEach((v, i) => {
+        const vs = violationState[rg.id + '-' + i];
+        if (vs.state === 'resolved') return;
+        total++;
+        if (vs.state === 'skipped') { skippedCount++; return; }
+        if (v.status === 'new') newCount++;
+        else preExistingCount++;
+        if (v.severity === 'critical') criticalCount++;
+        else if (v.severity === 'serious') seriousCount++;
+      });
+    });
+    // Component-level counts
+    const passedAudits = passedComponents.length;
+    const failedAudits = ruleGroups.length;
+    const totalAudits = passedAudits + failedAudits;
+    const skippedAudits = skippedCount;
+    return { total, newCount, preExistingCount, skippedCount, criticalCount, seriousCount, totalAudits, passedAudits, failedAudits, skippedAudits };
+  }
+
+  function getRuleGroupCounts(rg) {
+    let newC = 0, blC = 0;
+    rg.violations.forEach((v, i) => {
+      const vs = violationState[rg.id + '-' + i];
+      if (vs.state === 'resolved' || vs.state === 'skipped') return;
+      if (v.status === 'new') newC++;
+      else blC++;
+    });
+    return { newC, blC };
+  }
+
+  function getVisibleViolations() {
+    const result = [];
+    const groups = activeRuleGroup ? [ruleGroups.find(r => r.id === activeRuleGroup)] : ruleGroups;
+    groups.forEach(rg => {
+      if (!rg) return;
+      rg.violations.forEach((v, i) => {
+        const key = rg.id + '-' + i;
+        const vs = violationState[key];
+        if (activeFilter === 'passed') return; // passed audits have no violations to show
+        // skipped violations remain visible in 'failed' view (amber indicator, same pattern as resolved)
+        if (activeFilter === 'pre-existing' && v.status !== 'pre-existing') return;
+        if (activeFilter === 'skipped' && vs.state !== 'skipped') return;
+        if (activeFilter === 'all' && vs.state === 'skipped') {
+          // show skipped in "all" view too
+        }
+        if (activeSeverity !== 'all' && v.severity !== activeSeverity) return;
+        if (activePackage !== 'all' && v.pkg !== activePackage) return;
+        result.push({ ...v, ruleGroup: rg, key, vState: vs });
+      });
+    });
+    return result;
+  }
+
+  function getNewResolvedCount() {
+    let resolved = 0, totalNew = 0;
+    ruleGroups.forEach(rg => {
+      rg.violations.forEach((v, i) => {
+        if (v.status === 'new') {
+          totalNew++;
+          const vs = violationState[rg.id + '-' + i];
+          if (vs.state === 'resolved' || vs.state === 'skipped') resolved++;
+        }
+      });
+    });
+    return { resolved, totalNew };
+  }
+
+  // ---- RENDER ----
+  function getSkippedRuleGroups() {
+    // Rule groups that have at least one skipped violation
+    return ruleGroups.filter(rg => {
+      return rg.violations.some((v, i) => violationState[rg.id + '-' + i].state === 'skipped');
+    });
+  }
+
+  // Track which packages are open in the tree
+  var openPackages = {};
+
+  function buildPackageTree(filter) {
+    // Build a tree: package -> components (ruleGroups + passed)
+    var pkgMap = {};
+
+    // Add violated/pre-existing components grouped by their packages
+    if (filter === 'all' || filter === 'failed' || filter === 'pre-existing') {
+      ruleGroups.forEach(function(rg) {
+        // For pre-existing filter, only include if has pre-existing violations
+        if (filter === 'pre-existing' && !rg.violations.some(function(v) { return v.status === 'pre-existing'; })) return;
+
+        var counts = getRuleGroupCounts(rg);
+        // Collect unique packages for this ruleGroup
+        var pkgs = [];
+        rg.violations.forEach(function(v) { if (pkgs.indexOf(v.pkg) === -1) pkgs.push(v.pkg); });
+
+        pkgs.forEach(function(pkg) {
+          if (!pkgMap[pkg]) pkgMap[pkg] = { violated: [], preExisting: [], passed: [] };
+          // Determine type
+          var newInPkg = rg.violations.filter(function(v) { return v.pkg === pkg && v.status === 'new'; }).length;
+          var blInPkg = rg.violations.filter(function(v) { return v.pkg === pkg && v.status === 'pre-existing'; }).length;
+
+          if (filter === 'pre-existing') {
+            if (blInPkg > 0) pkgMap[pkg].preExisting.push({ rg: rg, newC: newInPkg, blC: blInPkg });
+          } else if (filter === 'failed') {
+            pkgMap[pkg].violated.push({ rg: rg, newC: newInPkg, blC: blInPkg });
+          } else {
+            // 'all' — put in violated bucket
+            pkgMap[pkg].violated.push({ rg: rg, newC: newInPkg, blC: blInPkg });
+          }
+        });
+      });
+    }
+
+    // Add passed components
+    if (filter === 'all' || filter === 'passed') {
+      passedComponents.forEach(function(pc) {
+        if (!pkgMap[pc.pkg]) pkgMap[pc.pkg] = { violated: [], preExisting: [], passed: [] };
+        pkgMap[pc.pkg].passed.push(pc);
+      });
+    }
+
+    return pkgMap;
+  }
+
+  function renderSidebar() {
+    var listEl = document.getElementById('ruleGroupsList');
+    listEl.innerHTML = '';
+    listEl.setAttribute('data-filter-mode', activeFilter);
+    var totalComponents = ruleGroups.length + passedComponents.length;
+    var titleEl = document.getElementById('sidebarTitle');
+
+    // Handle skipped early (no pkgTree needed)
+    if (activeFilter === 'skipped') {
+      var skippedGroups = getSkippedRuleGroups();
+      // Count packages for skipped
+      var skippedPkgs = {};
+      skippedGroups.forEach(function(rg) { rg.violations.forEach(function(v) { skippedPkgs[v.pkg] = true; }); });
+      var skippedPkgCount = Object.keys(skippedPkgs).length;
+      titleEl.textContent = skippedPkgCount + ' package' + (skippedPkgCount !== 1 ? 's' : '') + ' · ' + skippedGroups.length + ' component' + (skippedGroups.length !== 1 ? 's' : '');
+      if (skippedGroups.length === 0) {
+        titleEl.textContent = 'No ignored violations yet';
+        var emptyMsg = document.createElement('div');
+        emptyMsg.className = 'sidebar-section-label';
+        emptyMsg.style.cssText = 'padding: 20px 14px; font-size: 12px;';
+        emptyMsg.textContent = 'No skipped violations yet';
+        listEl.appendChild(emptyMsg);
+      }
+      return;
+    }
+
+    var pkgTree = buildPackageTree(activeFilter);
+    var sortedPkgs = Object.keys(pkgTree).sort(function(a, b) {
+      // Packages with violations first, then by name
+      var aHasViolations = pkgTree[a].violated.length + pkgTree[a].preExisting.length;
+      var bHasViolations = pkgTree[b].violated.length + pkgTree[b].preExisting.length;
+      if (aHasViolations && !bHasViolations) return -1;
+      if (!aHasViolations && bHasViolations) return 1;
+      return a.localeCompare(b);
+    });
+
+    // Count components per filter
+    var pkgCount = sortedPkgs.filter(function(p) {
+      var pkg = pkgTree[p];
+      return pkg.violated.length + pkg.preExisting.length + pkg.passed.length > 0;
+    }).length;
+    var compCount;
+    if (activeFilter === 'all') {
+      compCount = ruleGroups.length + passedComponents.length;
+    } else if (activeFilter === 'failed') {
+      compCount = ruleGroups.length;
+    } else if (activeFilter === 'pre-existing') {
+      compCount = ruleGroups.filter(function(rg) { return rg.violations.some(function(v) { return v.status === 'pre-existing'; }); }).length;
+    } else if (activeFilter === 'passed') {
+      compCount = passedComponents.length;
+    } else {
+      compCount = 0;
+    }
+    titleEl.textContent = pkgCount + ' package' + (pkgCount !== 1 ? 's' : '') + ' · ' + compCount + ' component' + (compCount !== 1 ? 's' : '');
+
+    var firstPkgWithViolations = true;
+    sortedPkgs.forEach(function(pkgName) {
+      var pkg = pkgTree[pkgName];
+      var violatedCount = 0;
+      var preExistingCount = 0;
+
+      pkg.violated.forEach(function(item) {
+        item.rg.violations.forEach(function(v) {
+          if (v.pkg === pkgName && v.status === 'new') violatedCount++;
+        });
+      });
+      pkg.violated.concat(pkg.preExisting).forEach(function(item) {
+        item.rg.violations.forEach(function(v) {
+          if (v.pkg === pkgName && v.status === 'pre-existing') preExistingCount++;
+        });
+      });
+
+      var totalInPkg = pkg.violated.length + pkg.preExisting.length + pkg.passed.length;
+      if (totalInPkg === 0) return;
+
+      // Determine badge style
+      var badgeClass = 'passed-only';
+      var badgeText = pkg.passed.length;
+      if (violatedCount > 0) {
+        badgeClass = 'has-new';
+        badgeText = violatedCount;
+      } else if (preExistingCount > 0) {
+        badgeClass = 'pre-existing-only';
+        badgeText = preExistingCount;
+      }
+
+      // All packages start open on first render
+      var isFirstRender = openPackages[pkgName] === undefined;
+      if (isFirstRender) {
+        openPackages[pkgName] = true;
+      }
+
+      var node = document.createElement('div');
+      node.className = 'pkg-tree-node' + (openPackages[pkgName] ? ' open' : '');
+
+      var header = document.createElement('div');
+      header.className = 'pkg-tree-header';
+      header.innerHTML =
+        '<span class="pkg-tree-chevron">&#9654;</span>' +
+        '<span class="pkg-tree-icon">&#128230;</span>' +
+        '<span class="pkg-tree-name">' + escapeHtml(pkgName) + '</span>' +
+        '<span class="pkg-tree-badge ' + badgeClass + '">' + badgeText + '</span>';
+
+      header.setAttribute('role', 'button');
+      header.setAttribute('tabindex', '0');
+      header.setAttribute('aria-expanded', openPackages[pkgName] ? 'true' : 'false');
+      header.addEventListener('click', function() {
+        openPackages[pkgName] = !openPackages[pkgName];
+        node.classList.toggle('open');
+        header.setAttribute('aria-expanded', openPackages[pkgName] ? 'true' : 'false');
+      });
+      header.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          header.click();
+        }
+      });
+
+      var children = document.createElement('div');
+      children.className = 'pkg-tree-children';
+
+      // Render violated components
+      var seenRgs = {};
+      pkg.violated.forEach(function(item) {
+        if (seenRgs[item.rg.id]) return;
+        seenRgs[item.rg.id] = true;
+        var comp = renderCompTreeItem(item.rg, pkgName, 'violated');
+        children.appendChild(comp);
+      });
+
+      // Render pre-existing components
+      pkg.preExisting.forEach(function(item) {
+        if (seenRgs[item.rg.id]) return;
+        seenRgs[item.rg.id] = true;
+        var comp = renderCompTreeItem(item.rg, pkgName, 'pre-existing');
+        children.appendChild(comp);
+      });
+
+      // Render passed components
+      if (activeFilter === 'all' || activeFilter === 'passed') {
+        pkg.passed.forEach(function(pc) {
+          var comp = document.createElement('div');
+          comp.className = 'comp-tree-item passed-comp';
+          comp.setAttribute('role', 'button');
+          comp.setAttribute('tabindex', '0');
+          comp.setAttribute('aria-label', 'View ' + pc.name);
+          comp.innerHTML =
+            '<span class="comp-tree-icon passed-icon" aria-hidden="true">&#10003;</span>' +
+            '<div class="comp-tree-info">' +
+              '<div class="comp-tree-name">' + escapeHtml(pc.name) + '</div>' +
+            '</div>';
+          comp.addEventListener('click', (function(name) { return function() {
+            pendingScrollTarget = name;
+            activeFilter = 'passed';
+            activeRuleGroup = null;
+            document.querySelectorAll('.filter-tab').forEach(function(t) {
+              t.classList.toggle('active', t.dataset.filter === 'passed');
+              t.setAttribute('aria-pressed', String(t.dataset.filter === 'passed'));
+            });
+            render();
+          }; })(pc.name));
+          comp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); comp.click(); }
+          });
+          children.appendChild(comp);
+        });
+      }
+
+      node.appendChild(header);
+      node.appendChild(children);
+      listEl.appendChild(node);
+    });
+  }
+
+  function renderCompTreeItem(rg, pkgName, type) {
+    var isActive = activeRuleGroup === rg.id;
+    var comp = document.createElement('div');
+    comp.className = 'comp-tree-item' + (isActive ? ' active' : '');
+
+    var newInPkg = rg.violations.filter(function(v) { return v.pkg === pkgName && v.status === 'new'; }).length;
+    var blInPkg = rg.violations.filter(function(v) { return v.pkg === pkgName && v.status === 'pre-existing'; }).length;
+
+    var iconClass = type === 'violated' ? 'violated' : 'pre-existing-icon';
+    var icon = type === 'violated' ? '&#9679;' : '&#9675;';
+
+    var countsHtml = '';
+    if (newInPkg > 0 && blInPkg > 0) {
+      countsHtml = '<span class="new-dot">' + newInPkg + ' new</span> &middot; <span class="bl-dot">' + blInPkg + ' pre-existing</span>';
+    } else if (newInPkg > 0) {
+      countsHtml = '<span class="new-dot">' + newInPkg + ' new</span>';
+    } else if (blInPkg > 0) {
+      countsHtml = '<span class="bl-dot">' + blInPkg + ' pre-existing</span>';
+    }
+
+    comp.innerHTML =
+      '<span class="comp-tree-icon ' + iconClass + '" aria-hidden="true">' + icon + '</span>' +
+      '<div class="comp-tree-info">' +
+        '<div class="comp-tree-name">' + escapeHtml(rg.name) + '</div>' +
+        (countsHtml ? '<div class="comp-tree-counts">' + countsHtml + '</div>' : '') +
+      '</div>';
+
+    comp.setAttribute('role', 'button');
+    comp.setAttribute('tabindex', '0');
+    comp.addEventListener('click', function() {
+      activeRuleGroup = isActive ? null : rg.id;
+      render();
+    });
+    comp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        comp.click();
+      }
+    });
+
+    return comp;
+  }
+
+  function renderViolations() {
+    const listEl = document.getElementById('violationsList');
+    listEl.innerHTML = '';
+    const titleEl = document.getElementById('mainTitle');
+    const countEl = document.getElementById('mainCount');
+
+    var sevFiltersEl = document.getElementById('severityFilters');
+    if (sevFiltersEl) sevFiltersEl.style.display = (activeFilter === 'passed') ? 'none' : 'flex';
+
+    // Passed filter
+    if (activeFilter === 'passed') {
+      titleEl.textContent = 'Passed Components';
+      countEl.textContent = passedComponents.length + ' items';
+      passedComponents.forEach(function(pc) {
+        var card = document.createElement('div');
+        card.className = 'passed-card';
+        card.setAttribute('data-pc-name', pc.name);
+        card.innerHTML =
+          '<span class="passed-icon">&#10003;</span>' +
+          '<div class="passed-info">' +
+            '<div class="passed-name">' + pc.name + '</div>' +
+          '</div>' +
+          '<span class="passed-pkg">' + pc.pkg + '</span>';
+        listEl.appendChild(card);
+      });
+      if (pendingScrollTarget) {
+        var scrollCard = listEl.querySelector('[data-pc-name="' + pendingScrollTarget.replace(/"/g, '\\"') + '"]');
+        if (scrollCard) {
+          scrollCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          scrollCard.style.outline = '2px solid var(--focus-ring)';
+          scrollCard.style.borderRadius = '10px';
+          setTimeout(function() { scrollCard.style.outline = ''; }, 1800);
+        }
+        pendingScrollTarget = null;
+      }
+      return;
+    }
+
+    // Determine which rule groups to show
+    var groups = activeRuleGroup ? [ruleGroups.find(function(r) { return r.id === activeRuleGroup; })] : ruleGroups;
+
+    // Filter violations within each group, build display data
+    var visibleGroups = [];
+    groups.forEach(function(rg) {
+      if (!rg) return;
+      var instances = [];
+      rg.violations.forEach(function(v, i) {
+        var key = rg.id + '-' + i;
+        var vs = violationState[key];
+        // Apply filters
+        if (activeFilter === 'failed' && v.status === 'pre-existing') return;
+        if (activeFilter === 'all' && v.status === 'pre-existing') return; // pre-existing rendered separately below
+        if (activeFilter === 'pre-existing' && v.status !== 'pre-existing') return;
+        if (activeFilter === 'skipped' && vs.state !== 'skipped') return;
+        if (activeSeverity !== 'all' && v.severity !== activeSeverity) return;
+        if (activePackage !== 'all' && v.pkg !== activePackage) return;
+        instances.push({ v: v, key: key, vs: vs, idx: i });
+      });
+      if (instances.length > 0) {
+        visibleGroups.push({ rg: rg, instances: instances });
+      }
+    });
+
+    // Set title
+    if (activeRuleGroup) {
+      var theRg = ruleGroups.find(function(r) { return r.id === activeRuleGroup; });
+      titleEl.textContent = theRg ? theRg.description : 'Violations';
+    } else if (activeFilter === 'failed') {
+      titleEl.textContent = 'Failed Components';
+    } else if (activeFilter === 'pre-existing') {
+      titleEl.textContent = 'Pre-existing';
+    } else if (activeFilter === 'skipped') {
+      titleEl.textContent = 'Skipped';
+    } else {
+      titleEl.textContent = 'All Components';
+    }
+
+    var totalInstances = 0;
+    visibleGroups.forEach(function(g) { totalInstances += g.instances.length; });
+    if (activeFilter === 'all') {
+      // Count pre-existing groups too
+      var preExistingGroupCount = ruleGroups.filter(function(rg) {
+        return rg.violations.some(function(v) { return v.status === 'pre-existing'; });
+      }).length;
+      var totalComps = visibleGroups.length + preExistingGroupCount + passedComponents.length;
+      countEl.textContent = totalComps + ' component' + (totalComps !== 1 ? 's' : '');
+    } else {
+      countEl.textContent = totalInstances + ' element' + (totalInstances !== 1 ? 's' : '') + ' in ' + visibleGroups.length + ' rule' + (visibleGroups.length !== 1 ? 's' : '');
+    }
+
+    // Render each rule group as a card
+    visibleGroups.forEach(function(group, gIdx) {
+      var rg = group.rg;
+      var instances = group.instances;
+
+      // Determine highest severity in the group
+      var severityOrder = { critical: 0, serious: 1, moderate: 2 };
+      var highestSev = 'moderate';
+      instances.forEach(function(inst) {
+        if (severityOrder[inst.v.severity] < severityOrder[highestSev]) highestSev = inst.v.severity;
+      });
+
+      // Check if all instances in this card are resolved/skipped
+      var allResolved = instances.every(function(inst) { return inst.vs.state === 'resolved'; });
+      var allSkipped = instances.every(function(inst) { return inst.vs.state === 'skipped'; });
+
+      // Count new vs pre-existing
+      var newCount = instances.filter(function(inst) { return inst.v.status === 'new'; }).length;
+      var preExistingCount = instances.filter(function(inst) { return inst.v.status === 'pre-existing'; }).length;
+
+      var card = document.createElement('div');
+      card.className = 'violation-card' + (allResolved ? ' resolved' : '') + (allSkipped ? ' skipped' : '');
+      card.setAttribute('data-rg', rg.id);
+
+      // Status tags
+      var statusTags = '<span style="font-size:12px;color:var(--text-muted);font-weight:400;">' + instances.length + ' element' + (instances.length !== 1 ? 's' : '') + '</span>';
+
+      // Build instances HTML
+      var instancesHtml = '';
+      instances.forEach(function(inst, iIdx) {
+        var isResolved = inst.vs.state === 'resolved';
+        var isSkipped = inst.vs.state === 'skipped';
+        var instanceClass = 'violation-instance' + (isResolved ? ' resolved-instance' : '') + (isSkipped ? ' skipped-instance' : '');
+
+        // Build row-2 actions / status
+        var row2Actions = '';
+        if (isSkipped) {
+          var skipLabel = inst.vs.skipScope === 'forever' ? 'Ignored forever' : 'Ignored for PR';
+          row2Actions =
+            '<div class="instance-resolution-label">' + skipLabel + '</div>' +
+            '<button class="btn-instance-unskip" data-key="' + inst.key + '">Undo</button>';
+        } else if (isResolved) {
+          var resolvedLabel = inst.vs.resolvedBy === 'ai' ? 'Fixed by AI' : 'Fixed manually';
+          row2Actions =
+            '<div class="instance-resolution-label">' + resolvedLabel + '</div>' +
+            (inst.vs.resolvedBy !== 'ai' ? '<button class="btn-instance-undo" data-key="' + inst.key + '">Undo</button>' : '');
+        } else {
+          row2Actions =
+            '<button class="btn-instance-fix" data-key="' + inst.key + '">Fix with AI</button>' +
+            '<button class="btn-instance-skip" data-key="' + inst.key + '">Ignore issue</button>';
+        }
+
+        var copySvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+        instancesHtml +=
+          '<div class="' + instanceClass + '" data-key="' + inst.key + '">' +
+            '<div class="instance-row-1">' +
+              '<span class="instance-num">' + (iIdx + 1) + '</span>' +
+              '<code class="instance-code">' + escapeHtml(inst.v.selector) + '</code>' +
+              '<button class="btn-copy-selector" type="button" title="Copy selector" aria-label="Copy selector" data-copy="' + escapeHtml(inst.v.selector) + '">' + copySvg + '</button>' +
+            '</div>' +
+            '<div class="instance-row-2">' +
+              '<button class="instance-more-info-toggle" type="button" aria-expanded="false" onclick="var t=this;t.classList.toggle(\'open\');t.closest(\'.violation-instance\').querySelector(\'.instance-more-info\').classList.toggle(\'open\');t.setAttribute(\'aria-expanded\',t.classList.contains(\'open\'))">' +
+                '<span class="toggle-chevron">&#9654;</span> More info' +
+              '</button>' +
+              '<div class="instance-actions">' + row2Actions + '</div>' +
+            '</div>' +
+            '<div class="instance-more-info">' +
+              '<div class="info-screenshot"><span class="info-screenshot-icon">&#128247;</span>Element screenshot</div>' +
+              (inst.v.elementHtml ? '<pre class="info-html-block">' + escapeHtml(inst.v.elementHtml) + '</pre>' : '') +
+            '</div>' +
+          '</div>';
+      });
+
+      card.innerHTML =
+        '<div class="card-top-row">' +
+          '<div class="card-top-left">' +
+            '<span class="severity-badge ' + highestSev + '">' +
+              highestSev.toUpperCase() +
+            '</span>' +
+            statusTags +
+          '</div>' +
+          '<span class="card-chevron">&#9662;</span>' +
+        '</div>' +
+        '<div class="card-rule-name">' + escapeHtml(rg.description) + '</div>' +
+        '<div class="violation-instances">' + instancesHtml + '</div>' +
+        (rg.fixOptions && rg.fixOptions.length ?
+          '<div class="card-fix-options">' +
+            '<div class="card-fix-options-heading">Fix any of:</div>' +
+            '<ul>' + rg.fixOptions.map(function(opt) { return '<li>' + opt + '</li>'; }).join('') + '</ul>' +
+          '</div>' : '') +
+        '<div class="card-footer">' +
+          '<a class="card-learn-more" href="' + rg.wcagUrl + '" target="_blank" rel="noopener">Learn more &#8599;</a>' +
+        '</div>';
+
+      listEl.appendChild(card);
+    });
+
+    // ---- All Components: append pre-existing section ----
+    if (activeFilter === 'all') {
+      // Collect pre-existing groups
+      var preExistingGroups = [];
+      ruleGroups.forEach(function(rg) {
+        var instances = [];
+        rg.violations.forEach(function(v, i) {
+          if (v.status !== 'pre-existing') return;
+          var key = rg.id + '-' + i;
+          var vs = violationState[key];
+          instances.push({ v: v, key: key, vs: vs, idx: i });
+        });
+        if (instances.length > 0) preExistingGroups.push({ rg: rg, instances: instances });
+      });
+
+      if (preExistingGroups.length > 0) {
+
+        preExistingGroups.forEach(function(group) {
+          var rg = group.rg;
+          var instances = group.instances;
+          var severityOrder = { critical: 0, serious: 1, moderate: 2 };
+          var highestSev = 'moderate';
+          instances.forEach(function(inst) {
+            if (severityOrder[inst.v.severity] < severityOrder[highestSev]) highestSev = inst.v.severity;
+          });
+          var allResolved = instances.every(function(inst) { return inst.vs.state === 'resolved'; });
+          var allSkipped = instances.every(function(inst) { return inst.vs.state === 'skipped'; });
+          var statusTags = '<span style="font-size:12px;color:var(--text-muted);font-weight:400;">' + instances.length + ' element' + (instances.length !== 1 ? 's' : '') + '</span>';
+          var instancesHtml = '';
+          instances.forEach(function(inst, iIdx) {
+            var isResolved = inst.vs.state === 'resolved';
+            var isSkipped = inst.vs.state === 'skipped';
+            var instanceClass = 'violation-instance' + (isResolved ? ' resolved-instance' : '') + (isSkipped ? ' skipped-instance' : '');
+            var row2Actions = '';
+            if (isSkipped) {
+              var skipLabel = inst.vs.skipScope === 'forever' ? 'Ignored forever' : 'Ignored for PR';
+              row2Actions = '<div class="instance-resolution-label">' + skipLabel + '</div><button class="btn-instance-unskip" data-key="' + inst.key + '">Undo</button>';
+            } else if (isResolved) {
+              var resolvedLabel = inst.vs.resolvedBy === 'ai' ? 'Fixed by AI' : 'Fixed manually';
+              row2Actions = '<div class="instance-resolution-label">' + resolvedLabel + '</div>' + (inst.vs.resolvedBy !== 'ai' ? '<button class="btn-instance-undo" data-key="' + inst.key + '">Undo</button>' : '');
+            } else {
+              row2Actions = '<button class="btn-instance-fix" data-key="' + inst.key + '">Fix with AI</button><button class="btn-instance-skip" data-key="' + inst.key + '">Ignore issue</button>';
+            }
+            var copySvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+            instancesHtml +=
+              '<div class="' + instanceClass + '" data-key="' + inst.key + '">' +
+                '<div class="instance-row-1"><span class="instance-num">' + (iIdx + 1) + '</span><code class="instance-code">' + escapeHtml(inst.v.selector) + '</code><button class="btn-copy-selector" type="button" title="Copy selector" aria-label="Copy selector" data-copy="' + escapeHtml(inst.v.selector) + '">' + copySvg + '</button></div>' +
+                '<div class="instance-row-2"><button class="instance-more-info-toggle" type="button" aria-expanded="false" onclick="var t=this;t.classList.toggle(\'open\');t.closest(\'.violation-instance\').querySelector(\'.instance-more-info\').classList.toggle(\'open\');t.setAttribute(\'aria-expanded\',t.classList.contains(\'open\'))"><span class="toggle-chevron">&#9654;</span> More info</button><div class="instance-actions">' + row2Actions + '</div></div>' +
+                '<div class="instance-more-info"><div class="info-screenshot"><span class="info-screenshot-icon">&#128247;</span>Element screenshot</div>' + (inst.v.elementHtml ? '<pre class="info-html-block">' + escapeHtml(inst.v.elementHtml) + '</pre>' : '') + '</div>' +
+              '</div>';
+          });
+          var card = document.createElement('div');
+          card.className = 'violation-card' + (allResolved ? ' resolved' : '') + (allSkipped ? ' skipped' : '');
+          card.setAttribute('data-rg', rg.id);
+          card.innerHTML =
+            '<div class="card-top-row">' +
+              '<div class="card-top-left"><span class="severity-badge ' + highestSev + '">' + highestSev.toUpperCase() + '</span>' + statusTags + '</div>' +
+              '<span class="card-chevron">&#9662;</span>' +
+            '</div>' +
+            '<div class="card-rule-name">' + escapeHtml(rg.description) + '</div>' +
+            '<div class="violation-instances">' + instancesHtml + '</div>' +
+            (rg.fixOptions && rg.fixOptions.length ? '<div class="card-fix-options"><div class="card-fix-options-heading">Fix any of:</div><ul>' + rg.fixOptions.map(function(opt) { return '<li>' + opt + '</li>'; }).join('') + '</ul></div>' : '') +
+            '<div class="card-footer"><a class="card-learn-more" href="' + rg.wcagUrl + '" target="_blank" rel="noopener">Learn more &#8599;</a></div>';
+          listEl.appendChild(card);
+        });
+      }
+
+      // ---- All Components: append passed section ----
+      if (passedComponents.length > 0) {
+        passedComponents.forEach(function(pc) {
+          var card = document.createElement('div');
+          card.className = 'passed-card';
+          card.setAttribute('data-pc-name', pc.name);
+          card.innerHTML =
+            '<span class="passed-icon">&#10003;</span>' +
+            '<div class="passed-info"><div class="passed-name">' + pc.name + '</div></div>' +
+            '<span class="passed-pkg">' + pc.pkg + '</span>';
+          listEl.appendChild(card);
+        });
+      }
+    }
+
+    // Collapse logic — first non-resolved card is open
+    var allCards = listEl.querySelectorAll('.violation-card');
+    var autoExpandedIndex = -1;
+
+    if (lastResolvedKey) {
+      // Find which rule group card contains the resolved key, expand the next one
+      var resolvedCardIdx = -1;
+      allCards.forEach(function(c, idx) {
+        var instEls = c.querySelectorAll('.violation-instance');
+        instEls.forEach(function(inst) {
+          if (inst.getAttribute('data-key') === lastResolvedKey) resolvedCardIdx = idx;
+        });
+      });
+      // Check if all instances in that card are now resolved/skipped
+      if (resolvedCardIdx >= 0) {
+        var resolvedCard = allCards[resolvedCardIdx];
+        var unresolvedInCard = resolvedCard.querySelectorAll('.violation-instance:not(.resolved-instance):not(.skipped-instance)');
+        if (unresolvedInCard.length === 0) {
+          // All done in this card, find next card with unresolved instances
+          for (var ni = resolvedCardIdx + 1; ni < allCards.length; ni++) {
+            if (!allCards[ni].classList.contains('resolved') && !allCards[ni].classList.contains('skipped')) {
+              autoExpandedIndex = ni;
+              break;
+            }
+          }
+          if (autoExpandedIndex === -1) {
+            for (var nj = 0; nj < resolvedCardIdx; nj++) {
+              if (!allCards[nj].classList.contains('resolved') && !allCards[nj].classList.contains('skipped')) {
+                autoExpandedIndex = nj;
+                break;
+              }
+            }
+          }
+        } else {
+          // Still has unresolved instances — keep this card open
+          autoExpandedIndex = resolvedCardIdx;
+        }
+      }
+      lastResolvedKey = null;
+    }
+
+    // Skip action: always keep the card open, never navigate away
+    if (lastSkipKey) {
+      var skippedCardIdx = -1;
+      allCards.forEach(function(c, idx) {
+        c.querySelectorAll('.violation-instance').forEach(function(inst) {
+          if (inst.getAttribute('data-key') === lastSkipKey) skippedCardIdx = idx;
+        });
+      });
+      if (skippedCardIdx >= 0) autoExpandedIndex = skippedCardIdx;
+      lastSkipKey = null;
+    }
+
+    allCards.forEach(function(card, i) {
+      if (autoExpandedIndex >= 0) {
+        // After a resolution: keep the target card open, collapse the rest
+        if (i !== autoExpandedIndex) card.classList.add('v-collapsed');
+      } else {
+        // Initial render: all cards start collapsed
+        card.classList.add('v-collapsed');
+      }
+
+      // Set aria-expanded
+      card.setAttribute('aria-expanded', card.classList.contains('v-collapsed') ? 'false' : 'true');
+
+      var topRow = card.querySelector('.card-top-row');
+      if (topRow) {
+        topRow.setAttribute('role', 'button');
+        topRow.setAttribute('tabindex', '0');
+        topRow.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.classList.toggle('v-collapsed');
+            card.setAttribute('aria-expanded', card.classList.contains('v-collapsed') ? 'false' : 'true');
+          }
+        });
+      }
+      // Clicking anywhere on a collapsed card expands it;
+      // clicking the top-row on an expanded card collapses it.
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        var isCollapsed = card.classList.contains('v-collapsed');
+        if (isCollapsed || e.target.closest('.card-top-row')) {
+          card.classList.toggle('v-collapsed');
+          card.setAttribute('aria-expanded', card.classList.contains('v-collapsed') ? 'false' : 'true');
+        }
+      });
+    });
+
+    if (autoExpandedIndex >= 0 && allCards[autoExpandedIndex]) {
+      allCards[autoExpandedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ---- Event delegation for instance-level actions ----
+    var pendingSkipKey = null;
+    var pendingAiKey = null;
+    var skipTriggerEl = null;
+    var aiTriggerEl = null;
+    var skipModal = document.getElementById('skipModal');
+    var skipModalRule = document.getElementById('skipModalRule');
+    var skipReason = document.getElementById('skipReason');
+    var aiModal = document.getElementById('aiModal');
+    var aiModalRule = document.getElementById('aiModalRule');
+    var aiLoading = document.getElementById('aiLoading');
+    var aiDone = document.getElementById('aiDone');
+    var aiModalActions = document.getElementById('aiModalActions');
+
+    function getRuleNameForKey(key) {
+      for (var gi = 0; gi < ruleGroups.length; gi++) {
+        var rg = ruleGroups[gi];
+        for (var vi = 0; vi < rg.violations.length; vi++) {
+          if (rg.id + '-' + vi === key) return rg.description;
+        }
+      }
+      return '';
+    }
+
+    function openSkipModal(key, ruleName) {
+      pendingSkipKey = key;
+      skipTriggerEl = document.activeElement;
+      skipModalRule.textContent = ruleName;
+      skipReason.value = '';
+      document.querySelector('input[name="skipScope"][value="this-pr"]').checked = true;
+      skipModal.classList.add('open');
+      setTimeout(function() { skipReason.focus(); }, 100);
+    }
+
+    function closeSkipModal() {
+      skipModal.classList.remove('open');
+      pendingSkipKey = null;
+      if (skipTriggerEl) { skipTriggerEl.focus(); skipTriggerEl = null; }
+    }
+
+    function openAiModal(key, ruleName) {
+      pendingAiKey = key;
+      aiTriggerEl = document.activeElement;
+      aiModalRule.textContent = ruleName;
+      aiLoading.classList.remove('hidden');
+      aiDone.classList.remove('visible');
+      aiModalActions.innerHTML = '<button class="modal-btn" id="aiModalCancel">Cancel</button>';
+      aiModal.classList.add('open');
+      setTimeout(function() {
+        aiLoading.classList.add('hidden');
+        aiDone.classList.add('visible');
+        aiModalActions.innerHTML = '<button class="modal-btn" id="aiModalDismiss">Close</button>';
+        document.getElementById('aiModalDismiss').addEventListener('click', function() {
+          if (pendingAiKey) {
+            violationState[pendingAiKey].state = 'resolved';
+            violationState[pendingAiKey].resolvedBy = 'ai';
+            lastResolvedKey = pendingAiKey;
+          }
+          aiModal.classList.remove('open');
+          pendingAiKey = null;
+          if (aiTriggerEl) { aiTriggerEl.focus(); aiTriggerEl = null; }
+          render();
+        });
+      }, 2500);
+    }
+
+    document.getElementById('skipModalCancel').onclick = closeSkipModal;
+    document.getElementById('skipModalConfirm').onclick = function() {
+      if (pendingSkipKey) {
+        var scope = document.querySelector('input[name="skipScope"]:checked').value;
+        violationState[pendingSkipKey].state = 'skipped';
+        violationState[pendingSkipKey].skipReason = skipReason.value;
+        violationState[pendingSkipKey].skipScope = scope;
+        lastSkipKey = pendingSkipKey;
+      }
+      closeSkipModal();
+      render();
+    };
+
+    // Instance-level button handlers
+    listEl.querySelectorAll('.btn-instance-done').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.key;
+        violationState[key].state = 'resolved';
+        violationState[key].resolvedBy = 'manual';
+        lastResolvedKey = key;
+        render();
+      });
+    });
+    listEl.querySelectorAll('.btn-instance-fix').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.key;
+        openAiModal(key, getRuleNameForKey(key));
+      });
+    });
+    listEl.querySelectorAll('.btn-instance-skip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.key;
+        openSkipModal(key, getRuleNameForKey(key));
+      });
+    });
+    listEl.querySelectorAll('.btn-instance-undo').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.key;
+        violationState[key].state = 'active';
+        violationState[key].resolvedBy = null;
+        render();
+      });
+    });
+    listEl.querySelectorAll('.btn-instance-unskip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var key = btn.dataset.key;
+        violationState[key].state = 'active';
+        violationState[key].skipReason = null;
+        violationState[key].skipScope = null;
+        render();
+      });
+    });
+
+    // Copy button handlers
+    listEl.querySelectorAll('.btn-copy-selector, .btn-copy-code').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = btn.dataset.copy;
+        navigator.clipboard.writeText(text).then(function() {
+          var orig = btn.innerHTML;
+          btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+          setTimeout(function() { btn.innerHTML = orig; }, 1500);
+        });
+      });
+    });
+
+    // Fix all with AI handler
+    listEl.querySelectorAll('.card-fix-all').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var rgId = btn.dataset.rg;
+        // Resolve all active instances in this rule group
+        for (var gi = 0; gi < ruleGroups.length; gi++) {
+          if (ruleGroups[gi].id === rgId) {
+            for (var vi = 0; vi < ruleGroups[gi].violations.length; vi++) {
+              var key = rgId + '-' + vi;
+              if (violationState[key] && violationState[key].state === 'active') {
+                violationState[key].state = 'resolved';
+                violationState[key].resolvedBy = 'ai';
+                lastResolvedKey = key;
+              }
+            }
+            break;
+          }
+        }
+        render();
+      });
+    });
+
+    // Escape to close modals
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (skipModal.classList.contains('open')) closeSkipModal();
+        if (aiModal.classList.contains('open')) {
+          aiModal.classList.remove('open');
+          pendingAiKey = null;
+          if (aiTriggerEl) { aiTriggerEl.focus(); aiTriggerEl = null; }
+        }
+      }
+    });
+  }
+
+  function updateStats() {
+    const c = getCounts();
+    const elNew = document.getElementById('stat-new');
+    const elCrit = document.getElementById('stat-critical');
+    const elSer = document.getElementById('stat-serious');
+    const elBl = document.getElementById('stat-baseline');
+    const elTotal = document.getElementById('stat-total');
+    if (elNew) elNew.textContent = c.newCount;
+    if (elCrit) elCrit.textContent = c.criticalCount;
+    if (elSer) elSer.textContent = c.seriousCount;
+    if (elBl) elBl.textContent = c.preExistingCount;
+    if (elTotal) elTotal.textContent = c.total;
+
+    document.getElementById('count-total').textContent = c.totalAudits;
+    document.getElementById('count-passed').textContent = c.passedAudits;
+    document.getElementById('count-failed').textContent = c.newCount;
+    var elSkipped = document.getElementById('count-skipped');
+    if (elSkipped) elSkipped.textContent = c.skippedAudits;
+
+    // Pre-existing count
+    var preExistingTotal = 0;
+    ruleGroups.forEach(function(rg) {
+      rg.violations.forEach(function(v) { if (v.status === 'pre-existing') preExistingTotal++; });
+    });
+    var elPreExisting = document.getElementById('count-pre-existing');
+    if (elPreExisting) elPreExisting.textContent = preExistingTotal;
+
+    // Severity pill counts
+    var sevCounts = { critical: 0, serious: 0, moderate: 0 };
+    ruleGroups.forEach(function(rg) {
+      rg.violations.forEach(function(v) { if (sevCounts[v.severity] !== undefined) sevCounts[v.severity]++; });
+    });
+    var elPC = document.getElementById('pill-critical-count');
+    var elPS = document.getElementById('pill-serious-count');
+    var elPM = document.getElementById('pill-moderate-count');
+    if (elPC) elPC.textContent = sevCounts.critical;
+    if (elPS) elPS.textContent = sevCounts.serious;
+    if (elPM) elPM.textContent = sevCounts.moderate;
+
+    // Celebration
+    const p = getNewResolvedCount();
+    const celeb = document.getElementById('celebration');
+    if (p.resolved >= p.totalNew && p.totalNew > 0) {
+      celeb.classList.add('show');
+    } else {
+      celeb.classList.remove('show');
+    }
+  }
+
+  function render() {
+    renderSidebar();
+    renderViolations();
+    updateStats();
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ---- FILTER BUTTONS ----
+  document.querySelectorAll('.filter-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+      activeFilter = btn.dataset.filter;
+      activeRuleGroup = null; // reset to show all when switching filter
+      render();
+    });
+  });
+
+  // ---- SEVERITY DROPDOWN ----
+  var sevBtn = document.getElementById('sevDropdownBtn');
+  var sevMenu = document.getElementById('sevDropdownMenu');
+
+  sevBtn.addEventListener('click', function() {
+    var isOpen = sevMenu.classList.toggle('open');
+    sevBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!sevBtn.contains(e.target) && !sevMenu.contains(e.target)) {
+      sevMenu.classList.remove('open');
+      sevBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  sevMenu.querySelectorAll('.severity-dropdown-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      sevMenu.querySelectorAll('.severity-dropdown-item').forEach(function(i) {
+        i.classList.remove('active');
+        i.setAttribute('aria-selected', 'false');
+      });
+      item.classList.add('active');
+      item.setAttribute('aria-selected', 'true');
+      activeSeverity = item.dataset.severity;
+
+      // Update button label
+      var dot = item.querySelector('.sev-dot');
+      if (dot) {
+        sevBtn.innerHTML = '<span class="sev-dot ' + activeSeverity + '"></span> ' + activeSeverity.charAt(0).toUpperCase() + activeSeverity.slice(1);
+      } else {
+        sevBtn.textContent = 'All severities';
+      }
+
+      sevMenu.classList.remove('open');
+      sevBtn.setAttribute('aria-expanded', 'false');
+      render();
+    });
+  });
+
+  // ---- PACKAGE FILTER (removed) ----
+  var allPackages = [];
+  function renderPackageDropdown() {}
+  function closePackageDropdown() {}
+
+  // ---- THEME TOGGLE ----
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+  themeToggle.addEventListener('click', () => {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeIcon.innerHTML = isDark ? '&#9728;' : '&#9790;';
+  });
+
+  // ---- INIT ----
+  render();
+})();
+</script>
+</body>
+</html>

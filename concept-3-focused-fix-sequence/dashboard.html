@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN - Concept 3: Focused Fix Sequence</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-elevated: #f7f7f7;
+    --bg-card: #ffffff;
+    --border: #d4d4d4;
+    --border-light: #e8e8e8;
+    --text: #111111;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --accent-critical: #c0392b;
+    --accent-critical-bg: #fdecea;
+    --accent-serious: #d35400;
+    --accent-serious-bg: #fef4ec;
+    --accent-moderate: #f39c12;
+    --accent-moderate-bg: #fef9ec;
+    --accent-pass: #1a8a4a;
+    --accent-pass-bg: #e8f8ef;
+    --accent-blocked: #c0392b;
+    --accent-blocked-bg: #fdecea;
+    --code-bg: #f0f0f0;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.1);
+    --radius: 8px;
+    --radius-sm: 4px;
+    --radius-lg: 12px;
+    --focus-ring: 0 0 0 3px rgba(17,17,17,0.3);
+    --transition: 0.2s ease;
+  }
+
+  [data-theme="dark"] {
+    --bg: #111111;
+    --bg-elevated: #1a1a1a;
+    --bg-card: #1e1e1e;
+    --border: #333333;
+    --border-light: #2a2a2a;
+    --text: #f0f0f0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #777777;
+    --accent-critical-bg: #2d1416;
+    --accent-serious-bg: #2d1d10;
+    --accent-moderate-bg: #2d2510;
+    --accent-pass-bg: #122d1a;
+    --accent-blocked-bg: #2d1416;
+    --code-bg: #2a2a2a;
+    --shadow: 0 2px 12px rgba(0,0,0,0.3);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.4);
+    --focus-ring: 0 0 0 3px rgba(240,240,240,0.3);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  button { font-family: inherit; cursor: pointer; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-elevated);
+  }
+  .topbar-brand {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .topbar-brand span { color: var(--text); }
+  .topbar-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .theme-toggle:hover { border-color: var(--text-muted); }
+  .theme-toggle .icon { font-size: 15px; }
+
+  /* ── Verdict banner ── */
+  .verdict-banner {
+    padding: 28px 24px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-light);
+    transition: background var(--transition);
+  }
+  .verdict-banner.blocked { background: var(--accent-blocked-bg); }
+  .verdict-banner.passing { background: var(--accent-pass-bg); }
+
+  .verdict-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .verdict-badge .shape {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .verdict-badge.blocked-badge .shape {
+    background: var(--accent-critical);
+    color: #fff;
+    border-radius: 4px; /* square = blocked */
+  }
+  .verdict-badge.passing-badge .shape {
+    background: var(--accent-pass);
+    color: #fff;
+  }
+  .verdict-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  /* ── Stats strip ── */
+  .stats-strip {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-elevated);
+    flex-wrap: wrap;
+  }
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .stat-count {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+  }
+  .stat-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .stat-dot.new { background: var(--accent-critical); }
+  .stat-dot.fixed { background: var(--accent-pass); }
+  .stat-dot.preexisting { background: var(--text-muted); border: 2px solid var(--text-muted); background: transparent; }
+
+  /* ── Audit stats strip ── */
+  .audit-stats-strip {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg);
+    flex-wrap: wrap;
+  }
+  .audit-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .audit-stat-count {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+  }
+  .audit-stat-count.total { color: var(--text); }
+  .audit-stat-count.passed { color: var(--accent-pass); }
+  .audit-stat-count.failed { color: var(--accent-critical); }
+  .audit-stat-count.skipped { color: var(--text-muted); }
+
+  /* ── Progress tracker ── */
+  .progress-tracker {
+    padding: 24px 24px 16px;
+    text-align: center;
+  }
+  .progress-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+  .progress-label strong { color: var(--text); font-size: 16px; }
+  .progress-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .progress-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg);
+    transition: all var(--transition);
+    cursor: pointer;
+  }
+  .progress-dot:hover { border-color: var(--text-muted); }
+  .progress-dot.active {
+    border-color: var(--text);
+    background: var(--text);
+    color: var(--bg);
+  }
+  .progress-dot.done {
+    border-color: var(--accent-pass);
+    background: var(--accent-pass);
+    color: #fff;
+  }
+  .progress-dot.skipped {
+    border-color: var(--accent-moderate);
+    background: var(--accent-moderate-bg);
+    color: var(--accent-moderate);
+  }
+  .progress-connector {
+    width: 32px;
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+  }
+  .progress-connector.done { background: var(--accent-pass); }
+
+  /* ── Main content area ── */
+  .main-area {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+  }
+
+  /* ── Violation card ── */
+  .violation-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    margin-top: 8px;
+    overflow: hidden;
+    animation: fadeSlideIn 0.3s ease;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .violation-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .violation-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .violation-title {
+    font-size: 20px;
+    font-weight: 700;
+    flex: 1;
+    min-width: 200px;
+  }
+  .severity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .severity-badge .sev-shape {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+  }
+  .severity-badge.critical {
+    background: var(--accent-critical-bg);
+    color: var(--accent-critical);
+  }
+  .severity-badge.critical .sev-shape {
+    background: var(--accent-critical);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* triangle */
+  }
+  .severity-badge.serious {
+    background: var(--accent-serious-bg);
+    color: var(--accent-serious);
+  }
+  .severity-badge.serious .sev-shape {
+    background: var(--accent-serious);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); /* diamond */
+  }
+  .severity-badge.moderate {
+    background: var(--accent-moderate-bg);
+    color: var(--accent-moderate);
+  }
+  .severity-badge.moderate .sev-shape {
+    background: var(--accent-moderate);
+    border-radius: 50%; /* circle */
+  }
+  .category-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    margin-top: 10px;
+  }
+
+  /* ── Card sections ── */
+  .card-section {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .card-section:last-child { border-bottom: none; }
+  .section-heading {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-heading .section-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .section-body {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .section-body p { margin-bottom: 10px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* code block */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .selector-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .selector-value {
+    font-family: 'SF Mono', Consolas, monospace;
+    font-size: 13px;
+    color: var(--text-secondary);
+    background: var(--code-bg);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+  }
+
+  /* Screenshot placeholder */
+  .screenshot-placeholder {
+    background: var(--bg-elevated);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 14px;
+  }
+  .screenshot-placeholder .ph-icon { font-size: 28px; margin-bottom: 6px; }
+
+  /* Fix steps */
+  .fix-steps {
+    list-style: none;
+    counter-reset: fixstep;
+  }
+  .fix-steps li {
+    counter-increment: fixstep;
+    padding: 8px 0 8px 36px;
+    position: relative;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .fix-steps li::before {
+    content: counter(fixstep);
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .fix-steps li code {
+    font-family: 'SF Mono', Consolas, monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+  }
+  .wcag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 5px 12px;
+    transition: all var(--transition);
+  }
+  .wcag-link:hover { border-color: var(--text-muted); color: var(--text-secondary); }
+
+  /* ── Skip inline ── */
+  .skip-area {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-top: 16px;
+    animation: fadeSlideIn 0.2s ease;
+  }
+  .skip-area.hidden { display: none; }
+  .skip-heading {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .skip-options {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .skip-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .skip-option input[type="radio"] {
+    accent-color: var(--text);
+    width: 16px;
+    height: 16px;
+  }
+  .skip-textarea {
+    width: 100%;
+    min-height: 70px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    background: var(--bg-card);
+    color: var(--text);
+    resize: vertical;
+    margin-bottom: 12px;
+    transition: border-color var(--transition);
+  }
+  .skip-textarea:focus { border-color: var(--text-muted); }
+  .skip-actions {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* ── Unskip banner ── */
+  .unskip-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--accent-moderate-bg);
+    border: 1px solid var(--accent-moderate);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--text);
+    animation: fadeSlideIn 0.2s ease;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .unskip-banner.hidden { display: none; }
+  .unskip-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .unskip-info .skip-icon {
+    font-size: 18px;
+  }
+
+  /* ── Navigation ── */
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    transition: all var(--transition);
+  }
+  .btn:hover { border-color: var(--text-muted); background: var(--bg-elevated); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled:hover { background: var(--bg-card); border-color: var(--border); }
+  .btn-primary {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+  .btn-primary:hover { opacity: 0.85; background: var(--text); }
+  .btn-skip {
+    background: transparent;
+    border: 1px dashed var(--border);
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .btn-skip:hover { border-color: var(--text-muted); color: var(--text-secondary); }
+  .btn-sm {
+    padding: 7px 16px;
+    font-size: 13px;
+  }
+  .btn-danger {
+    color: var(--accent-critical);
+    border-color: var(--accent-critical);
+  }
+  .btn-danger:hover { background: var(--accent-critical-bg); }
+
+  /* ── All-passing celebration ── */
+  .celebration {
+    text-align: center;
+    padding: 80px 24px;
+    animation: fadeSlideIn 0.4s ease;
+  }
+  .celebration.hidden { display: none; }
+  .celebration-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent-pass);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  .celebration h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .celebration p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 440px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Review-complete state ── */
+  .review-complete {
+    text-align: center;
+    padding: 48px 24px;
+    animation: fadeSlideIn 0.3s ease;
+  }
+  .review-complete.hidden { display: none; }
+  .review-complete h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .review-complete p {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  /* ── Reference section ── */
+  .reference-section {
+    margin-top: 32px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 24px;
+  }
+  .reference-section.hidden { display: none; }
+  .reference-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .reference-toggle:hover { border-color: var(--text-muted); }
+  .reference-toggle .arrow { transition: transform var(--transition); font-size: 12px; }
+  .reference-toggle .arrow.open { transform: rotate(180deg); }
+  .reference-list {
+    margin-top: 12px;
+    animation: fadeSlideIn 0.2s ease;
+  }
+  .reference-list.hidden { display: none; }
+  .reference-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .reference-item .ref-severity {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .reference-item .ref-severity.moderate { background: var(--accent-moderate); }
+  .reference-item .ref-severity.serious { background: var(--accent-serious); }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .verdict-badge { font-size: 22px; }
+    .stats-strip { gap: 16px; }
+    .audit-stats-strip { gap: 16px; }
+    .violation-header, .card-section { padding: 18px 18px; }
+    .violation-title { font-size: 17px; }
+    .nav-bar { flex-direction: column; }
+    .nav-bar .btn { width: 100%; text-align: center; }
+    .topbar { padding: 10px 16px; }
+    .main-area { padding: 0 16px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+  <div class="topbar-brand"><span>ELEVEN</span> Accessibility Audit</div>
+  <div class="topbar-meta">
+    <span>PR #482 &middot; feature/user-profile</span>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <span class="icon" id="themeIcon">&#9790;</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</header>
+
+<!-- Verdict banner -->
+<div class="verdict-banner blocked" id="verdictBanner">
+  <div class="verdict-badge blocked-badge" id="verdictBadge">
+    <span class="shape" aria-hidden="true">&#10007;</span>
+    <span id="verdictText">Blocked</span>
+  </div>
+  <div class="verdict-subtitle" id="verdictSubtitle">3 new issues to resolve before merge</div>
+</div>
+
+<!-- Stats strip -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <span class="stat-dot new" aria-hidden="true"></span>
+    <span class="stat-count" id="statNew">3</span> new
+  </div>
+  <div class="stat-item">
+    <span class="stat-dot fixed" aria-hidden="true"></span>
+    <span class="stat-count" id="statFixed">1</span> fixed
+  </div>
+  <div class="stat-item">
+    <span class="stat-dot preexisting" aria-hidden="true"></span>
+    <span class="stat-count" id="statPreexisting">2</span> pre-existing
+  </div>
+</div>
+
+<!-- Audit stats strip -->
+<div class="audit-stats-strip">
+  <div class="audit-stat">
+    <span class="audit-stat-count total">47</span> Total Audits
+  </div>
+  <div class="audit-stat">
+    <span class="audit-stat-count passed">38</span> Passed
+  </div>
+  <div class="audit-stat">
+    <span class="audit-stat-count failed">6</span> Failed
+  </div>
+  <div class="audit-stat">
+    <span class="audit-stat-count skipped">3</span> Skipped
+  </div>
+</div>
+
+<!-- Main area -->
+<div class="main-area">
+
+  <!-- Progress tracker -->
+  <div class="progress-tracker" id="progressTracker">
+    <div class="progress-label" id="progressLabel">
+      <strong>Issue 1 of 3</strong> &mdash; most critical first
+    </div>
+    <div class="progress-dots" id="progressDots">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- Single violation card -->
+  <div id="violationView">
+    <div class="violation-card" id="violationCard">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Skip area (inline, hidden by default) -->
+    <div class="skip-area hidden" id="skipArea">
+      <div class="skip-heading">Why are you skipping this issue?</div>
+      <div class="skip-options">
+        <label class="skip-option">
+          <input type="radio" name="skipReason" value="not-relevant" checked>
+          Not relevant to this PR
+        </label>
+        <label class="skip-option">
+          <input type="radio" name="skipReason" value="will-fix-later">
+          Will fix in follow-up PR
+        </label>
+        <label class="skip-option">
+          <input type="radio" name="skipReason" value="false-positive">
+          False positive
+        </label>
+      </div>
+      <textarea class="skip-textarea" id="skipNote" placeholder="Add details (optional)..."></textarea>
+      <div class="skip-actions">
+        <button class="btn btn-sm btn-primary" onclick="confirmSkip()">Confirm Skip</button>
+        <button class="btn btn-sm" onclick="cancelSkip()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Unskip banner (shown when current issue is skipped) -->
+    <div class="unskip-banner hidden" id="unskipBanner">
+      <div class="unskip-info">
+        <span class="skip-icon" aria-hidden="true">&#9888;</span>
+        <span><strong>Skipped</strong> &mdash; <span id="unskipReasonText"></span></span>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="unskipCurrent()">Unskip</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-bar" id="navBar">
+      <button class="btn" id="btnPrev" onclick="goIssue(-1)" disabled>&#8592; Previous</button>
+      <button class="btn btn-skip" id="btnSkip" onclick="showSkipArea()">Skip this issue</button>
+      <button class="btn btn-primary" id="btnNext" onclick="goIssue(1)">Next issue &#8594;</button>
+    </div>
+  </div>
+
+  <!-- Review-complete state (after all issues navigated) -->
+  <div class="review-complete hidden" id="reviewComplete">
+    <h3>Review Complete</h3>
+    <p id="reviewSummaryText">You have reviewed all 3 issues.</p>
+    <button class="btn btn-primary" onclick="goIssue(0, 0)">Back to first issue</button>
+  </div>
+
+  <!-- All-passing celebration -->
+  <div class="celebration hidden" id="celebration">
+    <div class="celebration-icon" aria-hidden="true">&#10003;</div>
+    <h2>All Clear</h2>
+    <p>No new accessibility issues found. Your changes look good to merge. Keep up the great work.</p>
+  </div>
+
+  <!-- Reference section (pre-existing issues) -->
+  <div class="reference-section hidden" id="referenceSection">
+    <button class="reference-toggle" onclick="toggleReference()" aria-expanded="false" id="refToggleBtn">
+      <span>Pre-existing issues (2)</span>
+      <span class="arrow" id="refArrow">&#9660;</span>
+    </button>
+    <div class="reference-list hidden" id="referenceList">
+      <div class="reference-item">
+        <span class="ref-severity moderate" aria-hidden="true"></span>
+        <span><strong>Moderate:</strong> Low contrast on footer copyright text (2.8:1 ratio) &mdash; <code>footer &gt; .copyright</code></span>
+      </div>
+      <div class="reference-item">
+        <span class="ref-severity serious" aria-hidden="true"></span>
+        <span><strong>Serious:</strong> Skip-to-content link hidden with <code>display:none</code> instead of off-screen positioning &mdash; <code>#skip-link</code></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Demo data ──
+const issues = [
+  {
+    title: 'Image missing alternative text',
+    severity: 'critical',
+    severityLabel: 'Critical',
+    category: 'Perceivable',
+    why: '<p>Screen reader users rely on alt text to understand images. Without it, the profile avatar is announced as a meaningless filename or ignored entirely, leaving users unable to understand the page content.</p><p>This is a WCAG 2.1 Level A requirement (1.1.1 Non-text Content) and a top-priority issue for accessibility compliance.</p>',
+    element: '<img src="/uploads/avatars/user-482.jpg"\n     class="profile-avatar"\n     width="96" height="96">',
+    selector: '.profile-card > .profile-avatar',
+    fix: [
+      'Add a descriptive <code>alt</code> attribute to the <code>&lt;img&gt;</code> tag, such as <code>alt="User profile photo"</code>.',
+      'If the image is purely decorative, use an empty alt: <code>alt=""</code> and add <code>role="presentation"</code>.',
+      'Ensure dynamically loaded images also receive alt text from the API response.'
+    ],
+    wcag: 'WCAG 2.1 &sect; 1.1.1 Non-text Content',
+    wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html',
+    skipped: false,
+    skipReason: '',
+    skipNote: ''
+  },
+  {
+    title: 'Form input has no accessible label',
+    severity: 'serious',
+    severityLabel: 'Serious',
+    category: 'Operable',
+    why: '<p>The "Display Name" input field uses a visual placeholder as its only label. Placeholders disappear on focus, leaving assistive technology users with no indication of what the field expects.</p><p>This also affects voice-control users who cannot target the field by name.</p>',
+    element: '<input type="text"\n       class="form-input"\n       placeholder="Display name"\n       id="displayName">',
+    selector: '#profile-form > .form-group:nth-child(2) > #displayName',
+    fix: [
+      'Add a <code>&lt;label for="displayName"&gt;Display Name&lt;/label&gt;</code> element visually associated with the input.',
+      'If a visible label is not desired, add <code>aria-label="Display Name"</code> to the input element.',
+      'Keep the placeholder as supplementary hint text, not the sole label.'
+    ],
+    wcag: 'WCAG 2.1 &sect; 1.3.1 Info and Relationships',
+    wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html',
+    skipped: false,
+    skipReason: '',
+    skipNote: ''
+  },
+  {
+    title: 'Interactive button not keyboard accessible',
+    severity: 'critical',
+    severityLabel: 'Critical',
+    category: 'Operable',
+    why: '<p>The "Save Changes" action is implemented as a <code>&lt;div&gt;</code> with a click handler instead of a <code>&lt;button&gt;</code>. Keyboard users cannot tab to or activate this control, making the form impossible to submit without a mouse.</p><p>This blocks approximately 15% of users who navigate primarily by keyboard.</p>',
+    element: '<div class="btn-save"\n     onclick="saveProfile()">\n  Save Changes\n</div>',
+    selector: '#profile-form > .form-actions > .btn-save',
+    fix: [
+      'Replace the <code>&lt;div&gt;</code> with a native <code>&lt;button type="submit"&gt;</code> element.',
+      'If a <code>&lt;div&gt;</code> must be used, add <code>role="button"</code>, <code>tabindex="0"</code>, and a keydown handler for Enter/Space.',
+      'Verify the element appears in the tab order and can be activated with keyboard alone.'
+    ],
+    wcag: 'WCAG 2.1 &sect; 2.1.1 Keyboard',
+    wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/keyboard.html',
+    skipped: false,
+    skipReason: '',
+    skipNote: ''
+  }
+];
+
+let currentIndex = 0;
+let allPassingMode = false;
+
+// ── Render ──
+function renderProgressDots() {
+  const container = document.getElementById('progressDots');
+  container.innerHTML = '';
+  issues.forEach((issue, i) => {
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'progress-connector' + (i < currentIndex ? ' done' : '');
+      container.appendChild(conn);
+    }
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    if (i === currentIndex) dot.className += ' active';
+    else if (issue.skipped) dot.className += ' skipped';
+    else if (i < currentIndex) dot.className += ' done';
+    dot.textContent = issue.skipped && i !== currentIndex ? '~' : (i + 1);
+    dot.setAttribute('aria-label', 'Go to issue ' + (i + 1));
+    dot.tabIndex = 0;
+    dot.onclick = () => goIssue(0, i);
+    dot.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goIssue(0, i); } };
+    container.appendChild(dot);
+  });
+}
+
+function renderCard() {
+  const issue = issues[currentIndex];
+  const card = document.getElementById('violationCard');
+  card.innerHTML = `
+    <div class="violation-header">
+      <div class="violation-title-row">
+        <div class="violation-title">${issue.title}</div>
+        <span class="severity-badge ${issue.severity}">
+          <span class="sev-shape" aria-hidden="true"></span>
+          ${issue.severityLabel}
+        </span>
+      </div>
+      <span class="category-tag">${issue.category}</span>
+    </div>
+    <div class="card-section">
+      <div class="section-heading">
+        <span class="section-num" aria-hidden="true">1</span>
+        Why this matters
+      </div>
+      <div class="section-body">${issue.why}</div>
+    </div>
+    <div class="card-section">
+      <div class="section-heading">
+        <span class="section-num" aria-hidden="true">2</span>
+        The element
+      </div>
+      <div class="section-body">
+        <div class="code-block"><code>${escapeHtml(issue.element)}</code></div>
+        <div class="selector-label">CSS Selector</div>
+        <div class="selector-value">${escapeHtml(issue.selector)}</div>
+        <div class="screenshot-placeholder">
+          <div class="ph-icon" aria-hidden="true">&#128247;</div>
+          Screenshot of the element on-page
+        </div>
+      </div>
+    </div>
+    <div class="card-section">
+      <div class="section-heading">
+        <span class="section-num" aria-hidden="true">3</span>
+        How to fix
+      </div>
+      <div class="section-body">
+        <ol class="fix-steps">
+          ${issue.fix.map(s => '<li>' + s + '</li>').join('')}
+        </ol>
+        <a class="wcag-link" href="${issue.wcagUrl}" target="_blank" rel="noopener">
+          &#128279; ${issue.wcag}
+        </a>
+      </div>
+    </div>
+  `;
+}
+
+function renderNavState() {
+  document.getElementById('btnPrev').disabled = currentIndex === 0;
+  const issue = issues[currentIndex];
+  const btnSkip = document.getElementById('btnSkip');
+  const btnNext = document.getElementById('btnNext');
+
+  if (issue.skipped) {
+    btnSkip.style.display = 'none';
+  } else {
+    btnSkip.style.display = '';
+  }
+
+  if (currentIndex === issues.length - 1) {
+    btnNext.textContent = 'Finish review \u2192';
+  } else {
+    btnNext.textContent = 'Next issue \u2192';
+  }
+
+  // show/hide unskip
+  const unskip = document.getElementById('unskipBanner');
+  if (issue.skipped) {
+    unskip.classList.remove('hidden');
+    const reasonMap = {
+      'not-relevant': 'Not relevant to this PR',
+      'will-fix-later': 'Will fix in follow-up PR',
+      'false-positive': 'False positive'
+    };
+    document.getElementById('unskipReasonText').textContent =
+      (reasonMap[issue.skipReason] || issue.skipReason) + (issue.skipNote ? ' \u2014 "' + issue.skipNote + '"' : '');
+  } else {
+    unskip.classList.add('hidden');
+  }
+}
+
+function render() {
+  if (allPassingMode) {
+    document.getElementById('violationView').style.display = 'none';
+    document.getElementById('reviewComplete').classList.add('hidden');
+    document.getElementById('celebration').classList.remove('hidden');
+    document.getElementById('progressTracker').style.display = 'none';
+    document.getElementById('referenceSection').classList.remove('hidden');
+    // update verdict
+    const banner = document.getElementById('verdictBanner');
+    banner.className = 'verdict-banner passing';
+    document.getElementById('verdictBadge').className = 'verdict-badge passing-badge';
+    document.getElementById('verdictBadge').innerHTML = '<span class="shape" aria-hidden="true">&#10003;</span><span>Passing</span>';
+    document.getElementById('verdictSubtitle').textContent = 'No new accessibility issues found';
+    document.getElementById('statNew').textContent = '0';
+    return;
+  }
+
+  document.getElementById('celebration').classList.add('hidden');
+  document.getElementById('progressTracker').style.display = '';
+  document.getElementById('violationView').style.display = '';
+  document.getElementById('reviewComplete').classList.add('hidden');
+
+  document.getElementById('progressLabel').innerHTML =
+    '<strong>Issue ' + (currentIndex + 1) + ' of ' + issues.length + '</strong> &mdash; most critical first';
+
+  renderProgressDots();
+  renderCard();
+  renderNavState();
+  hideSkipArea();
+
+  // Show reference section once user reaches last issue
+  if (currentIndex === issues.length - 1) {
+    document.getElementById('referenceSection').classList.remove('hidden');
+  }
+}
+
+// ── Navigation ──
+function goIssue(delta, absolute) {
+  if (absolute !== undefined) {
+    currentIndex = absolute;
+    render();
+    return;
+  }
+  const next = currentIndex + delta;
+  if (next < 0) return;
+  if (next >= issues.length) {
+    // show review-complete
+    document.getElementById('violationView').style.display = 'none';
+    document.getElementById('reviewComplete').classList.remove('hidden');
+    document.getElementById('referenceSection').classList.remove('hidden');
+    const skippedCount = issues.filter(i => i.skipped).length;
+    const reviewedCount = issues.length - skippedCount;
+    document.getElementById('reviewSummaryText').textContent =
+      'You reviewed all ' + issues.length + ' issues' +
+      (skippedCount > 0 ? ' (' + skippedCount + ' skipped).' : '.');
+    return;
+  }
+  currentIndex = next;
+  render();
+}
+
+// ── Skip flow ──
+function showSkipArea() {
+  document.getElementById('skipArea').classList.remove('hidden');
+  document.getElementById('btnSkip').style.display = 'none';
+  document.getElementById('skipNote').value = '';
+  document.querySelector('input[name="skipReason"][value="not-relevant"]').checked = true;
+}
+function hideSkipArea() {
+  document.getElementById('skipArea').classList.add('hidden');
+}
+function cancelSkip() {
+  hideSkipArea();
+  document.getElementById('btnSkip').style.display = '';
+}
+function confirmSkip() {
+  const reason = document.querySelector('input[name="skipReason"]:checked').value;
+  const note = document.getElementById('skipNote').value.trim();
+  issues[currentIndex].skipped = true;
+  issues[currentIndex].skipReason = reason;
+  issues[currentIndex].skipNote = note;
+  render();
+}
+function unskipCurrent() {
+  issues[currentIndex].skipped = false;
+  issues[currentIndex].skipReason = '';
+  issues[currentIndex].skipNote = '';
+  render();
+}
+
+// ── Reference toggle ──
+function toggleReference() {
+  const list = document.getElementById('referenceList');
+  const arrow = document.getElementById('refArrow');
+  const btn = document.getElementById('refToggleBtn');
+  const isHidden = list.classList.contains('hidden');
+  list.classList.toggle('hidden');
+  arrow.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+}
+
+// ── Theme ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').innerHTML = isDark ? '&#9790;' : '&#9788;';
+  document.getElementById('themeLabel').textContent = isDark ? 'Dark' : 'Light';
+}
+
+// ── All-passing demo ──
+function showAllPassing() {
+  allPassingMode = true;
+  render();
+}
+
+// ── Utility ──
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ── Init ──
+render();
+</script>
+
+</body>
+</html>

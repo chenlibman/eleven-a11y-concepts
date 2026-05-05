@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELEVEN A11Y — Compare Concepts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700&family=Wix+Madefor+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Wix Madefor Text', -apple-system, BlinkMacSystemFont, sans-serif;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      background: #e5e5e5;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      min-width: 240px;
+      height: 100vh;
+      background: #f5f5f5;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .sidebar-header {
+      padding: 14px 16px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    /* ── Nav item ── */
+    .nav-item {
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.1s;
+      margin-bottom: 4px;
+      padding: 10px 12px;
+    }
+
+    .nav-item:hover { background: rgba(0,0,0,0.04); }
+    .nav-item.active {
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+    }
+
+    .nav-item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .nav-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.15s;
+    }
+
+    .nav-text { min-width: 0; }
+
+    .nav-name {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: #333;
+      line-height: 1.35;
+    }
+
+    .nav-item.active .nav-name { font-weight: 600; color: #1f1f1f; }
+
+    .nav-desc {
+      font-size: 11px;
+      color: #999;
+      line-height: 1.45;
+      margin-top: 3px;
+    }
+
+    .nav-item.active .nav-desc { color: #777; }
+
+    .nav-badge {
+      margin-top: 5px;
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* ── Footer ── */
+    .sidebar-footer {
+      padding: 10px 16px;
+      border-top: 1px solid #e5e5e5;
+      font-size: 10px;
+      color: #b3b3b3;
+      text-align: center;
+    }
+
+    kbd {
+      background: rgba(0,0,0,0.05);
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 10px;
+      color: #b3b3b3;
+    }
+
+    /* ── Content ── */
+    .content {
+      flex: 1;
+      min-width: 0;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title">ELEVEN — Compare</span>
+  </div>
+
+  <div class="nav-list" id="navList"></div>
+
+  <div class="sidebar-footer">
+    <kbd>↑</kbd> <kbd>↓</kbd> navigate
+  </div>
+</nav>
+
+<main class="content">
+  <iframe id="conceptFrame" src="about:blank"></iframe>
+</main>
+
+<script>
+  const concepts = [
+    {
+      id: 'concept-0-current-state',
+      name: 'Current State',
+      desc: 'Classic table layout with inline expansion — light theme',
+      src: 'concept-0-current-state/dashboard.html',
+      color: { light: '#c8ddf5', rich: '#3b82f6' },
+      badge: 'Light',
+      badgeColor: '#3b82f6',
+      badgeBg: 'rgba(59,130,246,0.08)',
+      label: 'A'
+    },
+    {
+      id: 'concept-0-first-run',
+      name: 'First Run',
+      desc: 'First-time scan — only pre-existing violations, no PR blocking',
+      src: 'concept-0-first-run/dashboard.html',
+      color: { light: '#d5ecd0', rich: '#16a34a' },
+      badge: 'First Run',
+      badgeColor: '#16a34a',
+      badgeBg: 'rgba(22,163,74,0.08)',
+      label: 'A-2'
+    },
+    {
+      id: 'concept-8-sidebar-navigator',
+      name: 'Sidebar Navigator',
+      desc: 'Rule-grouped sidebar with filter tabs and violation cards — dark theme',
+      src: 'concept-8-sidebar-navigator/dashboard.html',
+      color: { light: '#b8ddf4', rich: '#0ea5e9' },
+      badge: 'Dark',
+      badgeColor: '#0ea5e9',
+      badgeBg: 'rgba(14,165,233,0.08)',
+      label: 'B'
+    }
+  ];
+
+  let activeIndex = 0;
+  const navList = document.getElementById('navList');
+  const frame = document.getElementById('conceptFrame');
+
+  function render() {
+    navList.innerHTML = '';
+    concepts.forEach((c, i) => {
+      const item = document.createElement('div');
+      item.className = 'nav-item' + (i === activeIndex ? ' active' : '');
+
+      const numBg = i === activeIndex ? c.color.rich : c.color.light;
+      const numColor = i === activeIndex ? '#fff' : '#333';
+
+      item.innerHTML = `
+        <div class="nav-item-header">
+          <div class="nav-number" style="background:${numBg};color:${numColor}">${c.label}</div>
+          <div class="nav-text">
+            <div class="nav-name">${c.name}</div>
+            <div class="nav-desc">${c.desc}</div>
+            <span class="nav-badge" style="background:${c.badgeBg};color:${c.badgeColor}">${c.badge}</span>
+          </div>
+        </div>
+      `;
+      item.addEventListener('click', () => navigate(i));
+      navList.appendChild(item);
+    });
+  }
+
+  function navigate(index) {
+    activeIndex = index;
+    frame.src = concepts[index].src + '?_t=' + Date.now();
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set('concept', concepts[index].id);
+    window.history.replaceState({}, '', nextUrl.toString());
+    render();
+  }
+
+  // Restore from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const conceptParam = urlParams.get('concept');
+  if (conceptParam) {
+    const idx = concepts.findIndex(c => c.id === conceptParam);
+    if (idx !== -1) activeIndex = idx;
+  }
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      navigate(activeIndex < concepts.length - 1 ? activeIndex + 1 : 0);
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      navigate(activeIndex > 0 ? activeIndex - 1 : concepts.length - 1);
+    }
+  });
+
+  // Hide page-nav in iframe
+  frame.addEventListener('load', function() {
+    try {
+      frame.contentDocument.documentElement.style.overflowX = 'hidden';
+      frame.contentDocument.body.style.overflowX = 'hidden';
+      let s = frame.contentDocument.getElementById('conceptViewerInjectedStyle');
+      if (!s) {
+        s = frame.contentDocument.createElement('style');
+        s.id = 'conceptViewerInjectedStyle';
+        frame.contentDocument.head.appendChild(s);
+      }
+      s.textContent = '.page-nav { display: none !important; }';
+    } catch(e) {}
+  });
+
+  render();
+  navigate(activeIndex);
+</script>
+
+</body>
+</html>

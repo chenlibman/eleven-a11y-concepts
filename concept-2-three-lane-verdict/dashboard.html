@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN - Accessibility Audit Report (Concept 2: Three-Lane Verdict Board)</title>
+<style>
+  :root {
+    /* Light theme */
+    --bg: #fafafa;
+    --bg-surface: #ffffff;
+    --bg-surface-hover: #f5f5f5;
+    --text: #1a1a1a;
+    --text-secondary: #666;
+    --text-muted: #999;
+    --border: #e0e0e0;
+    --border-strong: #ccc;
+
+    /* Lane tints */
+    --lane-new-bg: #fff5f5;
+    --lane-new-border: #e8c0c0;
+    --lane-new-header: #d32f2f;
+    --lane-fixed-bg: #f0faf0;
+    --lane-fixed-border: #b0d8b0;
+    --lane-fixed-header: #2e7d32;
+    --lane-persist-bg: #f5f5f5;
+    --lane-persist-border: #ccc;
+    --lane-persist-header: #616161;
+
+    /* Status colors */
+    --critical-bg: #d32f2f;
+    --critical-text: #fff;
+    --serious-bg: #e65100;
+    --serious-text: #fff;
+    --moderate-bg: #f9a825;
+    --moderate-text: #1a1a1a;
+
+    /* Verdict */
+    --verdict-blocked-bg: #d32f2f;
+    --verdict-blocked-text: #fff;
+    --verdict-passing-bg: #2e7d32;
+    --verdict-passing-text: #fff;
+
+    /* Misc */
+    --code-bg: #f5f5f5;
+    --skip-bg: #fff8e1;
+    --skip-border: #ffe082;
+    --radius: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.12);
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg: #121212;
+    --bg-surface: #1e1e1e;
+    --bg-surface-hover: #2a2a2a;
+    --text: #e0e0e0;
+    --text-secondary: #aaa;
+    --text-muted: #777;
+    --border: #333;
+    --border-strong: #444;
+
+    --lane-new-bg: #2a1a1a;
+    --lane-new-border: #5c2a2a;
+    --lane-fixed-bg: #1a2a1a;
+    --lane-fixed-border: #2a5c2a;
+    --lane-persist-bg: #1e1e1e;
+    --lane-persist-border: #444;
+
+    --code-bg: #2a2a2a;
+    --skip-bg: #2a2510;
+    --skip-border: #5c4a10;
+    --shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── Top Bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .pr-info {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .pr-info strong { color: var(--text); }
+
+  /* Theme toggle */
+  .theme-toggle {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .theme-toggle:hover { border-color: var(--border-strong); }
+  .theme-icon { font-size: 14px; }
+
+  /* ── Verdict Banner ── */
+  .verdict {
+    padding: 20px 24px;
+    text-align: center;
+    transition: background 0.3s;
+  }
+  .verdict.blocked {
+    background: var(--verdict-blocked-bg);
+    color: var(--verdict-blocked-text);
+  }
+  .verdict.passing {
+    background: var(--verdict-passing-bg);
+    color: var(--verdict-passing-text);
+  }
+  .verdict-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+  .verdict-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .verdict-sub {
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  /* ── Stats Strip ── */
+  .stats-strip {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+  .stat-value.red { color: var(--critical-bg); }
+  .stat-value.green { color: var(--lane-fixed-header); }
+  .stat-value.grey { color: var(--text-secondary); }
+  .stat-value.amber { color: var(--serious-bg); }
+
+  /* Audit Stats Strip */
+  .audit-stats-strip {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .audit-stat {
+    text-align: center;
+    padding: 10px 28px;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .audit-stat:last-child { border-right: none; }
+  .audit-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .audit-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .audit-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+  }
+  .audit-dot.green { background: var(--lane-fixed-header); border-radius: 50%; }
+  .audit-dot.red { background: var(--critical-bg); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+  .audit-dot.amber { background: var(--serious-bg); border-radius: 2px; }
+
+  /* ── Three-Lane Layout ── */
+  .lanes {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    min-height: calc(100vh - 260px);
+  }
+  @media (max-width: 960px) {
+    .lanes {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .lane {
+    border-right: 1px solid var(--border);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .lane:last-child { border-right: none; }
+
+  .lane-header {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-surface);
+  }
+  .lane-header .count {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .lane.new .lane-header { color: var(--lane-new-header); border-color: var(--lane-new-header); }
+  .lane.fixed .lane-header { color: var(--lane-fixed-header); border-color: var(--lane-fixed-header); }
+  .lane.persist .lane-header { color: var(--lane-persist-header); border-color: var(--lane-persist-header); }
+
+  .lane-body {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+  }
+  .lane.new .lane-body { background: var(--lane-new-bg); }
+  .lane.fixed .lane-body { background: var(--lane-fixed-bg); }
+  .lane.persist .lane-body { background: var(--lane-persist-bg); }
+
+  /* ── Skipped Area ── */
+  .skipped-area {
+    margin-top: 16px;
+    border-top: 1px dashed var(--border-strong);
+    padding-top: 12px;
+  }
+  .skipped-area-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .skipped-area:empty, .skipped-area:not(:has(.card)) {
+    display: none;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s, opacity 0.3s;
+    overflow: hidden;
+  }
+  .card:hover { box-shadow: var(--shadow-hover); }
+  .card.skipped {
+    opacity: 0.65;
+    border-style: dashed;
+  }
+
+  .card-head {
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    user-select: none;
+  }
+  .card-head:hover { background: var(--bg-surface-hover); }
+
+  .card-row-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+  }
+  .card-expand-icon {
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .card.expanded .card-expand-icon { transform: rotate(90deg); }
+
+  .card-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Severity badges with shapes */
+  .severity {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .severity-shape {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+  .severity.critical { background: var(--critical-bg); color: var(--critical-text); }
+  .severity.critical .severity-shape {
+    /* Diamond shape */
+    width: 8px; height: 8px;
+    background: var(--critical-text);
+    transform: rotate(45deg);
+  }
+  .severity.serious { background: var(--serious-bg); color: var(--serious-text); }
+  .severity.serious .severity-shape {
+    /* Triangle via borders */
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 8px solid var(--serious-text);
+  }
+  .severity.moderate { background: var(--moderate-bg); color: var(--moderate-text); }
+  .severity.moderate .severity-shape {
+    /* Circle */
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--moderate-text);
+  }
+
+  .category-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+  .package-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--bg);
+    color: var(--text-muted);
+    font-family: var(--mono);
+    white-space: nowrap;
+  }
+
+  /* ── Card Details ── */
+  .card-details {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .card.expanded .card-details { display: block; }
+
+  .detail-section {
+    margin-top: 12px;
+  }
+  .detail-section h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .detail-section p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .detail-section ol {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding-left: 20px;
+    line-height: 1.8;
+  }
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    overflow-x: auto;
+    white-space: pre;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .code-file {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+    margin-bottom: 4px;
+  }
+  .wcag-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-decoration: underline;
+    margin-top: 8px;
+  }
+  .wcag-link:hover { color: var(--text); }
+
+  /* ── Skip UI ── */
+  .card-actions {
+    padding: 8px 14px;
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text);
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--bg-surface-hover); border-color: var(--border-strong); }
+  .btn-skip {
+    color: var(--text-secondary);
+  }
+  .btn-unskip {
+    border-color: var(--skip-border);
+    background: var(--skip-bg);
+  }
+
+  .skip-form {
+    display: none;
+    padding: 10px 14px;
+    background: var(--skip-bg);
+    border-top: 1px solid var(--skip-border);
+  }
+  .skip-form.visible { display: block; }
+  .skip-form label {
+    font-size: 12px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .skip-form select,
+  .skip-form textarea {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 12px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg-surface);
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .skip-form textarea {
+    min-height: 60px;
+    resize: vertical;
+  }
+  .skip-form .skip-form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .btn-confirm-skip {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+  }
+  .btn-confirm-skip:hover { opacity: 0.85; }
+  .btn-confirm-skip:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ── Footer / Demo Controls ── */
+  .demo-controls {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .demo-controls span {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+  .toggle-label input { accent-color: var(--lane-fixed-header); }
+
+  /* ── Celebration for Fixed ── */
+  .lane.fixed .card {
+    border-left: 3px solid var(--lane-fixed-header);
+  }
+
+  /* ── All-passing empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+  }
+  .empty-state-icon { font-size: 36px; margin-bottom: 8px; }
+  .empty-state-text { font-size: 14px; }
+
+  /* Responsive stacking */
+  @media (max-width: 960px) {
+    .lane { border-right: none; border-bottom: 1px solid var(--border); }
+    .lane:last-child { border-bottom: none; }
+    .lanes { min-height: auto; }
+    .lane-body { max-height: 500px; }
+  }
+
+  /* Skip link for a11y */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: var(--text);
+    color: var(--bg);
+    padding: 8px 16px;
+    z-index: 100;
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .skip-to-content:focus {
+    left: 0;
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-to-content">Skip to main content</a>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="logo">ELEVEN <span class="logo-sub">Accessibility Audit</span></div>
+  </div>
+  <div class="topbar-right">
+    <span class="pr-info"><strong>PR #482</strong> &mdash; feat: add user profile card &mdash; <span id="timestamp">2026-04-09 14:32 UTC</span></span>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light and dark theme">
+      <span class="theme-icon" id="themeIcon">&#9790;</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</header>
+
+<!-- Verdict Banner -->
+<div class="verdict blocked" id="verdictBanner" role="status" aria-live="polite">
+  <div class="verdict-icon" id="verdictIcon" aria-hidden="true">&#x2716;</div>
+  <div class="verdict-title" id="verdictTitle">Merge Blocked</div>
+  <div class="verdict-sub" id="verdictSub">3 new accessibility violations must be resolved (or skipped with justification)</div>
+</div>
+
+<!-- Stats Strip -->
+<div class="stats-strip" role="region" aria-label="Issue statistics">
+  <div class="stat">
+    <div class="stat-value red" id="statNew">3</div>
+    <div class="stat-label">New Issues</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value green" id="statFixed">1</div>
+    <div class="stat-label">Fixed</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value grey" id="statPersist">5</div>
+    <div class="stat-label">Persisting</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="statSkipped">0</div>
+    <div class="stat-label">Skipped</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="statDelta">+2</div>
+    <div class="stat-label">Net Delta</div>
+  </div>
+</div>
+
+<!-- Audit Stats Strip -->
+<div class="audit-stats-strip" role="region" aria-label="Audit statistics">
+  <div class="audit-stat">
+    <div class="audit-stat-value">47</div>
+    <div class="audit-stat-label">Total Audits</div>
+  </div>
+  <div class="audit-stat">
+    <div class="audit-stat-value green">38</div>
+    <div class="audit-stat-label"><span class="audit-dot green"></span> Passed Audits</div>
+  </div>
+  <div class="audit-stat">
+    <div class="audit-stat-value red">6</div>
+    <div class="audit-stat-label"><span class="audit-dot red"></span> Failed Audits</div>
+  </div>
+  <div class="audit-stat">
+    <div class="audit-stat-value amber">3</div>
+    <div class="audit-stat-label"><span class="audit-dot amber"></span> Skipped</div>
+  </div>
+</div>
+
+<!-- Three-Lane Board -->
+<main id="main" class="lanes">
+
+  <!-- NEW ISSUES LANE -->
+  <section class="lane new" aria-label="New issues that block merge">
+    <div class="lane-header">
+      <span>&#x26D4; New Issues</span>
+      <span class="count" id="newCount">3</span>
+    </div>
+    <div class="lane-body" id="laneNew">
+      <!-- Cards injected by JS -->
+      <div class="skipped-area" id="skippedArea">
+        <div class="skipped-area-label">&#x23ED; Skipped</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIXED ISSUES LANE -->
+  <section class="lane fixed" aria-label="Issues fixed by this PR">
+    <div class="lane-header">
+      <span>&#x2714; Fixed</span>
+      <span class="count" id="fixedCount">1</span>
+    </div>
+    <div class="lane-body" id="laneFixed">
+      <!-- Cards injected by JS -->
+    </div>
+  </section>
+
+  <!-- PERSISTING ISSUES LANE -->
+  <section class="lane persist" aria-label="Pre-existing issues for reference">
+    <div class="lane-header">
+      <span>&#x25CB; Persisting</span>
+      <span class="count" id="persistCount">5</span>
+    </div>
+    <div class="lane-body" id="lanePersist">
+      <!-- Cards injected by JS -->
+    </div>
+  </section>
+
+</main>
+
+<!-- Demo Controls -->
+<footer class="demo-controls">
+  <span>Demo Controls</span>
+  <label class="toggle-label">
+    <input type="checkbox" id="allPassingToggle" onchange="toggleAllPassing(this.checked)">
+    Simulate "All Passing" state
+  </label>
+</footer>
+
+<script>
+// ── Demo Data ──
+const DEMO_DATA = {
+  new: [
+    {
+      id: 'new-1',
+      title: 'Image missing alternative text',
+      severity: 'critical',
+      category: 'Images',
+      package: '@app/profile-card',
+      why: 'Screen readers cannot convey the meaning of images without alt text. Users who are blind or have low vision will have no indication of what the image represents.',
+      file: 'src/components/ProfileCard.tsx',
+      line: 42,
+      code: '<img\n  src={user.avatarUrl}\n  className="avatar-lg"\n/>',
+      fix: [
+        'Add a descriptive <code>alt</code> attribute to the <code>&lt;img&gt;</code> element.',
+        'If the image is decorative, use <code>alt=""</code> and <code>role="presentation"</code>.',
+        'Ensure the alt text describes the purpose, not just "image of...".'
+      ],
+      wcag: '1.1.1',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/non-text-content.html'
+    },
+    {
+      id: 'new-2',
+      title: 'Button has no accessible name',
+      severity: 'critical',
+      category: 'Interactive',
+      package: '@app/profile-card',
+      why: 'A button without an accessible name cannot be identified by assistive technology. Screen reader users will hear "button" with no indication of what it does.',
+      file: 'src/components/ProfileCard.tsx',
+      line: 67,
+      code: '<button\n  className="icon-btn"\n  onClick={handleEdit}\n>\n  <EditIcon />\n</button>',
+      fix: [
+        'Add an <code>aria-label</code> attribute describing the button action, e.g. <code>aria-label="Edit profile"</code>.',
+        'Alternatively, add visually hidden text inside the button.',
+        'Ensure the label is concise and describes the action, not the icon.'
+      ],
+      wcag: '4.1.2',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html'
+    },
+    {
+      id: 'new-3',
+      title: 'Insufficient color contrast on subtitle',
+      severity: 'serious',
+      category: 'Color',
+      package: '@app/profile-card',
+      why: 'The subtitle text (#999 on #fff) has a contrast ratio of 2.85:1, which fails the WCAG AA minimum of 4.5:1 for normal text. Users with low vision may not be able to read it.',
+      file: 'src/components/ProfileCard.module.css',
+      line: 28,
+      code: '.subtitle {\n  color: #999999;\n  font-size: 14px;\n}',
+      fix: [
+        'Change the text color to at least <code>#767676</code> to achieve a 4.5:1 ratio against white.',
+        'Alternatively, increase the font size to 18px+ or make it bold to qualify for the 3:1 large text ratio.',
+        'Use a contrast checker tool to verify the final ratio meets AA.'
+      ],
+      wcag: '1.4.3',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html'
+    }
+  ],
+  fixed: [
+    {
+      id: 'fixed-1',
+      title: 'Form input missing associated label',
+      severity: 'serious',
+      category: 'Forms',
+      package: '@app/settings',
+      why: 'The email input previously had no programmatically associated label. This was resolved by adding a <code>&lt;label&gt;</code> element with a matching <code>for</code> attribute.',
+      file: 'src/components/SettingsForm.tsx',
+      line: 15,
+      code: '<label htmlFor="email">Email address</label>\n<input id="email" type="email" ... />',
+      fix: ['No action needed - this issue has been resolved in this PR.'],
+      wcag: '1.3.1',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html'
+    }
+  ],
+  persisting: [
+    {
+      id: 'persist-1',
+      title: 'Skip navigation link missing',
+      severity: 'moderate',
+      category: 'Navigation',
+      package: '@app/shell',
+      why: 'Users navigating with a keyboard must tab through the entire navigation on every page. A skip link allows them to jump directly to the main content.',
+      file: 'src/layouts/AppShell.tsx',
+      line: 8,
+      code: '<header>\n  <Nav items={navItems} />\n</header>\n<main>{children}</main>',
+      fix: [
+        'Add a visually hidden skip link as the first focusable element: <code>&lt;a href="#main" class="skip-link"&gt;Skip to content&lt;/a&gt;</code>.',
+        'Ensure the link becomes visible on focus.',
+        'Add <code>id="main"</code> to the main content area.'
+      ],
+      wcag: '2.4.1',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/bypass-blocks.html'
+    },
+    {
+      id: 'persist-2',
+      title: 'Page does not have a level-one heading',
+      severity: 'moderate',
+      category: 'Structure',
+      package: '@app/shell',
+      why: 'Screen reader users often navigate by headings. A missing h1 makes it harder to understand the page structure and find the main content.',
+      file: 'src/pages/Dashboard.tsx',
+      line: 12,
+      code: '<div className="page-title">\n  Dashboard\n</div>',
+      fix: [
+        'Change the page title element to an <code>&lt;h1&gt;</code>.',
+        'Ensure there is exactly one <code>&lt;h1&gt;</code> per page.',
+        'Maintain visual styling via CSS classes on the heading element.'
+      ],
+      wcag: '1.3.1',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/info-and-relationships.html'
+    },
+    {
+      id: 'persist-3',
+      title: 'Focus indicator removed on interactive elements',
+      severity: 'serious',
+      category: 'Focus',
+      package: '@app/shell',
+      why: 'Global CSS includes <code>outline: none</code> on focus, removing the browser default focus ring. Keyboard users cannot see which element is currently focused.',
+      file: 'src/styles/global.css',
+      line: 4,
+      code: '*:focus {\n  outline: none;\n}',
+      fix: [
+        'Remove the global <code>outline: none</code> rule.',
+        'Replace with custom focus styles using <code>:focus-visible</code>.',
+        'Ensure focus indicators have a minimum 3:1 contrast ratio against adjacent colors.'
+      ],
+      wcag: '2.4.7',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/focus-visible.html'
+    },
+    {
+      id: 'persist-4',
+      title: 'ARIA role "tabpanel" used without required attributes',
+      severity: 'moderate',
+      category: 'ARIA',
+      package: '@app/settings',
+      why: 'The tabpanel element is missing <code>aria-labelledby</code> linking it to its tab, so screen readers cannot associate the panel with its tab control.',
+      file: 'src/components/SettingsTabs.tsx',
+      line: 33,
+      code: '<div role="tabpanel">\n  {activePanel}\n</div>',
+      fix: [
+        'Add <code>aria-labelledby</code> referencing the associated tab element\'s id.',
+        'Ensure each tab has a unique <code>id</code> attribute.',
+        'Verify keyboard navigation between tabs follows the ARIA Authoring Practices pattern.'
+      ],
+      wcag: '4.1.2',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/name-role-value.html'
+    },
+    {
+      id: 'persist-5',
+      title: 'Link text is not descriptive',
+      severity: 'moderate',
+      category: 'Links',
+      package: '@app/settings',
+      why: 'Multiple links on the page use "click here" as text. Screen reader users navigating by links hear a list of identical "click here" links with no context.',
+      file: 'src/components/HelpPanel.tsx',
+      line: 22,
+      code: '<a href="/docs/privacy">\n  click here\n</a>',
+      fix: [
+        'Replace generic link text with descriptive text, e.g. "Read our privacy policy".',
+        'If the visual design requires short text, use <code>aria-label</code> to provide a descriptive name.',
+        'Ensure each link\'s purpose can be determined from its text alone.'
+      ],
+      wcag: '2.4.4',
+      wcagUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/link-purpose-in-context.html'
+    }
+  ]
+};
+
+// ── State ──
+const skippedIssues = new Map(); // id -> { reason, type }
+
+// ── Render ──
+function severityHTML(level) {
+  const labels = { critical: 'Critical', serious: 'Serious', moderate: 'Moderate' };
+  return `<span class="severity ${level}" aria-label="Severity: ${labels[level]}"><span class="severity-shape" aria-hidden="true"></span>${labels[level]}</span>`;
+}
+
+function renderCard(issue, lane) {
+  const isNew = lane === 'new';
+  const isSkipped = skippedIssues.has(issue.id);
+  const skipInfo = skippedIssues.get(issue.id);
+
+  let actionsHTML = '';
+  if (isNew && !isSkipped) {
+    actionsHTML = `
+      <div class="card-actions">
+        <button class="btn btn-skip" onclick="openSkipForm('${issue.id}', event)" aria-expanded="false" aria-controls="skip-form-${issue.id}">Skip</button>
+      </div>
+      <div class="skip-form" id="skip-form-${issue.id}" role="region" aria-label="Skip form for ${issue.title}">
+        <label for="skip-type-${issue.id}">Skip scope</label>
+        <select id="skip-type-${issue.id}">
+          <option value="pr">Skip for this PR</option>
+          <option value="permanent">Not relevant (permanent)</option>
+        </select>
+        <label for="skip-reason-${issue.id}">Reason (required)</label>
+        <textarea id="skip-reason-${issue.id}" placeholder="Explain why this issue should be skipped..." oninput="validateSkipForm('${issue.id}')"></textarea>
+        <div class="skip-form-actions">
+          <button class="btn" onclick="closeSkipForm('${issue.id}')">Cancel</button>
+          <button class="btn btn-confirm-skip" id="skip-confirm-${issue.id}" disabled onclick="confirmSkip('${issue.id}')">Confirm Skip</button>
+        </div>
+      </div>`;
+  }
+  if (isNew && isSkipped) {
+    actionsHTML = `
+      <div class="card-actions">
+        <button class="btn btn-unskip" onclick="unskip('${issue.id}')">Unskip</button>
+        <span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;">
+          ${skipInfo.type === 'permanent' ? 'Permanent' : 'This PR'} &mdash; "${skipInfo.reason}"
+        </span>
+      </div>`;
+  }
+
+  const fixSteps = issue.fix.map((s, i) => `<li>${s}</li>`).join('');
+
+  return `
+    <div class="card ${isSkipped ? 'skipped' : ''}" id="card-${issue.id}" data-id="${issue.id}">
+      <div class="card-head" onclick="toggleCard('${issue.id}')" role="button" tabindex="0" aria-expanded="false"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleCard('${issue.id}')}">
+        <div class="card-row-top">
+          <span class="card-title">${issue.title}</span>
+          <span class="card-expand-icon" aria-hidden="true">&#x25B6;</span>
+        </div>
+        <div class="card-row-meta">
+          ${severityHTML(issue.severity)}
+          <span class="category-tag">${issue.category}</span>
+          <span class="package-tag">${issue.package}</span>
+        </div>
+      </div>
+      <div class="card-details" id="details-${issue.id}">
+        <div class="detail-section">
+          <h4>Why is this an issue?</h4>
+          <p>${issue.why}</p>
+        </div>
+        <div class="detail-section">
+          <h4>Where is it?</h4>
+          <div class="code-file">${issue.file}:${issue.line}</div>
+          <div class="code-block">${escapeHTML(issue.code)}</div>
+        </div>
+        <div class="detail-section">
+          <h4>How to fix</h4>
+          <ol>${fixSteps}</ol>
+        </div>
+        <a class="wcag-link" href="${issue.wcagUrl}" target="_blank" rel="noopener">
+          WCAG ${issue.wcag} &#x2197;
+        </a>
+      </div>
+      ${actionsHTML}
+    </div>`;
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderAll() {
+  const laneNew = document.getElementById('laneNew');
+  const skippedArea = document.getElementById('skippedArea');
+  const laneFixed = document.getElementById('laneFixed');
+  const lanePersist = document.getElementById('lanePersist');
+
+  // New issues (non-skipped)
+  const activeCards = DEMO_DATA.new.filter(i => !skippedIssues.has(i.id));
+  const skippedCards = DEMO_DATA.new.filter(i => skippedIssues.has(i.id));
+
+  // Clear and rebuild new lane
+  const existingCards = laneNew.querySelectorAll(':scope > .card');
+  existingCards.forEach(c => c.remove());
+  activeCards.forEach(issue => {
+    skippedArea.insertAdjacentHTML('beforebegin', renderCard(issue, 'new'));
+  });
+
+  // Clear and rebuild skipped area cards
+  const existingSkipped = skippedArea.querySelectorAll('.card');
+  existingSkipped.forEach(c => c.remove());
+  skippedCards.forEach(issue => {
+    skippedArea.insertAdjacentHTML('beforeend', renderCard(issue, 'new'));
+  });
+
+  // Fixed lane
+  laneFixed.innerHTML = '';
+  DEMO_DATA.fixed.forEach(issue => {
+    laneFixed.insertAdjacentHTML('beforeend', renderCard(issue, 'fixed'));
+  });
+
+  // Persist lane
+  lanePersist.innerHTML = '';
+  DEMO_DATA.persisting.forEach(issue => {
+    lanePersist.insertAdjacentHTML('beforeend', renderCard(issue, 'persist'));
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  const activeNew = DEMO_DATA.new.filter(i => !skippedIssues.has(i.id)).length;
+  const skippedCount = skippedIssues.size;
+  const fixedCount = DEMO_DATA.fixed.length;
+  const persistCount = DEMO_DATA.persisting.length;
+
+  document.getElementById('statNew').textContent = activeNew;
+  document.getElementById('statFixed').textContent = fixedCount;
+  document.getElementById('statPersist').textContent = persistCount;
+  document.getElementById('statSkipped').textContent = skippedCount;
+  document.getElementById('newCount').textContent = DEMO_DATA.new.length;
+  document.getElementById('fixedCount').textContent = fixedCount;
+  document.getElementById('persistCount').textContent = persistCount;
+
+  const delta = activeNew - fixedCount;
+  document.getElementById('statDelta').textContent = (delta >= 0 ? '+' : '') + delta;
+
+  // Update verdict
+  const banner = document.getElementById('verdictBanner');
+  const icon = document.getElementById('verdictIcon');
+  const title = document.getElementById('verdictTitle');
+  const sub = document.getElementById('verdictSub');
+
+  if (activeNew === 0) {
+    banner.className = 'verdict passing';
+    icon.innerHTML = '&#x2714;';
+    title.textContent = 'Merge Passing';
+    if (skippedCount > 0) {
+      sub.textContent = `All new issues resolved or skipped (${skippedCount} skipped with justification)`;
+    } else if (DEMO_DATA.new.length === 0) {
+      sub.textContent = 'No accessibility violations detected in this PR';
+    } else {
+      sub.textContent = 'All new accessibility issues have been resolved';
+    }
+  } else {
+    banner.className = 'verdict blocked';
+    icon.innerHTML = '&#x2716;';
+    title.textContent = 'Merge Blocked';
+    sub.textContent = `${activeNew} new accessibility violation${activeNew > 1 ? 's' : ''} must be resolved (or skipped with justification)`;
+  }
+}
+
+// ── Interactions ──
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  const isExpanded = card.classList.toggle('expanded');
+  const head = card.querySelector('.card-head');
+  head.setAttribute('aria-expanded', isExpanded);
+}
+
+function openSkipForm(id, event) {
+  event.stopPropagation();
+  const form = document.getElementById('skip-form-' + id);
+  const btn = event.target;
+  const isVisible = form.classList.toggle('visible');
+  btn.setAttribute('aria-expanded', isVisible);
+}
+
+function closeSkipForm(id) {
+  const form = document.getElementById('skip-form-' + id);
+  form.classList.remove('visible');
+  const card = document.getElementById('card-' + id);
+  const btn = card.querySelector('.btn-skip');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+}
+
+function validateSkipForm(id) {
+  const reason = document.getElementById('skip-reason-' + id).value.trim();
+  document.getElementById('skip-confirm-' + id).disabled = reason.length === 0;
+}
+
+function confirmSkip(id) {
+  const type = document.getElementById('skip-type-' + id).value;
+  const reason = document.getElementById('skip-reason-' + id).value.trim();
+  if (!reason) return;
+  skippedIssues.set(id, { type, reason });
+  renderAll();
+}
+
+function unskip(id) {
+  skippedIssues.delete(id);
+  renderAll();
+}
+
+// ── Theme Toggle ──
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'light' ? 'dark' : 'light';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeIcon').innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';
+  document.getElementById('themeLabel').textContent = next === 'dark' ? 'Light' : 'Dark';
+}
+
+// ── All-Passing Demo Toggle ──
+let savedNewIssues = null;
+function toggleAllPassing(checked) {
+  if (checked) {
+    savedNewIssues = DEMO_DATA.new;
+    DEMO_DATA.new = [];
+    skippedIssues.clear();
+  } else {
+    DEMO_DATA.new = savedNewIssues || [];
+  }
+  renderAll();
+}
+
+// ── Init ──
+renderAll();
+</script>
+</body>
+</html>

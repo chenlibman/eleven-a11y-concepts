@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN — Fix Rush Report</title>
+<style>
+/* ========== CSS Custom Properties ========== */
+:root {
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+
+  /* Light theme */
+  --bg: #ffffff;
+  --bg-surface: #f7f7f8;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-hover: #f0f0f2;
+  --bg-code: #f4f4f6;
+  --border: #e0e0e4;
+  --border-light: #ebebef;
+  --text: #1a1a1a;
+  --text-secondary: #6b6b76;
+  --text-muted: #9b9ba8;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+
+  /* Status colors */
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fca5a5;
+  --orange: #ea580c;
+  --orange-bg: #fff7ed;
+  --orange-border: #fdba74;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --amber-border: #fcd34d;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #86efac;
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --purple-border: #c4b5fd;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --gold: #b8860b;
+  --gold-bg: #fefce8;
+  --gold-light: #fbbf24;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --bg: #111114;
+  --bg-surface: #1a1a1f;
+  --bg-elevated: #222228;
+  --bg-card: #1e1e24;
+  --bg-hover: #2a2a32;
+  --bg-code: #1a1a22;
+  --border: #333340;
+  --border-light: #2a2a34;
+  --text: #f0f0f4;
+  --text-secondary: #9b9ba8;
+  --text-muted: #6b6b76;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.04);
+  --red-bg: #1f1012;
+  --red-border: #7f1d1d;
+  --orange-bg: #1c1108;
+  --orange-border: #7c2d12;
+  --amber-bg: #1c1506;
+  --amber-border: #78350f;
+  --green-bg: #0a1f10;
+  --green-border: #14532d;
+  --purple-bg: #15102a;
+  --purple-border: #4c1d95;
+  --blue-bg: #0c1528;
+  --gold-bg: #1a1506;
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+button { font-family: var(--font); cursor: pointer; border: none; background: none; color: var(--text); }
+button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+code { font-family: var(--mono); font-size: 0.88em; }
+
+/* ========== Top Bar ========== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.logo {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text);
+}
+.logo-sub { font-weight: 400; font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.5px; margin-left: 4px; }
+.issue-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid var(--red-border);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.issue-count-badge.clean {
+  background: var(--green-bg);
+  color: var(--green);
+  border-color: var(--green-border);
+}
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--orange);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s ease;
+}
+.streak-badge.active { opacity: 1; transform: scale(1); }
+.streak-badge.pop { transform: scale(1.3); }
+.elapsed-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: var(--bg-hover);
+  transition: background var(--transition);
+}
+.theme-toggle:hover { background: var(--border); }
+
+/* ========== Progress Section ========== */
+.progress-section {
+  padding: 20px 24px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-light);
+}
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.xp-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.xp-count {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+.xp-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-light);
+  color: var(--gold);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.progress-fraction {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: var(--border-light);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--green), #22c55e);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3));
+  border-radius: 0 5px 5px 0;
+}
+
+/* ========== Audit Stats Strip ========== */
+.audit-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 0 24px;
+  margin-bottom: 12px;
+}
+.audit-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.audit-stat-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+}
+.audit-stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-top: 2px;
+}
+@media (max-width: 600px) {
+  .audit-stats-strip { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ========== Verdict Banner ========== */
+.verdict-banner {
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.verdict-banner.blocked {
+  background: var(--red-bg);
+  color: var(--red);
+  border-bottom: 2px solid var(--red-border);
+}
+.verdict-banner.passing {
+  background: var(--green-bg);
+  color: var(--green);
+  border-bottom: 2px solid var(--green-border);
+}
+.verdict-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.verdict-banner.blocked .verdict-icon { background: var(--red); color: #fff; }
+.verdict-banner.passing .verdict-icon { background: var(--green); color: #fff; }
+
+/* ========== Main Content ========== */
+.main-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 50vh;
+}
+
+/* ========== View Toggle ========== */
+.view-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.view-toggle {
+  display: inline-flex;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.view-toggle-btn {
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  border-right: 1px solid var(--border);
+}
+.view-toggle-btn:last-child { border-right: none; }
+.view-toggle-btn.active {
+  background: var(--text);
+  color: var(--bg);
+}
+.severity-tabs {
+  display: flex;
+  gap: 6px;
+}
+.severity-tab {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+.severity-tab.active { border-color: var(--text); color: var(--text); font-weight: 600; }
+
+/* ========== Card Stack ========== */
+.card-stack-container {
+  position: relative;
+  min-height: 380px;
+  perspective: 1000px;
+}
+.card-stack-container.hidden { display: none; }
+.issue-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+  transform-origin: center bottom;
+}
+.issue-card.behind-1 { transform: translateY(8px) scale(0.97); opacity: 0.7; z-index: 1; }
+.issue-card.behind-2 { transform: translateY(16px) scale(0.94); opacity: 0.4; z-index: 0; }
+.issue-card.behind-3 { transform: translateY(24px) scale(0.91); opacity: 0.2; z-index: -1; }
+.issue-card.active { z-index: 10; transform: translateY(0) scale(1); opacity: 1; }
+.issue-card.swiped-left {
+  transform: translateX(-120%) rotate(-10deg);
+  opacity: 0;
+  pointer-events: none;
+}
+.issue-card.swiped-right {
+  transform: translateX(120%) rotate(10deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-header-left { flex: 1; }
+.card-rule-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.severity-badge.critical { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.severity-badge.serious { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+.severity-badge.moderate { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.severity-shape {
+  width: 8px; height: 8px; display: inline-block; flex-shrink: 0;
+}
+.severity-shape.critical { background: var(--red); clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.severity-shape.serious { background: var(--orange); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.severity-shape.moderate { background: var(--amber); border-radius: 50%; }
+
+.package-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  font-family: var(--mono);
+}
+.category-badge {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+}
+.card-xp {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* Why / Where / How */
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.detail-row {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+.detail-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 50px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  padding-top: 2px;
+}
+.detail-value { color: var(--text); flex: 1; }
+.detail-value code {
+  background: var(--bg-code);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.82rem;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+.action-btn:hover { transform: translateY(-1px); }
+.action-btn:active { transform: translateY(0); }
+
+.btn-ai {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+.btn-ai:hover { background: #6d28d9; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4); }
+.btn-manual {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-manual:hover { background: var(--bg-hover); border-color: var(--text-muted); }
+.btn-skip {
+  color: var(--text-muted);
+  padding: 10px 12px;
+  position: relative;
+}
+.btn-skip:hover { color: var(--text-secondary); }
+
+/* Skip Dropdown */
+.skip-dropdown {
+  position: absolute;
+  bottom: 110%;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  min-width: 200px;
+  z-index: 20;
+  display: none;
+  overflow: hidden;
+}
+.skip-dropdown.open { display: block; }
+.skip-dropdown-title {
+  padding: 8px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-light);
+}
+.skip-reason {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 0.82rem;
+  color: var(--text);
+  transition: background var(--transition);
+}
+.skip-reason:hover { background: var(--bg-hover); }
+
+/* AI Fix Panel */
+.ai-fix-panel {
+  margin-top: 16px;
+  background: var(--purple-bg);
+  border: 1px solid var(--purple-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: none;
+}
+.ai-fix-panel.open { display: block; animation: slideDown 0.3s ease; }
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ai-fix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--purple-border);
+}
+.ai-fix-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--purple);
+}
+.ai-fix-body { padding: 0; }
+.diff-block {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+.diff-line { white-space: pre; }
+.diff-removed { background: var(--red-bg); color: var(--red); }
+.diff-added { background: var(--green-bg); color: var(--green); }
+.diff-context { color: var(--text-muted); }
+.ai-fix-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--purple-border);
+}
+.ai-btn-apply {
+  padding: 6px 14px;
+  background: var(--purple);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ai-btn-apply:hover { background: #6d28d9; }
+.ai-btn-secondary {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--purple-border);
+  color: var(--purple);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Card Navigation */
+.card-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+.card-nav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--transition);
+}
+.card-nav-btn:hover { background: var(--bg-hover); }
+.card-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.card-counter { font-size: 0.85rem; color: var(--text-secondary); font-weight: 500; }
+
+/* ========== List View (Primary View) ========== */
+.list-view { display: none; }
+.list-view.visible { display: block; }
+.list-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  overflow: hidden;
+  scroll-margin-top: 200px;
+}
+.list-item:hover { border-color: var(--text-muted); box-shadow: var(--shadow-sm); }
+.list-item.expanded { border-color: var(--purple); box-shadow: 0 0 0 1px var(--purple), var(--shadow-md); cursor: default; }
+.list-item.resolved { opacity: 0.55; }
+.list-item.resolved.expanded { opacity: 0.7; }
+.list-item.resolved .list-item-rule { text-decoration: line-through; }
+.list-item.just-resolved {
+  animation: resolvedPulse 0.5s ease;
+}
+@keyframes resolvedPulse {
+  0% { background: var(--green-bg); }
+  100% { background: var(--bg-card); }
+}
+.list-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+}
+.list-item-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.list-item-rule { font-weight: 600; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list-item-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.list-item-chevron {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.list-item.expanded .list-item-chevron { transform: rotate(90deg); color: var(--purple); }
+.list-item-status {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.list-item-status.open { background: var(--red-bg); color: var(--red); }
+.list-item-status.fixed { background: var(--green-bg); color: var(--green); }
+.list-item-status.skipped { background: var(--bg-surface); color: var(--text-muted); }
+.list-item-expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s ease;
+  padding: 0 20px;
+  border-top: 0px solid var(--border-light);
+}
+.list-item.expanded .list-item-expand {
+  max-height: 600px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--border-light);
+}
+.list-item-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.list-item-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+.list-item.expanded .list-item-number { background: var(--purple); color: #fff; border-color: var(--purple); }
+.list-item.resolved .list-item-number { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.auto-advance-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 12px;
+  padding: 6px 10px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+}
+
+/* Undo toast */
+.undo-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--text);
+  color: var(--bg);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 200;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.undo-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+.undo-btn {
+  color: var(--gold-light);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+/* XP Popup */
+.xp-popup {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--gold);
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.xp-popup.animate {
+  opacity: 1;
+  transform: translateY(-40px);
+}
+.xp-popup.fade {
+  opacity: 0;
+  transform: translateY(-80px);
+}
+
+/* ========== Bottom Bar ========== */
+.bottombar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+.bottombar-left { display: flex; gap: 8px; }
+.bulk-ai-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--purple);
+  color: #fff;
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all var(--transition);
+}
+.bulk-ai-btn:hover { background: #6d28d9; transform: translateY(-1px); }
+.bulk-skip-btn {
+  padding: 8px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.bulk-skip-btn:hover { border-color: var(--text-muted); }
+
+/* ========== Bulk AI Modal ========== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-title { font-size: 1.1rem; font-weight: 700; }
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  background: var(--bg-hover);
+}
+.modal-body { padding: 16px 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.bulk-fix-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.bulk-fix-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  cursor: pointer;
+}
+.bulk-fix-toggle {
+  width: 36px; height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.bulk-fix-toggle.on { background: var(--purple); }
+.bulk-fix-toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  top: 2px; left: 2px;
+  transition: transform var(--transition);
+}
+.bulk-fix-toggle.on::after { transform: translateX(16px); }
+.bulk-fix-rule { font-weight: 600; font-size: 0.88rem; flex: 1; }
+
+/* ========== Celebration ========== */
+.celebration-screen {
+  text-align: center;
+  padding: 60px 24px;
+  display: none;
+}
+.celebration-screen.visible { display: block; animation: fadeInUp 0.5s ease; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.celebration-icon { font-size: 4rem; margin-bottom: 16px; }
+.celebration-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.celebration-sub {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 30px;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 500px;
+  margin: 0 auto 30px;
+}
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.stat-value { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+.achievement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-bg);
+  border: 2px solid var(--gold-light);
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* ========== All Passing State ========== */
+.all-passing {
+  text-align: center;
+  padding: 80px 24px;
+  display: none;
+}
+.all-passing.visible { display: block; }
+.all-passing-icon { font-size: 5rem; margin-bottom: 16px; }
+.all-passing-title { font-size: 2rem; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+.all-passing-sub { color: var(--text-secondary); margin-bottom: 24px; }
+.all-passing .achievement-badge { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
+/* ========== Bonus Round ========== */
+.bonus-round-banner {
+  display: none;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-light);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  align-items: center;
+  gap: 10px;
+}
+.bonus-round-banner.visible { display: flex; }
+.bonus-round-icon { font-size: 1.3rem; }
+.bonus-round-text { flex: 1; }
+.bonus-round-title { font-weight: 700; font-size: 0.92rem; color: var(--gold); }
+.bonus-round-sub { font-size: 0.78rem; color: var(--text-muted); }
+
+/* ========== Confetti Canvas ========== */
+#confetti-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ========== Demo Controls ========== */
+.demo-controls {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow-md);
+  z-index: 150;
+  font-size: 0.78rem;
+}
+.demo-controls summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  list-style: none;
+  user-select: none;
+}
+.demo-controls summary::-webkit-details-marker { display: none; }
+.demo-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.demo-btn {
+  padding: 6px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-align: left;
+  color: var(--text);
+  transition: background var(--transition);
+}
+.demo-btn:hover { background: var(--bg-hover); }
+
+/* ========== Responsive ========== */
+@media (max-width: 640px) {
+  .topbar { padding: 10px 16px; }
+  .main-content { padding: 16px; }
+  .issue-card { padding: 18px; }
+  .card-actions { flex-direction: column; }
+  .action-btn { justify-content: center; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .bottombar { padding: 10px 16px; }
+  .severity-tabs { display: none; }
+}
+
+body { padding-bottom: 70px; }
+</style>
+</head>
+<body>
+
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+<!-- Top Bar -->
+<header class="topbar" role="banner">
+  <div class="topbar-left">
+    <div class="logo">ELEVEN <span class="logo-sub">Fix Rush</span></div>
+    <span class="issue-count-badge" id="issueCountBadge" aria-live="polite">
+      <span id="issueCountIcon">&#x2716;</span>
+      <span id="issueCountText">6 issues</span>
+    </span>
+  </div>
+  <div class="topbar-right">
+    <span class="streak-badge" id="streakBadge" aria-live="polite" role="status">
+      <span aria-hidden="true">&#x1F525;</span>
+      <span id="streakText">0 streak</span>
+    </span>
+    <span class="elapsed-time" id="elapsedTime" aria-label="Elapsed time">0:00</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <span id="themeIcon">&#x263D;</span>
+    </button>
+  </div>
+</header>
+
+<!-- Progress Section -->
+<section class="progress-section" aria-label="Progress">
+  <div class="progress-header">
+    <div class="xp-display">
+      <span class="xp-count" id="xpCount" aria-live="polite">0 XP</span>
+      <span class="xp-label">earned</span>
+      <span class="level-badge" id="levelBadge">
+        <span aria-hidden="true">&#x2B50;</span>
+        <span id="levelText">PR Reviewer</span>
+      </span>
+    </div>
+    <span class="progress-fraction" id="progressFraction">0 / 6 resolved</span>
+  </div>
+  <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Issue resolution progress" id="progressTrack">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+</section>
+
+<!-- Audit-Level Stats -->
+<div class="audit-stats-strip" aria-label="Audit-level statistics">
+  <div class="audit-stat" style="border-left: 3px solid var(--blue, var(--purple));">
+    <div class="audit-stat-value">47</div>
+    <div class="audit-stat-label">Total Audits</div>
+  </div>
+  <div class="audit-stat" style="border-left: 3px solid var(--green);">
+    <div class="audit-stat-value" style="color: var(--green);">38</div>
+    <div class="audit-stat-label">Passed</div>
+  </div>
+  <div class="audit-stat" style="border-left: 3px solid var(--red);">
+    <div class="audit-stat-value" style="color: var(--red);">6</div>
+    <div class="audit-stat-label">Failed</div>
+  </div>
+  <div class="audit-stat" style="border-left: 3px solid var(--text-muted);">
+    <div class="audit-stat-value" style="color: var(--text-muted);">3</div>
+    <div class="audit-stat-label">Skipped</div>
+  </div>
+</div>
+
+<!-- Verdict Banner -->
+<div class="verdict-banner blocked" id="verdictBanner" role="status" aria-live="polite">
+  <span class="verdict-icon" id="verdictIcon" aria-hidden="true">&#x2716;</span>
+  <span id="verdictText">Blocked — 6 accessibility issues need attention</span>
+</div>
+
+<!-- Main Content -->
+<main class="main-content" id="mainContent">
+
+  <!-- View Controls -->
+  <div class="view-controls">
+    <div class="view-toggle" role="tablist" aria-label="View mode">
+      <button class="view-toggle-btn active" id="btnListView" role="tab" aria-selected="true" data-view="list">All Issues</button>
+      <button class="view-toggle-btn" id="btnCardView" role="tab" aria-selected="false" data-view="card">Focus Mode</button>
+    </div>
+    <div class="severity-tabs" role="tablist" aria-label="Filter by severity">
+      <button class="severity-tab active" data-filter="all">All</button>
+      <button class="severity-tab" data-filter="critical">Critical</button>
+      <button class="severity-tab" data-filter="serious">Serious</button>
+      <button class="severity-tab" data-filter="moderate">Moderate</button>
+    </div>
+  </div>
+
+  <!-- Bonus Round Banner -->
+  <div class="bonus-round-banner" id="bonusRoundBanner" role="status">
+    <span class="bonus-round-icon" aria-hidden="true">&#x1F3C6;</span>
+    <div class="bonus-round-text">
+      <div class="bonus-round-title">Bonus Round!</div>
+      <div class="bonus-round-sub">These are pre-existing issues from your benchmark. Fixing them earns bonus XP!</div>
+    </div>
+  </div>
+
+  <!-- Card Stack View -->
+  <div class="card-stack-container" id="cardStackContainer" role="region" aria-label="Issue cards">
+    <!-- Cards injected by JS -->
+  </div>
+  <div class="card-nav" id="cardNav">
+    <button class="card-nav-btn" id="btnPrevCard" aria-label="Previous card" disabled>&#x2190;</button>
+    <span class="card-counter" id="cardCounter">1 / 6</span>
+    <button class="card-nav-btn" id="btnNextCard" aria-label="Next card">&#x2192;</button>
+  </div>
+
+  <!-- List View -->
+  <div class="list-view" id="listView" role="list" aria-label="Issue list">
+    <!-- List items injected by JS -->
+  </div>
+
+  <!-- Celebration Screen -->
+  <div class="celebration-screen" id="celebrationScreen" role="status" aria-live="polite">
+    <div class="celebration-icon" aria-hidden="true">&#x1F389;</div>
+    <div class="celebration-title">PR is Clean!</div>
+    <div class="celebration-sub">All accessibility issues have been resolved.</div>
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-value" id="statIssues">0</div>
+        <div class="stat-label">Issues resolved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statTime">0:00</div>
+        <div class="stat-label">Total time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statAvg">0s</div>
+        <div class="stat-label">Avg per issue</div>
+      </div>
+    </div>
+    <div class="achievement-badge" id="achievementBadge">
+      <span aria-hidden="true">&#x1F3C5;</span>
+      <span>A11y Champion</span>
+    </div>
+  </div>
+
+  <!-- All Passing Screen -->
+  <div class="all-passing" id="allPassingScreen">
+    <div class="all-passing-icon" aria-hidden="true">&#x2705;</div>
+    <div class="all-passing-title">Nothing to Fix!</div>
+    <div class="all-passing-sub">All accessibility checks passed. Your components are accessible.</div>
+    <div class="achievement-badge">
+      <span aria-hidden="true">&#x1F31F;</span>
+      <span>Clean Run Achievement</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom Bar -->
+<footer class="bottombar" id="bottombar" role="toolbar" aria-label="Bulk actions">
+  <div class="bottombar-left">
+    <button class="bulk-ai-btn" id="btnBulkAI" aria-label="Fix all issues with AI">
+      <span aria-hidden="true">&#x2728;</span> Fix All with AI
+    </button>
+    <button class="bulk-skip-btn" id="btnBulkSkip">Skip remaining</button>
+  </div>
+  <div class="view-toggle" role="tablist" aria-label="View mode (bottom)">
+    <button class="view-toggle-btn active" data-view="list" aria-label="All issues view">&#x2630;</button>
+    <button class="view-toggle-btn" data-view="card" aria-label="Focus mode">&#x25A3;</button>
+  </div>
+</footer>
+
+<!-- Undo Toast -->
+<div class="undo-toast" id="undoToast" role="alert" aria-live="assertive">
+  <span id="undoToastText">Issue skipped</span>
+  <button class="undo-btn" id="undoBtn">Undo</button>
+</div>
+
+<!-- Bulk AI Modal -->
+<div class="modal-overlay" id="bulkModal" role="dialog" aria-modal="true" aria-label="Fix all with AI">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title"><span aria-hidden="true">&#x2728;</span> Fix All with AI</span>
+      <button class="modal-close" id="bulkModalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body" id="bulkModalBody">
+      <!-- Injected by JS -->
+    </div>
+    <div class="modal-footer">
+      <button class="ai-btn-secondary" id="bulkModalCancel">Cancel</button>
+      <button class="ai-btn-apply" id="bulkModalApply">Apply selected fixes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Demo Controls -->
+<details class="demo-controls">
+  <summary>Demo Controls</summary>
+  <div class="demo-btn-group">
+    <button class="demo-btn" onclick="setDemoState('blocked')">Blocked (default)</button>
+    <button class="demo-btn" onclick="setDemoState('in-progress')">In Progress</button>
+    <button class="demo-btn" onclick="setDemoState('all-resolved')">All Resolved</button>
+    <button class="demo-btn" onclick="setDemoState('all-passing')">All Passing</button>
+  </div>
+</details>
+
+<script>
+// ==================== DATA ====================
+const ISSUES = [
+  {
+    id: 1, rule: 'button-name', ruleName: 'Button missing accessible name',
+    severity: 'critical', xp: 30, pkg: '@wix/wsr-modal', category: 'axe-core',
+    why: 'Screen readers announce this button without a label, making it unusable for blind users.',
+    where: '<code>src/Modal/CloseButton.tsx</code> line 42',
+    how: 'Add an <code>aria-label</code> attribute to the close button.',
+    status: 'open', benchmark: false,
+    diff: { removed: '<button class="close-btn" onclick="closeModal()">', added: '<button class="close-btn" onclick="closeModal()" aria-label="Close dialog">' }
+  },
+  {
+    id: 2, rule: 'image-alt', ruleName: 'Image missing alt text',
+    severity: 'critical', xp: 30, pkg: '@wix/wsr-avatar', category: 'axe-core',
+    why: 'Images without alt text are invisible to screen reader users and fail WCAG 1.1.1.',
+    where: '<code>src/Avatar/Avatar.tsx</code> line 18',
+    how: 'Add a descriptive <code>alt</code> attribute to the image element.',
+    status: 'open', benchmark: false,
+    diff: { removed: '<img src="avatar.png" class="profile-avatar">', added: '<img src="avatar.png" class="profile-avatar" alt="User profile photo">' }
+  },
+  {
+    id: 3, rule: 'color-contrast', ruleName: 'Insufficient color contrast',
+    severity: 'serious', xp: 20, pkg: '@wix/wsr-text', category: 'axe-core',
+    why: 'Text with contrast ratio 2.8:1 fails WCAG AA minimum of 4.5:1 for normal text.',
+    where: '<code>src/Text/Subtitle.st.css</code> line 7',
+    how: 'Darken the text color to meet contrast requirements.',
+    status: 'open', benchmark: false,
+    diff: { removed: '.subtitle { color: #999; }', added: '.subtitle { color: #595959; } /* Contrast ratio: 7.1:1 ✓ */' }
+  },
+  {
+    id: 4, rule: 'keyboard-nav', ruleName: 'Interactive element not keyboard accessible',
+    severity: 'serious', xp: 20, pkg: '@wix/wsr-modal', category: 'keyboard',
+    why: 'The dropdown trigger uses onClick without onKeyDown, excluding keyboard-only users.',
+    where: '<code>src/Dropdown/Trigger.tsx</code> line 55',
+    how: 'Add <code>onKeyDown</code> handler for Enter and Space keys, and ensure <code>tabIndex="0"</code>.',
+    status: 'open', benchmark: false,
+    diff: { removed: '<div className="trigger" onClick={open}>', added: '<div className="trigger" onClick={open} onKeyDown={handleKey} tabIndex={0} role="button">' }
+  },
+  {
+    id: 5, rule: 'focus-ring', ruleName: 'Missing visible focus indicator',
+    severity: 'moderate', xp: 10, pkg: '@wix/wsr-button', category: 'focus-ring',
+    why: 'Custom styles override the default focus ring, making keyboard focus invisible.',
+    where: '<code>src/Button/Button.st.css</code> line 23',
+    how: 'Add a <code>:focus-visible</code> rule with a visible outline.',
+    status: 'fixed', benchmark: false,
+    diff: { removed: '.btn:focus { outline: none; }', added: '.btn:focus-visible { outline: 2px solid #7c3aed; outline-offset: 2px; }' }
+  },
+  {
+    id: 6, rule: 'tab-reach', ruleName: 'Element unreachable via Tab key',
+    severity: 'moderate', xp: 10, pkg: '@wix/wsr-tooltip', category: 'tab-reachability',
+    why: 'The tooltip close button cannot be reached with Tab navigation.',
+    where: '<code>src/Tooltip/CloseIcon.tsx</code> line 12',
+    how: 'Ensure the close icon has <code>tabIndex="0"</code> and is in the DOM focus order.',
+    status: 'open', benchmark: false,
+    diff: { removed: '<span class="close-icon" onClick={dismiss}>', added: '<button class="close-icon" onClick={dismiss} aria-label="Dismiss tooltip">' }
+  },
+  // Pre-existing / benchmark issues
+  {
+    id: 7, rule: 'aria-roles', ruleName: 'Invalid ARIA role',
+    severity: 'serious', xp: 25, pkg: '@wix/wsr-modal', category: 'axe-core',
+    why: 'Using an invalid ARIA role confuses assistive technology.',
+    where: '<code>src/Modal/Dialog.tsx</code> line 8',
+    how: 'Replace the invalid role with <code>role="dialog"</code>.',
+    status: 'open', benchmark: true,
+    diff: { removed: '<div role="popup">', added: '<div role="dialog" aria-modal="true">' }
+  },
+  {
+    id: 8, rule: 'label', ruleName: 'Form input missing label',
+    severity: 'serious', xp: 25, pkg: '@wix/wsr-input', category: 'axe-core',
+    why: 'Inputs without labels cannot be identified by screen readers.',
+    where: '<code>src/Input/SearchInput.tsx</code> line 31',
+    how: 'Associate a <code>&lt;label&gt;</code> element or use <code>aria-label</code>.',
+    status: 'open', benchmark: true,
+    diff: { removed: '<input type="search" placeholder="Search...">', added: '<input type="search" placeholder="Search..." aria-label="Search components">' }
+  },
+  {
+    id: 9, rule: 'focus-order', ruleName: 'Focus order not logical',
+    severity: 'moderate', xp: 15, pkg: '@wix/wsr-modal', category: 'keyboard',
+    why: 'Tab order skips from the header to the footer, missing the body content.',
+    where: '<code>src/Modal/Modal.tsx</code> line 20',
+    how: 'Ensure content is in DOM order or use <code>tabIndex</code> appropriately.',
+    status: 'open', benchmark: true,
+    diff: { removed: '<div class="modal-body" tabindex="-1">', added: '<div class="modal-body" tabindex="0">' }
+  }
+];
+
+// ==================== STATE ====================
+let state = {
+  view: 'list', // 'list' | 'card'
+  currentCardIndex: 0,
+  issues: JSON.parse(JSON.stringify(ISSUES)),
+  xp: 0,
+  streak: 0,
+  resolved: 0,
+  filter: 'all',
+  startTime: Date.now(),
+  elapsedInterval: null,
+  showBonusRound: false,
+  lastSkippedId: null,
+  lastSkippedPrevStatus: null,
+  justResolvedId: null,  // for animation
+  expandedAI: {},       // issueId -> bool
+  expandedListItem: {}, // issueId -> bool
+  bulkToggles: {},      // issueId -> bool
+};
+
+// ==================== HELPERS ====================
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return document.querySelectorAll(sel); }
+
+function getNewIssues() { return state.issues.filter(i => !i.benchmark); }
+function getBenchmarkIssues() { return state.issues.filter(i => i.benchmark); }
+function getOpenNewIssues() { return getNewIssues().filter(i => i.status === 'open'); }
+function getFilteredIssues(list) {
+  if (state.filter === 'all') return list;
+  return list.filter(i => i.severity === state.filter);
+}
+function getAllVisibleIssues() {
+  const news = getNewIssues();
+  const bench = state.showBonusRound ? getBenchmarkIssues() : [];
+  return getFilteredIssues([...news, ...bench]);
+}
+
+function severityOrder(s) { return s === 'critical' ? 0 : s === 'serious' ? 1 : 2; }
+
+function getLevel(xp) {
+  if (xp >= 150) return 'A11y Legend';
+  if (xp >= 100) return 'A11y Champion';
+  if (xp >= 50) return 'Bug Squasher';
+  if (xp >= 20) return 'Getting Started';
+  return 'PR Reviewer';
+}
+
+function formatTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return m + ':' + String(sec).padStart(2, '0');
+}
+
+// ==================== RENDERING ====================
+function render() {
+  const newIssues = getNewIssues();
+  const openNew = newIssues.filter(i => i.status === 'open');
+  const allNewResolved = openNew.length === 0;
+  const totalNew = newIssues.length;
+  const resolvedNew = newIssues.filter(i => i.status !== 'open').length;
+
+  // If all new issues resolved, show bonus round
+  if (allNewResolved && !state.showBonusRound && getBenchmarkIssues().length > 0) {
+    const openBench = getBenchmarkIssues().filter(i => i.status === 'open');
+    if (openBench.length > 0) {
+      state.showBonusRound = true;
+      state.currentCardIndex = 0;
+    }
+  }
+
+  const visibleIssues = getAllVisibleIssues();
+  const allResolved = visibleIssues.filter(i => i.status === 'open').length === 0 && state.resolved > 0;
+  const totalVisible = visibleIssues.length;
+  const resolvedVisible = visibleIssues.filter(i => i.status !== 'open').length;
+
+  // Issue count badge
+  const badge = $('#issueCountBadge');
+  const remaining = visibleIssues.filter(i => i.status === 'open').length;
+  if (remaining === 0) {
+    badge.className = 'issue-count-badge clean';
+    $('#issueCountIcon').innerHTML = '&#x2714;';
+    $('#issueCountText').textContent = 'All clear';
+  } else {
+    badge.className = 'issue-count-badge';
+    $('#issueCountIcon').innerHTML = '&#x2716;';
+    $('#issueCountText').textContent = remaining + ' issue' + (remaining !== 1 ? 's' : '');
+  }
+
+  // XP
+  $('#xpCount').textContent = state.xp + ' XP';
+  $('#levelText').textContent = getLevel(state.xp);
+
+  // Progress
+  const progressPct = totalVisible > 0 ? (resolvedVisible / totalVisible * 100) : 0;
+  $('#progressFill').style.width = progressPct + '%';
+  $('#progressTrack').setAttribute('aria-valuenow', Math.round(progressPct));
+  const label = state.showBonusRound
+    ? resolvedVisible + ' / ' + totalVisible + ' resolved (incl. bonus)'
+    : resolvedNew + ' / ' + totalNew + ' resolved';
+  $('#progressFraction').textContent = label;
+
+  // Verdict
+  const verdictBanner = $('#verdictBanner');
+  if (allNewResolved && !state.showBonusRound) {
+    verdictBanner.className = 'verdict-banner passing';
+    $('#verdictIcon').innerHTML = '&#x2714;';
+    $('#verdictText').textContent = 'Passed — All new accessibility issues resolved';
+  } else if (allResolved) {
+    verdictBanner.className = 'verdict-banner passing';
+    $('#verdictIcon').innerHTML = '&#x2714;';
+    $('#verdictText').textContent = 'Passed — All issues resolved including bonus round!';
+  } else {
+    verdictBanner.className = 'verdict-banner blocked';
+    $('#verdictIcon').innerHTML = '&#x2716;';
+    const r = visibleIssues.filter(i => i.status === 'open').length;
+    $('#verdictText').textContent = 'Blocked — ' + r + ' accessibility issue' + (r !== 1 ? 's' : '') + ' need attention';
+  }
+
+  // Bonus round banner
+  $('#bonusRoundBanner').classList.toggle('visible', state.showBonusRound && getBenchmarkIssues().some(i => i.status === 'open'));
+
+  // Views
+  const showCelebration = allResolved && state.resolved > 0;
+  $('#celebrationScreen').classList.toggle('visible', showCelebration);
+  if (showCelebration) fillStats();
+
+  const shouldHideCards = showCelebration || visibleIssues.length === 0;
+  $('#cardStackContainer').classList.toggle('hidden', shouldHideCards || state.view !== 'card');
+  $('#cardNav').style.display = (shouldHideCards || state.view !== 'card') ? 'none' : 'flex';
+  $('#listView').classList.toggle('visible', !shouldHideCards && state.view === 'list');
+
+  if (!shouldHideCards) {
+    if (state.view === 'card') renderCardStack(visibleIssues);
+    renderListView(visibleIssues);
+  }
+
+  // Bottom bar visibility
+  $('#bottombar').style.display = showCelebration ? 'none' : 'flex';
+
+  // Update bottom bar view toggles
+  $$('.bottombar .view-toggle-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === state.view);
+  });
+}
+
+function renderCardStack(issues) {
+  const container = $('#cardStackContainer');
+  // Clamp index
+  if (state.currentCardIndex >= issues.length) state.currentCardIndex = Math.max(0, issues.length - 1);
+  if (state.currentCardIndex < 0) state.currentCardIndex = 0;
+
+  container.innerHTML = '';
+  issues.forEach((issue, idx) => {
+    const offset = idx - state.currentCardIndex;
+    const card = document.createElement('div');
+    card.className = 'issue-card';
+    card.setAttribute('role', 'article');
+    card.setAttribute('aria-label', issue.ruleName);
+
+    if (offset === 0) card.classList.add('active');
+    else if (offset === 1) card.classList.add('behind-1');
+    else if (offset === 2) card.classList.add('behind-2');
+    else if (offset >= 3) card.classList.add('behind-3');
+    else { card.style.display = 'none'; }
+
+    const isResolved = issue.status !== 'open';
+    const statusLabel = issue.status === 'fixed' ? 'Fixed' : issue.status === 'skipped' ? 'Skipped' : issue.status === 'ai-fixed' ? 'AI Fixed' : '';
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-rule-name">${isResolved ? '<s>' + issue.ruleName + '</s>' : issue.ruleName}</div>
+          <div class="card-meta">
+            <span class="severity-badge ${issue.severity}">
+              <span class="severity-shape ${issue.severity}" aria-hidden="true"></span>
+              ${issue.severity}
+            </span>
+            <span class="package-badge">${issue.pkg}</span>
+            <span class="category-badge">${issue.category}</span>
+            ${issue.benchmark ? '<span class="category-badge" style="color:var(--gold)">Bonus</span>' : ''}
+            ${isResolved ? '<span class="list-item-status fixed">' + statusLabel + '</span>' : ''}
+          </div>
+        </div>
+        <span class="card-xp">+${issue.xp} XP</span>
+      </div>
+      <div class="card-details">
+        <div class="detail-row">
+          <span class="detail-label">Why</span>
+          <span class="detail-value">${issue.why}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Where</span>
+          <span class="detail-value">${issue.where}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">How</span>
+          <span class="detail-value">${issue.how}</span>
+        </div>
+      </div>
+      ${isResolved ? '' : `
+      <div class="card-actions">
+        <button class="action-btn btn-ai" onclick="toggleAIFix(${issue.id})" aria-label="Fix with AI">
+          <span aria-hidden="true">&#x2728;</span> Fix with AI
+        </button>
+        <button class="action-btn btn-manual" onclick="resolveManual(${issue.id})" aria-label="Fix manually">
+          <span aria-hidden="true">&#x1F527;</span> I'll fix manually
+        </button>
+        <div class="action-btn btn-skip" role="button" tabindex="0" onclick="toggleSkipDropdown(event, ${issue.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSkipDropdown(event,${issue.id})}" aria-label="Skip issue" aria-haspopup="true">
+          <span aria-hidden="true">&#x23ED;</span> Skip
+          <div class="skip-dropdown" id="skipDrop-${issue.id}" role="menu">
+            <div class="skip-dropdown-title">Skip reason</div>
+            <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssue(${issue.id}, 'False positive')">False positive</button>
+            <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssue(${issue.id}, 'Not applicable')">Not applicable</button>
+            <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssue(${issue.id}, 'Will fix later')">Will fix later</button>
+            <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssue(${issue.id}, 'Intentional')">Intentional design</button>
+          </div>
+        </div>
+      </div>
+      `}
+      <div class="ai-fix-panel ${state.expandedAI[issue.id] ? 'open' : ''}" id="aiFix-${issue.id}">
+        <div class="ai-fix-header">
+          <span class="ai-fix-header-left"><span aria-hidden="true">&#x1F916;</span> AI Suggestion</span>
+          <button onclick="toggleAIFix(${issue.id})" aria-label="Close AI suggestion" style="font-size:0.8rem;color:var(--text-muted)">&times;</button>
+        </div>
+        <div class="ai-fix-body">
+          <div class="diff-block">
+            <div class="diff-line diff-removed">- ${escapeHtml(issue.diff.removed)}</div>
+            <div class="diff-line diff-added">+ ${escapeHtml(issue.diff.added)}</div>
+          </div>
+        </div>
+        <div class="ai-fix-actions">
+          <button class="ai-btn-apply" onclick="applyAIFix(${issue.id})">Apply fix</button>
+          <button class="ai-btn-secondary" onclick="toggleAIFix(${issue.id})">Dismiss</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Nav
+  $('#cardCounter').textContent = (state.currentCardIndex + 1) + ' / ' + issues.length;
+  $('#btnPrevCard').disabled = state.currentCardIndex === 0;
+  $('#btnNextCard').disabled = state.currentCardIndex >= issues.length - 1;
+}
+
+function renderListView(issues) {
+  const container = $('#listView');
+  container.innerHTML = '';
+  issues.forEach((issue, idx) => {
+    const isResolved = issue.status !== 'open';
+    const statusClass = issue.status === 'open' ? 'open' : issue.status === 'skipped' ? 'skipped' : 'fixed';
+    const statusLabel = issue.status === 'open' ? 'Open' : issue.status === 'fixed' ? 'Fixed' : issue.status === 'ai-fixed' ? 'AI Fixed' : issue.status === 'skipped' ? 'Skipped' : 'Manual';
+    const isExpanded = state.expandedListItem[issue.id];
+    const wasJustResolved = state.justResolvedId === issue.id;
+
+    const item = document.createElement('div');
+    item.className = 'list-item' + (isResolved ? ' resolved' : '') + (isExpanded ? ' expanded' : '') + (wasJustResolved ? ' just-resolved' : '');
+    item.setAttribute('role', 'listitem');
+    item.id = 'list-item-' + issue.id;
+    item.innerHTML = `
+      <div class="list-item-top" onclick="toggleListExpand(${issue.id})">
+        <div class="list-item-left">
+          <span class="list-item-number">${isResolved ? '&#x2714;' : (idx + 1)}</span>
+          <span class="severity-badge ${issue.severity}">
+            <span class="severity-shape ${issue.severity}" aria-hidden="true"></span>
+            ${issue.severity}
+          </span>
+          <span class="list-item-rule">${issue.ruleName}</span>
+        </div>
+        <div class="list-item-right">
+          <span class="package-badge">${issue.pkg}</span>
+          ${issue.benchmark ? '<span class="category-badge" style="color:var(--gold)">Bonus</span>' : ''}
+          <span class="card-xp">+${issue.xp} XP</span>
+          <span class="list-item-status ${statusClass}">${statusLabel}</span>
+          <span class="list-item-chevron" aria-hidden="true">&#x25B6;</span>
+        </div>
+      </div>
+      <div class="list-item-expand">
+        <div class="card-details">
+          <div class="detail-row"><span class="detail-label">Why</span><span class="detail-value">${issue.why}</span></div>
+          <div class="detail-row"><span class="detail-label">Where</span><span class="detail-value">${issue.where}</span></div>
+          <div class="detail-row"><span class="detail-label">How</span><span class="detail-value">${issue.how}</span></div>
+        </div>
+        ${!isResolved ? `
+        <div class="list-item-actions">
+          <button class="action-btn btn-ai" onclick="event.stopPropagation(); toggleAIFixList(${issue.id})" aria-label="Fix with AI"><span aria-hidden="true">&#x2728;</span> Fix with AI</button>
+          <button class="action-btn btn-manual" onclick="event.stopPropagation(); resolveManualFromList(${issue.id})" aria-label="Fix manually"><span aria-hidden="true">&#x1F527;</span> I'll fix manually</button>
+          <div class="action-btn btn-skip" role="button" tabindex="0" onclick="event.stopPropagation(); toggleSkipDropdown(event, ${issue.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSkipDropdown(event,${issue.id})}" aria-label="Skip issue" aria-haspopup="true">
+            <span aria-hidden="true">&#x23ED;</span> Skip
+            <div class="skip-dropdown" id="skipDrop-${issue.id}" role="menu">
+              <div class="skip-dropdown-title">Skip reason</div>
+              <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssueFromList(${issue.id}, 'False positive')">False positive</button>
+              <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssueFromList(${issue.id}, 'Not applicable')">Not applicable</button>
+              <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssueFromList(${issue.id}, 'Will fix later')">Will fix later</button>
+              <button class="skip-reason" role="menuitem" onclick="event.stopPropagation(); skipIssueFromList(${issue.id}, 'Intentional')">Intentional design</button>
+            </div>
+          </div>
+        </div>
+        <div class="ai-fix-panel ${state.expandedAI[issue.id] ? 'open' : ''}" id="aiFixList-${issue.id}">
+          <div class="ai-fix-header">
+            <span class="ai-fix-header-left"><span aria-hidden="true">&#x1F916;</span> AI Suggestion</span>
+            <button onclick="event.stopPropagation(); toggleAIFixList(${issue.id})" aria-label="Close AI suggestion" style="font-size:0.8rem;color:var(--text-muted)">&times;</button>
+          </div>
+          <div class="ai-fix-body">
+            <div class="diff-block">
+              <div class="diff-line diff-removed">- ${escapeHtml(issue.diff.removed)}</div>
+              <div class="diff-line diff-added">+ ${escapeHtml(issue.diff.added)}</div>
+            </div>
+          </div>
+          <div class="ai-fix-actions">
+            <button class="ai-btn-apply" onclick="event.stopPropagation(); applyAIFixFromList(${issue.id})">Apply fix</button>
+            <button class="ai-btn-secondary" onclick="event.stopPropagation(); toggleAIFixList(${issue.id})">Dismiss</button>
+          </div>
+        </div>
+        ` : ''}
+      </div>
+    `;
+    container.appendChild(item);
+  });
+  // Clear just-resolved flag after render
+  if (state.justResolvedId) {
+    setTimeout(() => { state.justResolvedId = null; }, 600);
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function fillStats() {
+  const elapsed = Date.now() - state.startTime;
+  const avg = state.resolved > 0 ? Math.round(elapsed / state.resolved / 1000) : 0;
+  $('#statIssues').textContent = state.resolved;
+  $('#statTime').textContent = formatTime(elapsed);
+  $('#statAvg').textContent = avg + 's';
+}
+
+// ==================== ACTIONS ====================
+function resolveIssue(id, status) {
+  const issue = state.issues.find(i => i.id === id);
+  if (!issue || issue.status !== 'open') return;
+  issue.status = status;
+  state.resolved++;
+  state.xp += issue.xp;
+  state.streak++;
+  updateStreak();
+  showXPPopup(issue.xp);
+  advanceCard();
+  render();
+  checkCompletion();
+}
+
+function resolveManual(id) {
+  resolveIssue(id, 'fixed');
+}
+
+function applyAIFix(id) {
+  state.expandedAI[id] = false;
+  resolveIssue(id, 'ai-fixed');
+}
+
+function toggleAIFix(id) {
+  state.expandedAI[id] = !state.expandedAI[id];
+  render();
+}
+function toggleAIFixList(id) {
+  state.expandedAI[id] = !state.expandedAI[id];
+  render();
+}
+
+function toggleListExpand(id) {
+  const wasExpanded = state.expandedListItem[id];
+  // Collapse all others (accordion behavior)
+  Object.keys(state.expandedListItem).forEach(k => { state.expandedListItem[k] = false; });
+  state.expandedListItem[id] = !wasExpanded;
+  // Also close any open AI panels when collapsing
+  if (wasExpanded) state.expandedAI[id] = false;
+  render();
+}
+
+function skipIssue(id, reason) {
+  const issue = state.issues.find(i => i.id === id);
+  if (!issue || issue.status !== 'open') return;
+  state.lastSkippedId = id;
+  state.lastSkippedPrevStatus = 'open';
+  issue.status = 'skipped';
+  issue.skipReason = reason;
+  state.resolved++;
+  // No XP for skip, streak resets
+  state.streak = 0;
+  updateStreak();
+  advanceCard();
+  render();
+  showUndoToast('Skipped: ' + reason);
+  checkCompletion();
+}
+
+function unskipIssue() {
+  if (state.lastSkippedId === null) return;
+  const issue = state.issues.find(i => i.id === state.lastSkippedId);
+  if (issue) {
+    issue.status = 'open';
+    delete issue.skipReason;
+    state.resolved = Math.max(0, state.resolved - 1);
+  }
+  state.lastSkippedId = null;
+  hideUndoToast();
+  render();
+}
+
+// ==================== LIST AUTO-ADVANCE ====================
+function findNextOpenIssueId(afterId) {
+  const visible = getAllVisibleIssues();
+  const currentIdx = visible.findIndex(i => i.id === afterId);
+  // Look forward first
+  for (let i = currentIdx + 1; i < visible.length; i++) {
+    if (visible[i].status === 'open') return visible[i].id;
+  }
+  // Then wrap around
+  for (let i = 0; i < currentIdx; i++) {
+    if (visible[i].status === 'open') return visible[i].id;
+  }
+  return null;
+}
+
+function autoAdvanceList(resolvedId) {
+  state.justResolvedId = resolvedId;
+  // Collapse ALL items first
+  Object.keys(state.expandedListItem).forEach(k => { state.expandedListItem[k] = false; });
+  Object.keys(state.expandedAI).forEach(k => { state.expandedAI[k] = false; });
+  const nextId = findNextOpenIssueId(resolvedId);
+  if (nextId !== null) {
+    state.expandedListItem[nextId] = true;
+    render();
+    // Smooth scroll to the next item after DOM update
+    setTimeout(() => {
+      const el = document.getElementById('list-item-' + nextId);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 150);
+  } else {
+    render();
+  }
+}
+
+function resolveManualFromList(id) {
+  const issue = state.issues.find(i => i.id === id);
+  if (!issue || issue.status !== 'open') return;
+  issue.status = 'fixed';
+  state.resolved++;
+  state.xp += issue.xp;
+  state.streak++;
+  updateStreak();
+  showXPPopup(issue.xp);
+  autoAdvanceList(id);
+  checkCompletion();
+}
+
+function applyAIFixFromList(id) {
+  const issue = state.issues.find(i => i.id === id);
+  if (!issue || issue.status !== 'open') return;
+  issue.status = 'ai-fixed';
+  state.resolved++;
+  state.xp += issue.xp;
+  state.streak++;
+  updateStreak();
+  showXPPopup(issue.xp);
+  autoAdvanceList(id);
+  checkCompletion();
+}
+
+function skipIssueFromList(id, reason) {
+  const issue = state.issues.find(i => i.id === id);
+  if (!issue || issue.status !== 'open') return;
+  state.lastSkippedId = id;
+  state.lastSkippedPrevStatus = 'open';
+  issue.status = 'skipped';
+  issue.skipReason = reason;
+  state.resolved++;
+  state.streak = 0;
+  updateStreak();
+  autoAdvanceList(id);
+  showUndoToast('Skipped: ' + reason);
+  checkCompletion();
+}
+
+function toggleSkipDropdown(event, id) {
+  event.stopPropagation();
+  // Close all others
+  $$('.skip-dropdown').forEach(d => { if (d.id !== 'skipDrop-' + id) d.classList.remove('open'); });
+  const dd = document.getElementById('skipDrop-' + id);
+  if (dd) dd.classList.toggle('open');
+}
+
+function advanceCard() {
+  const visible = getAllVisibleIssues();
+  // Find next open issue after current index
+  let found = false;
+  for (let i = state.currentCardIndex; i < visible.length; i++) {
+    if (visible[i].status === 'open') { state.currentCardIndex = i; found = true; break; }
+  }
+  if (!found) {
+    for (let i = 0; i < visible.length; i++) {
+      if (visible[i].status === 'open') { state.currentCardIndex = i; found = true; break; }
+    }
+  }
+}
+
+// ==================== STREAK ====================
+function updateStreak() {
+  const badge = $('#streakBadge');
+  if (state.streak >= 2) {
+    badge.classList.add('active');
+    $('#streakText').textContent = state.streak + ' streak!';
+    badge.classList.add('pop');
+    setTimeout(() => badge.classList.remove('pop'), 300);
+  } else {
+    badge.classList.remove('active');
+  }
+}
+
+// ==================== XP POPUP ====================
+function showXPPopup(amount) {
+  const popup = document.createElement('div');
+  popup.className = 'xp-popup';
+  popup.textContent = '+' + amount + ' XP';
+  popup.style.left = '50%';
+  popup.style.top = '50%';
+  popup.style.transform = 'translate(-50%, -50%)';
+  document.body.appendChild(popup);
+  requestAnimationFrame(() => {
+    popup.classList.add('animate');
+    setTimeout(() => {
+      popup.classList.add('fade');
+      setTimeout(() => popup.remove(), 600);
+    }, 500);
+  });
+}
+
+// ==================== UNDO TOAST ====================
+function showUndoToast(msg) {
+  const toast = $('#undoToast');
+  $('#undoToastText').textContent = msg;
+  toast.classList.add('visible');
+  clearTimeout(state.undoTimer);
+  state.undoTimer = setTimeout(() => {
+    hideUndoToast();
+    state.lastSkippedId = null;
+  }, 5000);
+}
+function hideUndoToast() {
+  $('#undoToast').classList.remove('visible');
+}
+
+// ==================== CONFETTI ====================
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+  const colors = ['#dc2626', '#ea580c', '#d97706', '#16a34a', '#7c3aed', '#2563eb', '#fbbf24', '#ec4899'];
+  for (let i = 0; i < 150; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      w: Math.random() * 8 + 4,
+      h: Math.random() * 6 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      vx: (Math.random() - 0.5) * 4,
+      vy: Math.random() * 3 + 2,
+      rot: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 10,
+      opacity: 1,
+    });
+  }
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.05;
+      p.rot += p.vr;
+      if (frame > 60) p.opacity -= 0.01;
+      if (p.opacity <= 0) return;
+      alive = true;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.opacity);
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive) requestAnimationFrame(animate);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  animate();
+}
+
+function checkCompletion() {
+  const visible = getAllVisibleIssues();
+  const allDone = visible.every(i => i.status !== 'open') && state.resolved > 0;
+  if (allDone) {
+    setTimeout(() => launchConfetti(), 300);
+  }
+}
+
+// ==================== BULK AI MODAL ====================
+function openBulkModal() {
+  const visible = getAllVisibleIssues().filter(i => i.status === 'open');
+  if (visible.length === 0) return;
+  // Init toggles
+  visible.forEach(i => { if (!(i.id in state.bulkToggles)) state.bulkToggles[i.id] = true; });
+  const body = $('#bulkModalBody');
+  body.innerHTML = '';
+  visible.forEach(issue => {
+    const on = state.bulkToggles[issue.id] !== false;
+    const el = document.createElement('div');
+    el.className = 'bulk-fix-item';
+    el.innerHTML = `
+      <div class="bulk-fix-item-header" onclick="toggleBulkFix(${issue.id})">
+        <div class="bulk-fix-toggle ${on ? 'on' : ''}" id="bulkToggle-${issue.id}" role="switch" aria-checked="${on}" aria-label="Include ${issue.ruleName}"></div>
+        <span class="severity-badge ${issue.severity}"><span class="severity-shape ${issue.severity}" aria-hidden="true"></span> ${issue.severity}</span>
+        <span class="bulk-fix-rule">${issue.ruleName}</span>
+        <span class="card-xp">+${issue.xp} XP</span>
+      </div>
+      <div class="diff-block">
+        <div class="diff-line diff-removed">- ${escapeHtml(issue.diff.removed)}</div>
+        <div class="diff-line diff-added">+ ${escapeHtml(issue.diff.added)}</div>
+      </div>
+    `;
+    body.appendChild(el);
+  });
+  $('#bulkModal').classList.add('open');
+}
+
+function toggleBulkFix(id) {
+  state.bulkToggles[id] = !state.bulkToggles[id];
+  const toggle = document.getElementById('bulkToggle-' + id);
+  if (toggle) {
+    toggle.classList.toggle('on', state.bulkToggles[id]);
+    toggle.setAttribute('aria-checked', state.bulkToggles[id]);
+  }
+}
+
+function applyBulkFixes() {
+  const visible = getAllVisibleIssues().filter(i => i.status === 'open');
+  visible.forEach(issue => {
+    if (state.bulkToggles[issue.id] !== false) {
+      issue.status = 'ai-fixed';
+      state.resolved++;
+      state.xp += issue.xp;
+      state.streak++;
+    }
+  });
+  updateStreak();
+  closeBulkModal();
+  render();
+  checkCompletion();
+}
+
+function closeBulkModal() {
+  $('#bulkModal').classList.remove('open');
+}
+
+function bulkSkipRemaining() {
+  const visible = getAllVisibleIssues().filter(i => i.status === 'open');
+  visible.forEach(issue => {
+    issue.status = 'skipped';
+    issue.skipReason = 'Bulk skip';
+    state.resolved++;
+  });
+  state.streak = 0;
+  updateStreak();
+  render();
+  checkCompletion();
+}
+
+// ==================== VIEW SWITCHING ====================
+function setView(view) {
+  state.view = view;
+  $('#btnCardView').classList.toggle('active', view === 'card');
+  $('#btnListView').classList.toggle('active', view === 'list');
+  $$('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  render();
+}
+
+// ==================== THEME ====================
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  $('#themeIcon').innerHTML = isDark ? '&#x263D;' : '&#x2600;';
+}
+
+// ==================== ELAPSED TIME ====================
+function startTimer() {
+  state.elapsedInterval = setInterval(() => {
+    const elapsed = Date.now() - state.startTime;
+    $('#elapsedTime').textContent = formatTime(elapsed);
+  }, 1000);
+}
+
+// ==================== DEMO STATES ====================
+function setDemoState(s) {
+  // Clear confetti canvas
+  const cv = document.getElementById('confetti-canvas');
+  const cx = cv.getContext('2d');
+  cx.clearRect(0, 0, cv.width, cv.height);
+  // Reset
+  state.issues = JSON.parse(JSON.stringify(ISSUES));
+  state.xp = 0;
+  state.streak = 0;
+  state.resolved = 0;
+  state.showBonusRound = false;
+  state.currentCardIndex = 0;
+  state.expandedAI = {};
+  state.expandedListItem = {};
+  state.startTime = Date.now();
+  state.lastSkippedId = null;
+  hideUndoToast();
+
+  if (s === 'blocked') {
+    // Default — issues open
+  } else if (s === 'in-progress') {
+    // Resolve first 3 new issues
+    state.issues[0].status = 'ai-fixed';
+    state.issues[1].status = 'fixed';
+    state.issues[2].status = 'skipped';
+    state.issues[2].skipReason = 'Will fix later';
+    state.resolved = 3;
+    state.xp = 80;
+    state.streak = 2;
+    state.currentCardIndex = 3;
+  } else if (s === 'all-resolved') {
+    state.issues.forEach(i => { i.status = 'ai-fixed'; });
+    state.resolved = state.issues.length;
+    state.xp = state.issues.reduce((a, i) => a + i.xp, 0);
+    state.showBonusRound = true;
+    setTimeout(() => launchConfetti(), 300);
+  } else if (s === 'all-passing') {
+    state.issues = [];
+    // Show all-passing screen
+    $('#allPassingScreen').classList.add('visible');
+    render();
+    return;
+  }
+
+  $('#allPassingScreen').classList.remove('visible');
+  updateStreak();
+  render();
+}
+
+// ==================== FILTER ====================
+function setFilter(f) {
+  state.filter = f;
+  state.currentCardIndex = 0;
+  $$('.severity-tab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
+  render();
+}
+
+// ==================== EVENT LISTENERS ====================
+document.addEventListener('DOMContentLoaded', () => {
+  // View toggles
+  $('#btnCardView').addEventListener('click', () => setView('card'));
+  $('#btnListView').addEventListener('click', () => setView('list'));
+  $$('.bottombar [data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+  // Card nav
+  $('#btnPrevCard').addEventListener('click', () => { state.currentCardIndex--; render(); });
+  $('#btnNextCard').addEventListener('click', () => { state.currentCardIndex++; render(); });
+
+  // Theme
+  $('#themeToggle').addEventListener('click', toggleTheme);
+
+  // Bulk actions
+  $('#btnBulkAI').addEventListener('click', openBulkModal);
+  $('#btnBulkSkip').addEventListener('click', bulkSkipRemaining);
+  $('#bulkModalClose').addEventListener('click', closeBulkModal);
+  $('#bulkModalCancel').addEventListener('click', closeBulkModal);
+  $('#bulkModalApply').addEventListener('click', applyBulkFixes);
+
+  // Undo
+  $('#undoBtn').addEventListener('click', unskipIssue);
+
+  // Close skip dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.btn-skip')) {
+      $$('.skip-dropdown').forEach(d => d.classList.remove('open'));
+    }
+  });
+
+  // Modal overlay close
+  $('#bulkModal').addEventListener('click', (e) => {
+    if (e.target === $('#bulkModal')) closeBulkModal();
+  });
+
+  // Severity filters
+  $$('.severity-tab').forEach(t => {
+    t.addEventListener('click', () => setFilter(t.dataset.filter));
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if ($('#bulkModal').classList.contains('open')) {
+      if (e.key === 'Escape') closeBulkModal();
+      return;
+    }
+    if (state.view === 'card') {
+      if (e.key === 'ArrowLeft' && state.currentCardIndex > 0) { state.currentCardIndex--; render(); }
+      if (e.key === 'ArrowRight') {
+        const visible = getAllVisibleIssues();
+        if (state.currentCardIndex < visible.length - 1) { state.currentCardIndex++; render(); }
+      }
+    }
+  });
+
+  // Start
+  startTimer();
+  render();
+});
+</script>
+</body>
+</html>

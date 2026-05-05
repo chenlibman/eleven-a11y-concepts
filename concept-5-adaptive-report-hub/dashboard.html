@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELEVEN — Adaptive Report Hub (Concept 5)</title>
+<style>
+/* ===== Reset & Variables ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f5;
+  --bg-card: #ffffff;
+  --border: #d4d4d4;
+  --border-light: #e5e5e5;
+  --text: #171717;
+  --text-muted: #737373;
+  --text-faint: #a3a3a3;
+  --accent: #2563eb;
+  --accent-light: #dbeafe;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fca5a5;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #86efac;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --amber-border: #fcd34d;
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 8px;
+  --radius-sm: 4px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0a;
+  --bg-alt: #171717;
+  --bg-card: #1c1c1c;
+  --border: #333333;
+  --border-light: #262626;
+  --text: #f5f5f5;
+  --text-muted: #a3a3a3;
+  --text-faint: #636363;
+  --accent: #60a5fa;
+  --accent-light: #1e3a5f;
+  --red-bg: #2a1010;
+  --red-border: #7f1d1d;
+  --green-bg: #0a2015;
+  --green-border: #14532d;
+  --amber-bg: #2a1f05;
+  --amber-border: #713f12;
+  --purple-bg: #1a0f2e;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ===== Top Bar ===== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.badge-experimental {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--purple);
+  color: #fff;
+  vertical-align: middle;
+}
+
+.role-switcher {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.role-btn {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-right: 1px solid var(--border);
+}
+
+.role-btn:last-child { border-right: none; }
+
+.role-btn:hover { background: var(--bg-alt); }
+
+.role-btn.active {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+
+.theme-toggle:hover { background: var(--bg-alt); }
+
+.run-info {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ===== Verdict Banner ===== */
+.verdict-banner {
+  padding: 20px 24px;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 2px solid;
+}
+
+.verdict-banner.blocked {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+}
+
+.verdict-banner.passing {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+}
+
+.verdict-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.verdict-banner.blocked .verdict-icon { background: var(--red); color: #fff; }
+.verdict-banner.passing .verdict-icon { background: var(--green); color: #fff; }
+
+.verdict-text h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.verdict-banner.blocked .verdict-text h2 { color: var(--red); }
+.verdict-banner.passing .verdict-text h2 { color: var(--green); }
+
+.verdict-text p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ===== Stats Strip ===== */
+.stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-info { display: flex; flex-direction: column; }
+
+.stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-value.red { color: var(--red); }
+.stat-value.green { color: var(--green); }
+.stat-value.amber { color: var(--amber); }
+
+.stat-sparkline {
+  width: 64px;
+  height: 28px;
+}
+
+/* ===== Section Headers ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  margin-top: 28px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.count-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+}
+
+.count-badge.red { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+.count-badge.green { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+.count-badge.amber { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber); }
+
+/* ===== Bulk Actions Bar ===== */
+.bulk-bar {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--accent-light);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.bulk-bar.visible { display: flex; }
+
+.bulk-bar .bulk-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.bulk-bar input[type="text"] {
+  flex: 1;
+  min-width: 200px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: var(--bg-card);
+  color: var(--text);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg-alt); }
+.btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn.primary:hover { opacity: 0.85; }
+.btn.danger { color: var(--red); border-color: var(--red-border); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ===== Violation Cards ===== */
+.violation-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.violation-card:hover { border-color: var(--border); }
+
+.violation-card.skipped {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.violation-card.pre-existing {
+  opacity: 0.65;
+}
+
+.violation-card.fixed-card {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.card-header:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.card-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.severity-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.sev-shape {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+
+.sev-critical .sev-shape {
+  background: var(--red);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+.sev-critical { color: var(--red); }
+
+.sev-serious .sev-shape {
+  background: var(--red);
+  border-radius: 2px;
+}
+.sev-serious { color: var(--red); }
+
+.sev-moderate .sev-shape {
+  background: var(--amber);
+  border-radius: 50%;
+}
+.sev-moderate { color: var(--amber); }
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ai-priority {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.ai-priority.fix-first {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+
+.ai-priority.quick-fix {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+}
+
+.ai-priority.complex-fix {
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  color: var(--amber);
+}
+
+.status-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.status-tag.new-tag { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+.status-tag.fixed-tag { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+.status-tag.persisting-tag { background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-muted); }
+.status-tag.skipped-tag { background: var(--bg-alt); border: 1px dashed var(--border); color: var(--text-faint); }
+
+.expand-icon {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.violation-card.open .expand-icon { transform: rotate(90deg); }
+
+.card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border-light);
+}
+
+.violation-card.open .card-body { display: block; }
+
+/* ===== Detail Tabs ===== */
+.detail-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 12px;
+}
+
+.detail-tab {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.detail-tab:hover { color: var(--text); }
+.detail-tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+.detail-panel { display: none; }
+.detail-panel.active { display: block; }
+
+.detail-panel p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.detail-panel code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-alt);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border-light);
+}
+
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.6;
+}
+
+/* ===== Skip Controls ===== */
+.skip-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  flex-wrap: wrap;
+}
+
+.skip-controls select {
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+.skip-controls input[type="text"] {
+  padding: 5px 8px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  color: var(--text);
+  flex: 1;
+  min-width: 140px;
+}
+
+/* ===== Package Group ===== */
+.package-group {
+  margin-bottom: 20px;
+}
+
+.package-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.package-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.package-expand {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.package-group.collapsed .package-expand { transform: rotate(-90deg); }
+.package-group.collapsed .package-body { display: none; }
+
+.package-sparkline {
+  width: 48px;
+  height: 18px;
+  margin-left: auto;
+}
+
+/* ===== Team Lead Table ===== */
+.health-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.health-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+}
+
+.health-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.health-table tr:hover td { background: var(--bg-alt); }
+
+.trend-arrow { font-weight: 700; }
+.trend-arrow.down { color: var(--green); }
+.trend-arrow.up { color: var(--red); }
+.trend-arrow.flat { color: var(--text-muted); }
+
+.health-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-alt);
+  min-width: 100px;
+}
+
+.health-bar .segment-fixed { background: var(--green); }
+.health-bar .segment-new { background: var(--red); }
+.health-bar .segment-persisting { background: var(--border); }
+
+/* ===== A11y Lead Aggregate ===== */
+.aggregate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.agg-item {
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== Fixed Celebration ===== */
+.fixed-celebration {
+  text-align: center;
+  padding: 16px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+.fixed-celebration .party { font-size: 24px; margin-bottom: 4px; }
+.fixed-celebration p {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green);
+}
+.fixed-celebration .sub {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ===== All Passing State ===== */
+.all-passing {
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.all-passing .check-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.all-passing h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.all-passing p {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .container { padding: 16px; }
+  .top-bar { padding: 10px 16px; }
+  .stats-strip { grid-template-columns: 1fr 1fr; }
+  .card-meta { flex-wrap: wrap; }
+  .role-btn { padding: 6px 10px; font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .stats-strip { grid-template-columns: 1fr; }
+  .role-switcher { width: 100%; }
+  .role-btn { flex: 1; text-align: center; }
+}
+
+/* ===== Utility ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ===== Top Bar ===== -->
+<header class="top-bar" role="banner">
+  <div class="top-bar-left">
+    <span class="logo">ELEVEN</span>
+    <span class="badge-experimental" aria-label="Experimental concept">Experimental</span>
+    <nav class="role-switcher" role="tablist" aria-label="View mode">
+      <button class="role-btn active" role="tab" aria-selected="true" data-role="developer" onclick="switchRole('developer')">Developer</button>
+      <button class="role-btn" role="tab" aria-selected="false" data-role="lead" onclick="switchRole('lead')">A11y Lead</button>
+      <button class="role-btn" role="tab" aria-selected="false" data-role="teamlead" onclick="switchRole('teamlead')">Team Lead</button>
+    </nav>
+  </div>
+  <div class="top-bar-right">
+    <span class="run-info">Run #47 &middot; 2 Apr 2026 &middot; main@a3f91c2</span>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <span id="themeIcon">&#9790;</span>
+    </button>
+  </div>
+</header>
+
+<main class="container" id="mainContent">
+
+  <!-- ===== Verdict Banner ===== -->
+  <div class="verdict-banner blocked" role="status" aria-live="polite" id="verdictBanner">
+    <div class="verdict-icon" aria-hidden="true">&#10007;</div>
+    <div class="verdict-text">
+      <h2>Blocked &mdash; 3 New Issues Found</h2>
+      <p>3 new violations detected across 2 packages. 1 issue was fixed since last run. 5 pre-existing issues remain.</p>
+    </div>
+  </div>
+
+  <!-- ===== Stats Strip ===== -->
+  <div class="stats-strip" aria-label="Summary statistics">
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">New Issues</span>
+        <span class="stat-value red">3</span>
+      </div>
+      <svg class="stat-sparkline" viewBox="0 0 64 28" aria-label="Trend: 0, 1, 0, 2, 3 new issues over last 5 runs" role="img">
+        <polyline points="2,26 17,20 32,26 48,14 62,2" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="62" cy="2" r="2.5" fill="#dc2626"/>
+      </svg>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Fixed</span>
+        <span class="stat-value green">1</span>
+      </div>
+      <svg class="stat-sparkline" viewBox="0 0 64 28" aria-label="Trend: 0, 0, 1, 0, 1 fixed over last 5 runs" role="img">
+        <polyline points="2,26 17,26 32,14 48,26 62,14" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="62" cy="14" r="2.5" fill="#16a34a"/>
+      </svg>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Pre-existing</span>
+        <span class="stat-value amber">5</span>
+      </div>
+      <svg class="stat-sparkline" viewBox="0 0 64 28" aria-label="Trend: 7, 6, 6, 5, 5 pre-existing over last 5 runs" role="img">
+        <polyline points="2,2 17,8 32,8 48,14 62,14" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="62" cy="14" r="2.5" fill="#d97706"/>
+      </svg>
+    </div>
+    <div class="stat-card">
+      <div class="stat-info">
+        <span class="stat-label">Total</span>
+        <span class="stat-value">8</span>
+      </div>
+      <svg class="stat-sparkline" viewBox="0 0 64 28" aria-label="Trend: 7, 7, 6, 7, 8 total over last 5 runs" role="img">
+        <polyline points="2,8 17,8 32,14 48,8 62,2" fill="none" stroke="#737373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="62" cy="2" r="2.5" fill="#737373"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ===== Audit-Level Stats ===== -->
+  <div class="stats-strip audit-stats" aria-label="Audit-level statistics" style="margin-top: -12px;">
+    <div class="stat-card" style="border-left: 3px solid var(--accent);">
+      <div class="stat-info">
+        <span class="stat-label">Total Audits</span>
+        <span class="stat-value">47</span>
+      </div>
+    </div>
+    <div class="stat-card" style="border-left: 3px solid var(--green);">
+      <div class="stat-info">
+        <span class="stat-label">Passed Audits</span>
+        <span class="stat-value green">38</span>
+      </div>
+    </div>
+    <div class="stat-card" style="border-left: 3px solid var(--red);">
+      <div class="stat-info">
+        <span class="stat-label">Failed Audits</span>
+        <span class="stat-value red">6</span>
+      </div>
+    </div>
+    <div class="stat-card" style="border-left: 3px solid var(--text-faint);">
+      <div class="stat-info">
+        <span class="stat-label">Skipped</span>
+        <span class="stat-value" style="color: var(--text-muted);">3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Bulk Actions Bar ===== -->
+  <div class="bulk-bar" id="bulkBar" role="region" aria-label="Bulk actions">
+    <span class="bulk-count" id="bulkCount">0 selected</span>
+    <input type="text" id="bulkReason" placeholder="Skip reason (required)" aria-label="Bulk skip reason">
+    <button class="btn primary" id="bulkSkipBtn" onclick="bulkSkip()" disabled>Skip Selected</button>
+    <button class="btn" onclick="clearSelection()">Clear</button>
+  </div>
+
+  <!-- ==================== DEVELOPER VIEW ==================== -->
+  <div id="view-developer" class="role-view">
+
+    <div class="section-header">
+      <div class="section-title">
+        New Issues <span class="count-badge red">3</span>
+        <span style="font-weight:400; font-size:12px; color:var(--text-muted); margin-left:4px;">Sorted by AI priority</span>
+      </div>
+    </div>
+
+    <!-- Package: @acme/button -->
+    <div class="package-group" data-package="@acme/button">
+      <div class="package-header" onclick="togglePackage(this)">
+        <span class="package-expand" aria-hidden="true">&#9662;</span>
+        <h3>@acme/button</h3>
+        <span class="count-badge red">2 new</span>
+        <svg class="package-sparkline" viewBox="0 0 48 18" aria-label="Issues trend for @acme/button: decreasing then increasing" role="img">
+          <polyline points="2,4 12,8 24,10 36,8 46,2" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="package-body">
+
+        <!-- Violation N1 -->
+        <div class="violation-card" data-id="n1" data-status="new">
+          <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+            <span class="severity-indicator sev-critical"><span class="sev-shape" aria-hidden="true"></span> Critical</span>
+            <span class="card-title">Button missing accessible name</span>
+            <div class="card-meta">
+              <span class="ai-priority fix-first" title="AI priority: Fix this first">Fix this first &mdash; blocks 2 other checks</span>
+              <span class="status-tag new-tag">New</span>
+            </div>
+            <span class="expand-icon" aria-hidden="true">&#9656;</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-tabs" role="tablist">
+              <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+            </div>
+            <div class="detail-panel active" data-panel="why">
+              <p>Buttons must have discernible text that identifies their purpose. Screen readers announce this element as "button" with no additional context, making it impossible for users relying on assistive technology to understand its function.</p>
+              <p>WCAG 2.1: <code>4.1.2 Name, Role, Value (Level A)</code></p>
+            </div>
+            <div class="detail-panel" data-panel="where">
+              <p>File: <code>packages/button/src/Button.tsx</code>, Line 42</p>
+              <div class="code-block">&lt;button className={styles.icon} onClick={onClose}&gt;
+  &lt;CloseIcon /&gt;
+&lt;/button&gt;</div>
+            </div>
+            <div class="detail-panel" data-panel="how">
+              <p>Add an <code>aria-label</code> attribute describing the button's action:</p>
+              <div class="code-block">&lt;button className={styles.icon} onClick={onClose} aria-label="Close dialog"&gt;
+  &lt;CloseIcon /&gt;
+&lt;/button&gt;</div>
+            </div>
+            <div class="skip-controls">
+              <select aria-label="Skip reason category" onchange="handleSkipSelect(this)">
+                <option value="">Skip this violation...</option>
+                <option value="false-positive">False positive</option>
+                <option value="wont-fix">Won't fix</option>
+                <option value="by-design">By design</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+              <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Violation N2 -->
+        <div class="violation-card" data-id="n2" data-status="new">
+          <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+            <span class="severity-indicator sev-serious"><span class="sev-shape" aria-hidden="true"></span> Serious</span>
+            <span class="card-title">Insufficient color contrast on disabled state</span>
+            <div class="card-meta">
+              <span class="ai-priority quick-fix" title="AI priority: Quick fix">Quick fix</span>
+              <span class="status-tag new-tag">New</span>
+            </div>
+            <span class="expand-icon" aria-hidden="true">&#9656;</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-tabs" role="tablist">
+              <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+            </div>
+            <div class="detail-panel active" data-panel="why">
+              <p>Text in the disabled state has a contrast ratio of 1.9:1, which is below the minimum 4.5:1 required by WCAG for normal text. Users with low vision may not be able to read the button label.</p>
+              <p>WCAG 2.1: <code>1.4.3 Contrast (Minimum) (Level AA)</code></p>
+            </div>
+            <div class="detail-panel" data-panel="where">
+              <p>File: <code>packages/button/src/Button.module.css</code>, Line 87</p>
+              <div class="code-block">.button:disabled {
+  color: #d1d1d1;
+  background: #f0f0f0;
+}</div>
+            </div>
+            <div class="detail-panel" data-panel="how">
+              <p>Increase the text color darkness to meet 4.5:1 contrast:</p>
+              <div class="code-block">.button:disabled {
+  color: #767676; /* 4.54:1 on #f0f0f0 */
+  background: #f0f0f0;
+}</div>
+            </div>
+            <div class="skip-controls">
+              <select aria-label="Skip reason category" onchange="handleSkipSelect(this)">
+                <option value="">Skip this violation...</option>
+                <option value="false-positive">False positive</option>
+                <option value="wont-fix">Won't fix</option>
+                <option value="by-design">By design</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+              <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Package: @acme/modal -->
+    <div class="package-group" data-package="@acme/modal">
+      <div class="package-header" onclick="togglePackage(this)">
+        <span class="package-expand" aria-hidden="true">&#9662;</span>
+        <h3>@acme/modal</h3>
+        <span class="count-badge red">1 new</span>
+        <svg class="package-sparkline" viewBox="0 0 48 18" aria-label="Issues trend for @acme/modal" role="img">
+          <polyline points="2,16 12,12 24,12 36,8 46,4" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="package-body">
+
+        <!-- Violation N3 -->
+        <div class="violation-card" data-id="n3" data-status="new">
+          <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+            <span class="severity-indicator sev-serious"><span class="sev-shape" aria-hidden="true"></span> Serious</span>
+            <span class="card-title">Focus not trapped inside modal dialog</span>
+            <div class="card-meta">
+              <span class="ai-priority complex-fix" title="AI priority: Complex fix">Complex fix</span>
+              <span class="status-tag new-tag">New</span>
+            </div>
+            <span class="expand-icon" aria-hidden="true">&#9656;</span>
+          </div>
+          <div class="card-body">
+            <div class="detail-tabs" role="tablist">
+              <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+              <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+            </div>
+            <div class="detail-panel active" data-panel="why">
+              <p>When a modal dialog is open, keyboard focus can escape to elements behind the overlay. This can cause users to interact with hidden content or get lost on the page.</p>
+              <p>WCAG 2.1: <code>2.4.3 Focus Order (Level A)</code></p>
+            </div>
+            <div class="detail-panel" data-panel="where">
+              <p>File: <code>packages/modal/src/Modal.tsx</code>, Line 28</p>
+              <div class="code-block">&lt;div className={styles.overlay}&gt;
+  &lt;div className={styles.modal} role="dialog"&gt;
+    {children}
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+            </div>
+            <div class="detail-panel" data-panel="how">
+              <p>Implement a focus trap using <code>aria-modal="true"</code> and manage focus with a focus-trap utility:</p>
+              <div class="code-block">&lt;div className={styles.overlay} onClick={onClose}&gt;
+  &lt;div
+    className={styles.modal}
+    role="dialog"
+    aria-modal="true"
+    ref={trapRef}
+  &gt;
+    {children}
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+            </div>
+            <div class="skip-controls">
+              <select aria-label="Skip reason category" onchange="handleSkipSelect(this)">
+                <option value="">Skip this violation...</option>
+                <option value="false-positive">False positive</option>
+                <option value="wont-fix">Won't fix</option>
+                <option value="by-design">By design</option>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+              <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pre-existing (collapsed) -->
+    <div class="section-header" style="margin-top:32px;">
+      <div class="section-title" style="color:var(--text-muted)">
+        Pre-existing Issues <span class="count-badge">5</span>
+      </div>
+      <button class="btn" id="togglePreExisting" onclick="togglePreExistingDev()">Show</button>
+    </div>
+
+    <div id="preExistingDev" class="hidden">
+
+      <div class="package-group" data-package="@acme/button">
+        <div class="package-header" onclick="togglePackage(this)">
+          <span class="package-expand" aria-hidden="true">&#9662;</span>
+          <h3>@acme/button</h3>
+          <span class="count-badge">2 pre-existing</span>
+        </div>
+        <div class="package-body">
+          <div class="violation-card pre-existing" data-id="p1" data-status="persisting">
+            <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+              <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+              <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+              <span class="card-title">Button group lacks role="group"</span>
+              <div class="card-meta"><span class="status-tag persisting-tag">Persisting</span></div>
+              <span class="expand-icon" aria-hidden="true">&#9656;</span>
+            </div>
+            <div class="card-body">
+              <div class="detail-tabs" role="tablist">
+                <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+              </div>
+              <div class="detail-panel active" data-panel="why"><p>A group of related buttons should be wrapped with <code>role="group"</code> and labeled so assistive technology can convey the relationship.</p></div>
+              <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/ButtonGroup.tsx</code>, Line 14</p></div>
+              <div class="detail-panel" data-panel="how"><p>Add <code>role="group"</code> and <code>aria-label</code> to the container element.</p></div>
+              <div class="skip-controls">
+                <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+                <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+                <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+              </div>
+            </div>
+          </div>
+          <div class="violation-card pre-existing" data-id="p2" data-status="persisting">
+            <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+              <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+              <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+              <span class="card-title">Touch target size below 44x44px</span>
+              <div class="card-meta"><span class="status-tag persisting-tag">Persisting</span></div>
+              <span class="expand-icon" aria-hidden="true">&#9656;</span>
+            </div>
+            <div class="card-body">
+              <div class="detail-tabs" role="tablist">
+                <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+              </div>
+              <div class="detail-panel active" data-panel="why"><p>Interactive elements should have a minimum touch target size of 44x44 CSS pixels for users with motor impairments.</p></div>
+              <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/IconButton.tsx</code>, Line 9</p></div>
+              <div class="detail-panel" data-panel="how"><p>Increase the minimum width and height to 44px, or add padding to achieve the target size.</p></div>
+              <div class="skip-controls">
+                <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+                <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+                <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="package-group" data-package="@acme/modal">
+        <div class="package-header" onclick="togglePackage(this)">
+          <span class="package-expand" aria-hidden="true">&#9662;</span>
+          <h3>@acme/modal</h3>
+          <span class="count-badge">2 pre-existing</span>
+        </div>
+        <div class="package-body">
+          <div class="violation-card pre-existing" data-id="p3" data-status="persisting">
+            <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+              <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+              <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+              <span class="card-title">Missing aria-describedby on dialog</span>
+              <div class="card-meta"><span class="status-tag persisting-tag">Persisting</span></div>
+              <span class="expand-icon" aria-hidden="true">&#9656;</span>
+            </div>
+            <div class="card-body">
+              <div class="detail-tabs" role="tablist">
+                <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+              </div>
+              <div class="detail-panel active" data-panel="why"><p>Dialogs should reference their descriptive content via <code>aria-describedby</code> so screen readers can announce context when the dialog opens.</p></div>
+              <div class="detail-panel" data-panel="where"><p>File: <code>packages/modal/src/Modal.tsx</code>, Line 30</p></div>
+              <div class="detail-panel" data-panel="how"><p>Add <code>aria-describedby</code> pointing to the ID of the modal's body content element.</p></div>
+              <div class="skip-controls">
+                <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+                <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+                <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+              </div>
+            </div>
+          </div>
+          <div class="violation-card pre-existing" data-id="p4" data-status="persisting">
+            <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+              <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+              <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+              <span class="card-title">Overlay animation uses motion without prefers-reduced-motion</span>
+              <div class="card-meta"><span class="status-tag persisting-tag">Persisting</span></div>
+              <span class="expand-icon" aria-hidden="true">&#9656;</span>
+            </div>
+            <div class="card-body">
+              <div class="detail-tabs" role="tablist">
+                <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+              </div>
+              <div class="detail-panel active" data-panel="why"><p>Users who have set <code>prefers-reduced-motion: reduce</code> still see the slide-in animation, which can cause discomfort or disorientation.</p></div>
+              <div class="detail-panel" data-panel="where"><p>File: <code>packages/modal/src/Modal.module.css</code>, Line 18</p></div>
+              <div class="detail-panel" data-panel="how"><p>Wrap the animation in a <code>@media (prefers-reduced-motion: no-preference)</code> query.</p></div>
+              <div class="skip-controls">
+                <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+                <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+                <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="package-group" data-package="@acme/tooltip">
+        <div class="package-header" onclick="togglePackage(this)">
+          <span class="package-expand" aria-hidden="true">&#9662;</span>
+          <h3>@acme/tooltip</h3>
+          <span class="count-badge">1 pre-existing</span>
+        </div>
+        <div class="package-body">
+          <div class="violation-card pre-existing" data-id="p5" data-status="persisting">
+            <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+              <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+              <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+              <span class="card-title">Tooltip not accessible via keyboard</span>
+              <div class="card-meta"><span class="status-tag persisting-tag">Persisting</span></div>
+              <span class="expand-icon" aria-hidden="true">&#9656;</span>
+            </div>
+            <div class="card-body">
+              <div class="detail-tabs" role="tablist">
+                <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+                <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+              </div>
+              <div class="detail-panel active" data-panel="why"><p>Tooltips only trigger on hover, making their content inaccessible to keyboard-only users.</p></div>
+              <div class="detail-panel" data-panel="where"><p>File: <code>packages/tooltip/src/Tooltip.tsx</code>, Line 22</p></div>
+              <div class="detail-panel" data-panel="how"><p>Add <code>onFocus</code>/<code>onBlur</code> handlers alongside <code>onMouseEnter</code>/<code>onMouseLeave</code>.</p></div>
+              <div class="skip-controls">
+                <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+                <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+                <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== A11Y LEAD VIEW ==================== -->
+  <div id="view-lead" class="role-view hidden">
+
+    <!-- Fixed Celebration -->
+    <div class="fixed-celebration">
+      <div class="party" aria-hidden="true">&#10003;</div>
+      <p>1 issue fixed since last run</p>
+      <p class="sub">@acme/modal: Missing aria-labelledby on dialog &mdash; resolved in commit e4f2a1b</p>
+    </div>
+
+    <!-- New -->
+    <div class="section-header">
+      <div class="section-title">New <span class="count-badge red">3</span></div>
+    </div>
+    <div class="aggregate-grid">
+      <div class="agg-item"><span style="font-family:var(--font-mono);font-size:12px">@acme/button</span> <span class="count-badge red">2</span></div>
+      <div class="agg-item"><span style="font-family:var(--font-mono);font-size:12px">@acme/modal</span> <span class="count-badge red">1</span></div>
+    </div>
+
+    <div class="violation-card" data-id="ln1" data-status="new">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-critical"><span class="sev-shape" aria-hidden="true"></span> Critical</span>
+        <span class="card-title">Button missing accessible name</span>
+        <div class="card-meta">
+          <code style="font-size:11px">@acme/button</code>
+          <span class="status-tag new-tag">New</span>
+        </div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Buttons must have discernible text. WCAG 4.1.2 Name, Role, Value (Level A).</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/Button.tsx</code>, Line 42</p></div>
+        <div class="detail-panel" data-panel="how"><p>Add <code>aria-label</code> describing the button's action.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card" data-id="ln2" data-status="new">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-serious"><span class="sev-shape" aria-hidden="true"></span> Serious</span>
+        <span class="card-title">Insufficient color contrast on disabled state</span>
+        <div class="card-meta">
+          <code style="font-size:11px">@acme/button</code>
+          <span class="status-tag new-tag">New</span>
+        </div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Contrast ratio 1.9:1 is below the 4.5:1 minimum. WCAG 1.4.3 Contrast (Minimum) (Level AA).</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/Button.module.css</code>, Line 87</p></div>
+        <div class="detail-panel" data-panel="how"><p>Change disabled text color to <code>#767676</code> for 4.54:1 contrast.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card" data-id="ln3" data-status="new">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-serious"><span class="sev-shape" aria-hidden="true"></span> Serious</span>
+        <span class="card-title">Focus not trapped inside modal dialog</span>
+        <div class="card-meta">
+          <code style="font-size:11px">@acme/modal</code>
+          <span class="status-tag new-tag">New</span>
+        </div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Keyboard focus escapes the modal overlay. WCAG 2.4.3 Focus Order (Level A).</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/modal/src/Modal.tsx</code>, Line 28</p></div>
+        <div class="detail-panel" data-panel="how"><p>Use <code>aria-modal="true"</code> and a focus-trap utility.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fixed -->
+    <div class="section-header">
+      <div class="section-title">Fixed <span class="count-badge green">1</span></div>
+    </div>
+    <div class="violation-card fixed-card" data-id="lf1" data-status="fixed">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <span class="severity-indicator sev-serious"><span class="sev-shape" aria-hidden="true"></span> Serious</span>
+        <span class="card-title" style="text-decoration:line-through; opacity:0.7;">Missing aria-labelledby on dialog</span>
+        <div class="card-meta">
+          <code style="font-size:11px">@acme/modal</code>
+          <span class="status-tag fixed-tag">Fixed</span>
+        </div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--green);font-weight:600;">Resolved in commit e4f2a1b on 1 Apr 2026.</p>
+      </div>
+    </div>
+
+    <!-- Persisting -->
+    <div class="section-header">
+      <div class="section-title">Persisting <span class="count-badge amber">5</span></div>
+    </div>
+    <div class="aggregate-grid">
+      <div class="agg-item"><span style="font-family:var(--font-mono);font-size:12px">@acme/button</span> <span class="count-badge">2</span></div>
+      <div class="agg-item"><span style="font-family:var(--font-mono);font-size:12px">@acme/modal</span> <span class="count-badge">2</span></div>
+      <div class="agg-item"><span style="font-family:var(--font-mono);font-size:12px">@acme/tooltip</span> <span class="count-badge">1</span></div>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">5 issues unchanged since previous run. Expand to view details.</p>
+
+    <div class="violation-card pre-existing" data-id="lp1" data-status="persisting">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+        <span class="card-title">Button group lacks role="group"</span>
+        <div class="card-meta"><code style="font-size:11px">@acme/button</code><span class="status-tag persisting-tag">Persisting</span></div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Related buttons should be wrapped with <code>role="group"</code> and an accessible label.</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/ButtonGroup.tsx</code>, Line 14</p></div>
+        <div class="detail-panel" data-panel="how"><p>Add <code>role="group"</code> and <code>aria-label</code> to the container.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card pre-existing" data-id="lp2" data-status="persisting">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+        <span class="card-title">Touch target size below 44x44px</span>
+        <div class="card-meta"><code style="font-size:11px">@acme/button</code><span class="status-tag persisting-tag">Persisting</span></div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Interactive elements need at least 44x44px touch targets for motor accessibility.</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/button/src/IconButton.tsx</code>, Line 9</p></div>
+        <div class="detail-panel" data-panel="how"><p>Increase min width/height to 44px or add padding.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card pre-existing" data-id="lp3" data-status="persisting">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+        <span class="card-title">Missing aria-describedby on dialog</span>
+        <div class="card-meta"><code style="font-size:11px">@acme/modal</code><span class="status-tag persisting-tag">Persisting</span></div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Dialogs should reference descriptive content via <code>aria-describedby</code>.</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/modal/src/Modal.tsx</code>, Line 30</p></div>
+        <div class="detail-panel" data-panel="how"><p>Add <code>aria-describedby</code> pointing to the modal body content ID.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card pre-existing" data-id="lp4" data-status="persisting">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+        <span class="card-title">Overlay animation ignores prefers-reduced-motion</span>
+        <div class="card-meta"><code style="font-size:11px">@acme/modal</code><span class="status-tag persisting-tag">Persisting</span></div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Users with <code>prefers-reduced-motion: reduce</code> still see the animation.</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/modal/src/Modal.module.css</code>, Line 18</p></div>
+        <div class="detail-panel" data-panel="how"><p>Wrap animation in <code>@media (prefers-reduced-motion: no-preference)</code>.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="violation-card pre-existing" data-id="lp5" data-status="persisting">
+      <div class="card-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleCard(this)">
+        <input type="checkbox" class="card-checkbox" aria-label="Select violation" onclick="event.stopPropagation(); updateBulk()">
+        <span class="severity-indicator sev-moderate"><span class="sev-shape" aria-hidden="true"></span> Moderate</span>
+        <span class="card-title">Tooltip not accessible via keyboard</span>
+        <div class="card-meta"><code style="font-size:11px">@acme/tooltip</code><span class="status-tag persisting-tag">Persisting</span></div>
+        <span class="expand-icon" aria-hidden="true">&#9656;</span>
+      </div>
+      <div class="card-body">
+        <div class="detail-tabs" role="tablist">
+          <button class="detail-tab active" role="tab" onclick="switchTab(this, 'why')">Why</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'where')">Where</button>
+          <button class="detail-tab" role="tab" onclick="switchTab(this, 'how')">How</button>
+        </div>
+        <div class="detail-panel active" data-panel="why"><p>Tooltips only trigger on hover, inaccessible to keyboard users.</p></div>
+        <div class="detail-panel" data-panel="where"><p>File: <code>packages/tooltip/src/Tooltip.tsx</code>, Line 22</p></div>
+        <div class="detail-panel" data-panel="how"><p>Add <code>onFocus</code>/<code>onBlur</code> handlers.</p></div>
+        <div class="skip-controls">
+          <select aria-label="Skip reason category" onchange="handleSkipSelect(this)"><option value="">Skip this violation...</option><option value="false-positive">False positive</option><option value="wont-fix">Won't fix</option><option value="by-design">By design</option><option value="other">Other</option></select>
+          <input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">
+          <button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TEAM LEAD VIEW ==================== -->
+  <div id="view-teamlead" class="role-view hidden">
+
+    <div class="section-header">
+      <div class="section-title">Package Health Summary</div>
+    </div>
+
+    <table class="health-table" aria-label="Package health summary">
+      <thead>
+        <tr>
+          <th scope="col">Package</th>
+          <th scope="col">New</th>
+          <th scope="col">Fixed</th>
+          <th scope="col">Persisting</th>
+          <th scope="col">Total</th>
+          <th scope="col">Trend</th>
+          <th scope="col">Health</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-family:var(--font-mono);font-size:12px;font-weight:600">@acme/button</td>
+          <td><span style="color:var(--red);font-weight:700">2</span></td>
+          <td><span style="color:var(--green)">0</span></td>
+          <td>2</td>
+          <td><strong>4</strong></td>
+          <td>
+            <span class="trend-arrow up" title="Increasing: was 2, now 4" aria-label="Issues increasing">&#9650; +2</span>
+            <svg style="width:48px;height:18px;vertical-align:middle;margin-left:4px" viewBox="0 0 48 18" aria-hidden="true">
+              <polyline points="2,14 12,14 24,10 36,10 46,2" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </td>
+          <td>
+            <div class="health-bar" title="50% new, 50% persisting" aria-label="Health: 50% new issues, 50% persisting">
+              <div class="segment-new" style="width:50%"></div>
+              <div class="segment-persisting" style="width:50%"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--font-mono);font-size:12px;font-weight:600">@acme/modal</td>
+          <td><span style="color:var(--red);font-weight:700">1</span></td>
+          <td><span style="color:var(--green);font-weight:700">1</span></td>
+          <td>2</td>
+          <td><strong>3</strong></td>
+          <td>
+            <span class="trend-arrow flat" title="Stable: was 3, now 3" aria-label="Issues stable">&#9654; 0</span>
+            <svg style="width:48px;height:18px;vertical-align:middle;margin-left:4px" viewBox="0 0 48 18" aria-hidden="true">
+              <polyline points="2,8 12,10 24,8 36,10 46,8" fill="none" stroke="#737373" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </td>
+          <td>
+            <div class="health-bar" title="33% new, 33% fixed, 33% persisting" aria-label="Health: 33% new, 33% fixed, 33% persisting">
+              <div class="segment-fixed" style="width:33%"></div>
+              <div class="segment-new" style="width:33%"></div>
+              <div class="segment-persisting" style="width:34%"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="font-family:var(--font-mono);font-size:12px;font-weight:600">@acme/tooltip</td>
+          <td><span style="color:var(--text-muted)">0</span></td>
+          <td><span style="color:var(--text-muted)">0</span></td>
+          <td>1</td>
+          <td><strong>1</strong></td>
+          <td>
+            <span class="trend-arrow down" title="Decreasing: was 2, now 1" aria-label="Issues decreasing">&#9660; -1</span>
+            <svg style="width:48px;height:18px;vertical-align:middle;margin-left:4px" viewBox="0 0 48 18" aria-hidden="true">
+              <polyline points="2,4 12,6 24,8 36,10 46,14" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </td>
+          <td>
+            <div class="health-bar" title="100% persisting" aria-label="Health: 100% persisting">
+              <div class="segment-persisting" style="width:100%"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:24px;padding:16px;background:var(--bg-alt);border-radius:var(--radius);border:1px solid var(--border-light);">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;"><strong style="color:var(--text)">Summary:</strong> 3 packages audited across Run #47. Net change: +2 issues (3 new, 1 fixed). @acme/button needs attention &mdash; 2 new critical/serious issues introduced.</p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;">
+        <div style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;background:var(--red);border-radius:2px;margin-right:4px;vertical-align:middle;"></span> New</div>
+        <div style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span> Fixed</div>
+        <div style="font-size:12px;"><span style="display:inline-block;width:10px;height:10px;background:var(--border);border-radius:2px;margin-right:4px;vertical-align:middle;"></span> Persisting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ALL PASSING STATE (toggled via demo) ==================== -->
+  <div id="allPassingState" class="hidden">
+    <div class="all-passing">
+      <div class="check-circle" aria-hidden="true">&#10003;</div>
+      <h2>All Passing</h2>
+      <p>No accessibility violations detected across all 3 packages.</p>
+      <p style="margin-top:8px;">Run #47 completed in 12.4s on main@a3f91c2</p>
+    </div>
+  </div>
+
+  <!-- Demo toggle -->
+  <div style="margin-top:40px;padding-top:20px;border-top:1px dashed var(--border);text-align:center;">
+    <p style="font-size:12px;color:var(--text-faint);margin-bottom:8px;">Demo controls (not part of production UI)</p>
+    <button class="btn" onclick="toggleAllPassing()">Toggle "All Passing" state</button>
+  </div>
+
+</main>
+
+<script>
+// ===== Role Switching =====
+function switchRole(role) {
+  // Update tabs
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    const isActive = btn.dataset.role === role;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive);
+  });
+
+  // Show/hide views
+  document.querySelectorAll('.role-view').forEach(v => v.classList.add('hidden'));
+  const target = document.getElementById('view-' + role);
+  if (target) target.classList.remove('hidden');
+
+  // Clear bulk selection
+  clearSelection();
+}
+
+// ===== Theme Toggle =====
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeIcon').innerHTML = isDark ? '&#9790;' : '&#9788;';
+}
+
+// ===== Card Expand/Collapse =====
+function toggleCard(header) {
+  const card = header.closest('.violation-card');
+  const isOpen = card.classList.toggle('open');
+  header.setAttribute('aria-expanded', isOpen);
+}
+
+// ===== Package Group Toggle =====
+function togglePackage(header) {
+  header.closest('.package-group').classList.toggle('collapsed');
+}
+
+// ===== Detail Tabs =====
+function switchTab(tabEl, panelName) {
+  const body = tabEl.closest('.card-body');
+  body.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  body.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+  tabEl.classList.add('active');
+  body.querySelector('[data-panel="' + panelName + '"]').classList.add('active');
+}
+
+// ===== Pre-existing Toggle (Developer View) =====
+function togglePreExistingDev() {
+  const section = document.getElementById('preExistingDev');
+  const btn = document.getElementById('togglePreExisting');
+  const isHidden = section.classList.toggle('hidden');
+  btn.textContent = isHidden ? 'Show' : 'Hide';
+}
+
+// ===== Bulk Skip =====
+function updateBulk() {
+  const checked = document.querySelectorAll('.role-view:not(.hidden) .card-checkbox:checked');
+  const bar = document.getElementById('bulkBar');
+  const count = checked.length;
+  document.getElementById('bulkCount').textContent = count + ' selected';
+  bar.classList.toggle('visible', count > 0);
+  validateBulk();
+}
+
+function validateBulk() {
+  const reason = document.getElementById('bulkReason').value.trim();
+  const checked = document.querySelectorAll('.role-view:not(.hidden) .card-checkbox:checked');
+  document.getElementById('bulkSkipBtn').disabled = !reason || checked.length === 0;
+}
+
+document.getElementById('bulkReason').addEventListener('input', validateBulk);
+
+function bulkSkip() {
+  const reason = document.getElementById('bulkReason').value.trim();
+  if (!reason) return;
+
+  const checked = document.querySelectorAll('.role-view:not(.hidden) .card-checkbox:checked');
+  checked.forEach(cb => {
+    const card = cb.closest('.violation-card');
+    card.classList.add('skipped');
+    card.dataset.status = 'skipped';
+    // Update status tag
+    const tag = card.querySelector('.status-tag');
+    if (tag) {
+      tag.className = 'status-tag skipped-tag';
+      tag.textContent = 'Skipped';
+    }
+    // Add unskip button
+    addUnskipButton(card, reason);
+    cb.checked = false;
+  });
+
+  clearSelection();
+}
+
+function clearSelection() {
+  document.querySelectorAll('.card-checkbox:checked').forEach(cb => cb.checked = false);
+  document.getElementById('bulkBar').classList.remove('visible');
+  document.getElementById('bulkReason').value = '';
+  document.getElementById('bulkCount').textContent = '0 selected';
+}
+
+// ===== Individual Skip =====
+function handleSkipSelect(select) {
+  const controls = select.closest('.skip-controls');
+  const noteInput = controls.querySelector('.skip-note-input');
+  const confirmBtn = controls.querySelector('.skip-confirm-btn');
+
+  if (select.value) {
+    noteInput.classList.remove('hidden');
+    confirmBtn.classList.remove('hidden');
+    noteInput.focus();
+  } else {
+    noteInput.classList.add('hidden');
+    confirmBtn.classList.add('hidden');
+  }
+}
+
+function confirmSkip(btn) {
+  const controls = btn.closest('.skip-controls');
+  const select = controls.querySelector('select');
+  const noteInput = controls.querySelector('.skip-note-input');
+  const reason = select.value + (noteInput.value.trim() ? ': ' + noteInput.value.trim() : '');
+
+  if (!select.value) return;
+
+  const card = btn.closest('.violation-card');
+  card.classList.add('skipped');
+  card.dataset.status = 'skipped';
+
+  const tag = card.querySelector('.status-tag');
+  if (tag) {
+    tag.className = 'status-tag skipped-tag';
+    tag.textContent = 'Skipped';
+  }
+
+  // Hide skip controls, show unskip
+  controls.innerHTML = '';
+  addUnskipButton(card, reason);
+}
+
+function addUnskipButton(card, reason) {
+  const controls = card.querySelector('.skip-controls');
+  if (!controls) return;
+  controls.innerHTML =
+    '<span style="font-size:12px;color:var(--text-faint);">Skipped: ' + escapeHtml(reason) + '</span>' +
+    '<button class="btn danger" onclick="unskip(this)" style="margin-left:auto;">Unskip</button>';
+}
+
+// ===== Unskip =====
+function unskip(btn) {
+  const card = btn.closest('.violation-card');
+  card.classList.remove('skipped');
+
+  // Restore original status
+  const wasPreExisting = card.classList.contains('pre-existing');
+  card.dataset.status = wasPreExisting ? 'persisting' : 'new';
+
+  const tag = card.querySelector('.status-tag');
+  if (tag) {
+    if (wasPreExisting) {
+      tag.className = 'status-tag persisting-tag';
+      tag.textContent = 'Persisting';
+    } else {
+      tag.className = 'status-tag new-tag';
+      tag.textContent = 'New';
+    }
+  }
+
+  // Restore skip controls
+  const controls = card.querySelector('.skip-controls');
+  if (controls) {
+    controls.innerHTML =
+      '<select aria-label="Skip reason category" onchange="handleSkipSelect(this)">' +
+      '<option value="">Skip this violation...</option>' +
+      '<option value="false-positive">False positive</option>' +
+      '<option value="wont-fix">Won\'t fix</option>' +
+      '<option value="by-design">By design</option>' +
+      '<option value="other">Other</option>' +
+      '</select>' +
+      '<input type="text" class="skip-note-input hidden" placeholder="Describe reason..." aria-label="Skip reason details">' +
+      '<button class="btn hidden skip-confirm-btn" onclick="confirmSkip(this)">Confirm Skip</button>';
+  }
+}
+
+// ===== All Passing Toggle (demo) =====
+function toggleAllPassing() {
+  const passing = document.getElementById('allPassingState');
+  const views = document.querySelectorAll('.role-view');
+  const banner = document.getElementById('verdictBanner');
+  const strip = document.querySelector('.stats-strip');
+  const bulk = document.getElementById('bulkBar');
+
+  if (passing.classList.contains('hidden')) {
+    passing.classList.remove('hidden');
+    views.forEach(v => v.classList.add('hidden'));
+    banner.className = 'verdict-banner passing';
+    banner.innerHTML =
+      '<div class="verdict-icon" aria-hidden="true">&#10003;</div>' +
+      '<div class="verdict-text"><h2>Passing &mdash; No Issues</h2>' +
+      '<p>All accessibility checks passed across 3 packages.</p></div>';
+    strip.classList.add('hidden');
+    bulk.classList.remove('visible');
+  } else {
+    passing.classList.add('hidden');
+    banner.className = 'verdict-banner blocked';
+    banner.innerHTML =
+      '<div class="verdict-icon" aria-hidden="true">&#10007;</div>' +
+      '<div class="verdict-text"><h2>Blocked &mdash; 3 New Issues Found</h2>' +
+      '<p>3 new violations detected across 2 packages. 1 issue was fixed since last run. 5 pre-existing issues remain.</p></div>';
+    strip.classList.remove('hidden');
+    // Restore current role view
+    const activeRole = document.querySelector('.role-btn.active');
+    if (activeRole) switchRole(activeRole.dataset.role);
+  }
+}
+
+// ===== Utility =====
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ===== Keyboard: Enter to toggle cards =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && e.target.classList.contains('card-header')) {
+    e.preventDefault();
+    toggleCard(e.target);
+  }
+});
+</script>
+
+</body>
+</html>

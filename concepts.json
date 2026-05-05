@@ -1,0 +1,55 @@
+{
+  "title": "ELEVEN — A11y Audit Tool",
+  "concepts": [
+    {
+      "id": "concept-0-current-state",
+      "name": "Current State (Quick Wins)",
+      "desc": "The existing ELEVEN report as it looks today — baseline reference before redesign",
+      "src": "concept-0-current-state/dashboard.html",
+      "doc": "concept-0-current-state/concept-0-current-state.md"
+    },
+    {
+      "id": "concept-1-signal-first-triage",
+      "name": "Signal-First Triage",
+      "desc": "Triage-optimized dashboard with inline expansion and three-tab detail pattern",
+      "src": "concept-1-signal-first-triage/dashboard.html",
+      "doc": "concept-1-signal-first-triage/concept-1-signal-first-triage.md"
+    },
+    {
+      "id": "concept-3-focused-fix-sequence",
+      "name": "Focused Fix Sequence",
+      "desc": "One-issue-at-a-time guided flow with progress tracking and sequential fixing",
+      "src": "concept-3-focused-fix-sequence/dashboard.html",
+      "doc": "concept-3-focused-fix-sequence/concept-3-focused-fix-sequence.md"
+    },
+    {
+      "id": "concept-4-package-health-grid",
+      "name": "Package Health Grid",
+      "desc": "Visual grid of package tiles with sidebar detail panel and scope toggle",
+      "src": "concept-4-package-health-grid/dashboard.html",
+      "doc": "concept-4-package-health-grid/concept-4-package-health-grid.md"
+    },
+    {
+      "id": "concept-5-adaptive-report-hub",
+      "name": "Adaptive Report Hub ★",
+      "desc": "Experimental: Role-based views, trend sparklines, bulk skip, and cross-package grouping",
+      "src": "concept-5-adaptive-report-hub/dashboard.html",
+      "doc": "concept-5-adaptive-report-hub/concept-5-adaptive-report-hub.md"
+    },
+    {
+      "id": "concept-7-issue-navigator",
+      "name": "Issue Navigator",
+      "desc": "Persistent nav bar of issue pills with full detail view, auto-advance, and Fix with AI",
+      "src": "concept-7-issue-navigator/dashboard.html",
+      "doc": "concept-7-issue-navigator/concept-7-issue-navigator.md"
+    },
+    {
+      "id": "concept-8-sidebar-navigator",
+      "name": "Sidebar Navigator",
+      "desc": "Rule-grouped sidebar with filter tabs, violation cards with selector badges, dark mode default",
+      "src": "concept-8-sidebar-navigator/dashboard.html",
+      "doc": "concept-8-sidebar-navigator/concept-8-sidebar-navigator.md"
+    }
+  ],
+  "existing": null
+}
